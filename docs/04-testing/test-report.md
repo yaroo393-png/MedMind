@@ -7,4 +7,6 @@
 ## 3. ผลรัน automated test (วันที่ / คำสั่ง / ผลดิบ)
 ## 4. ผลทดสอบ prototype ตาม flow (happy + unhappy)
 ## 5. ผลวัด NFR ที่ตรวจได้
+> NFR-08 (OCR ภายใน 10 วินาที) วัดด้วย `docs/04-testing/test.py` ซึ่งเป็น spike ทดลองอ่านฉลากด้วย Gemini (ไม่ใช่ automated test ของระบบ)
+
 ## 6. Bugs ที่พบและวิธีแก้
