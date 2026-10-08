@@ -200,7 +200,7 @@
 
 ## 8. AI usage log
 
-ทุกครั้งที่ใช้ AI ร่างเนื้อหาต้องบันทึกตามจริง (log ว่าง/ไม่ตรงจริง = milestone ถูก cap 50%)
+ทุกครั้งที่ใช้ AI ร่างเนื้อหาต้องบันทึกตามจริง
 
 | Date | Tool / model | What we asked | What AI produced | What we changed / verified | What we learned |
 |---|---|---|---|---|---|
