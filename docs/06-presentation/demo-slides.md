@@ -1,4 +1,4 @@
-# Demo Slides — MedMind
+# Demo Slides — [ชื่อโปรเจกต์]
 
 เล่าเรื่อง Problem → Solution · เวลา: **[ ] นาที**
 

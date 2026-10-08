@@ -1,4 +1,4 @@
-# Software Requirements Specification (SRS) — MedMind
+# Software Requirements Specification (SRS) — [ชื่อโปรเจกต์]
 
 > สถานะ: **โครง** ตามโครง SRS 7 ส่วนของอาจารย์ (ตัวอย่าง StudyMate, Week 3) · ตัวเลขทุกตัวเป็นเป้าของทีม รอยืนยัน · ห้ามใส่ข้อมูลที่ไม่มีที่มา
 > แหล่งร่าง: `decision-log.md` (FR-01..05, BR-01..14, AC)

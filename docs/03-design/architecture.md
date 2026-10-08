@@ -1,4 +1,4 @@
-# Architecture & Design — MedMind
+# Architecture & Design — [ชื่อโปรเจกต์]
 
 > สถานะ: **โครง** · diagram ใช้ Mermaid · ทุก diagram ติดป้าย FR
 

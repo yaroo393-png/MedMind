@@ -1,4 +1,4 @@
-# Prototype — MedMind
+# Prototype — [ชื่อโปรเจกต์]
 
 Clickable prototype (HTML/CSS/JS) เปิดในเบราว์เซอร์ ไม่ต้องมี server / DB
 

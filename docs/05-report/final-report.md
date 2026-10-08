@@ -1,4 +1,4 @@
-# Final Project Report — MedMind
+# Final Project Report — [ชื่อโปรเจกต์]
 
 1. ปก (ชื่อโปรเจกต์ · ทีม · สมาชิก + รหัส · ลิงก์ repo / demo)
 2. ปัญหา & ผู้ใช้ (จาก M1)
