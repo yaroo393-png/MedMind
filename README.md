@@ -83,6 +83,7 @@ docs/
 ├── 06-presentation/
 │   └── demo-slides.md        # M3: โครง Demo (Problem → Solution)
 prototype/                    # Clickable prototype + tests
+spikes/                       # การทดลองเทคนิค (ไม่ใช่ส่วนของระบบ)
 ```
 
 ---
