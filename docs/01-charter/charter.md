@@ -152,7 +152,7 @@ Intro to Software Engineering · ปีการศึกษา 2569 · Mileston
 | 2 | จับคู่ + ข้อมูลยาจากฉลาก | FR-01, FR-02 | คลิกได้ครบ · test ทั้งหมดผ่าน |
 | 3 | ส่งงาน | — | Final Report · AI-Use Statement · Demo Slides · README |
 
-วันที่: **10/10/69**
+วันที่:**[]**
 
 ---
 
