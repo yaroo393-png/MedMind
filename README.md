@@ -69,8 +69,8 @@ docs/
 ├── 01-charter/
 │   └── charter.md            # M1: ปัญหา, ผู้ใช้, ขอบเขต in/out, ตัววัดความสำเร็จ, SDLC, บทบาททีม
 ├── 02-requirements/
-│   ├── decision-log.md       # บันทึกการตัดสินใจ: 5 FR, Business Rules, AC ร่าง
-│   ├── spec.md               # M2: SRS (User Story, AC, NFR, Use Case, Traceability)
+│   ├── decision-log.md       # บันทึกการตัดสินใจและเหตุผล (ทีมเลือกอะไร เพราะอะไร)
+│   ├── spec.md               # M2: SRS (Business Rules, User Story, AC, NFR, Use Case, Traceability)
 │   └── backlog.md            # M2: Product Backlog + MoSCoW
 ├── 03-design/
 │   ├── architecture.md       # M2: Architecture, Use Case/Sequence/State, ERD, Module & Event
