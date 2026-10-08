@@ -71,7 +71,8 @@ docs/
 ├── 01-charter/
 │   └── charter.md            # M1: ปัญหา, ผู้ใช้, ขอบเขต in/out, ตัววัดความสำเร็จ, SDLC, บทบาททีม
 ├── 02-requirements/
-│   └── spec.md               # M2: SRS (Business Rules, User Story, AC, MoSCoW, NFR, Use Case, Traceability)
+│   ├── spec.md               # M2: SRS (Business Rules, User Story, AC, MoSCoW, NFR, Use Case, Traceability)
+│   └── backlog.md            # Product Backlog: MoSCoW รายข้อ + Traced pain + สถานะการพัฒนา
 ├── 03-design/
 │   ├── architecture.md       # M2: Architecture, Use Case/Sequence/State, ERD, Module & Event
 │   └── design-system.md      # M2: Design tokens, Screen Map (หน้าจอ ↔ FR), error/empty states

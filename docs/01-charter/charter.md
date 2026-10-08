@@ -7,7 +7,7 @@ Intro to Software Engineering · ปีการศึกษา 2569 · Mileston
 |---|---|
 | **Repo** | https://github.com/yaroo393-png/SE-Project |
 | **Demo** | **[ใส่ลิงก์ prototype เมื่อมี]** |
-| **เอกสารที่ใช้อ้างอิง** | `docs/02-requirements/spec.md` (SRS) |
+| **เอกสารที่ใช้อ้างอิง** | `docs/02-requirements/spec.md` (SRS) · `docs/02-requirements/backlog.md` (Product Backlog) |
 
 > แหล่งข้อมูลของเอกสารนี้: เอกสารปัญหาฉบับใหม่ของทีม + การตัดสินใจของทีม — ไม่ใช้ข้อมูลจาก M1/M2 ฉบับเดิม
 
