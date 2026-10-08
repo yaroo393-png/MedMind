@@ -46,8 +46,7 @@
 
 ---
 
-## 🧵 The Golden Thread (ตารางร้อยเรื่องสู่การประเมิน)
-
+## 🧵 The Golden Thread 
 *คะแนนไม่ได้ให้ที่ความสวยของแอป แต่ให้ที่ความต่อเนื่อง: ปัญหา → requirement → design → feature → test*
 
 | ปัญหา (Problem) | → Requirement | → Design | → Feature | → Test |
