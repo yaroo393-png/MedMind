@@ -1,44 +1,207 @@
 # Software Requirements Specification (SRS) — [ชื่อโปรเจกต์]
 
-> สถานะ: **โครง** ตามโครง SRS 7 ส่วนของอาจารย์ (ตัวอย่าง StudyMate, Week 3) · ตัวเลขทุกตัวเป็นเป้าของทีม รอยืนยัน · ห้ามใส่ข้อมูลที่ไม่มีที่มา
-> แหล่งร่าง: `decision-log.md` (FR-01..05, BR-01..14, AC)
-
 | Field | ค่า |
 |---|---|
 | Team name | **[ ]** |
-| Project title | **[ ]** |
-| SDLC chosen in M1 + reason | Agile — **[เหตุผลตาม Charter §5]** |
-| Date / version | **[ ]** |
+| Project title | **[ชื่อโปรเจกต์]** — ระบบเตือนกินยาและแจ้งสถานะการกินยาให้ผู้ดูแลผู้สูงอายุ |
+| SDLC chosen in M1 + reason | **[ทีมเลือก — ดู Charter §8]** |
+| Date / version | v2.0 (ร่าง) · **[วันที่ส่ง]** — แทนที่ฉบับเดิมทั้งหมด |
 | GitHub repo | **[ ]** |
 
+> แหล่งข้อมูล: เอกสารปัญหาฉบับใหม่ของทีม (`docs/01-charter/charter.md`) + การตัดสินใจของทีม (`decision-log.md`) · ตัวเลขทุกตัวเป็นเป้าของทีม ต้องยืนยันกับผู้ใช้จริง · ช่อง **[ ]** = ยังไม่มีข้อมูลจริง
+
+---
+
 ## 1. Introduction
+
 ### 1.1 Purpose and scope
-### 1.2 Users and stakeholders (ตาราง: Name/role · Kind · What they need · What they fear/forbid)
+ผู้สูงอายุที่ต้องรับประทานยาเป็นประจำอาจลืมกินยา กินไม่ตรงเวลา หรือจำไม่ได้ว่ากินแล้วหรือยัง ขณะที่ลูกหลานต้องออกไปทำงานและติดตามได้ไม่ตลอดวัน วิธีปัจจุบัน (นาฬิกาปลุก กล่องยา โทรถาม ส่ง LINE) ยังยืนยันและสรุปสถานะการกินยาให้ผู้ดูแลทราบโดยอัตโนมัติไม่ได้
+
+ระบบนี้เชื่อมผู้สูงอายุกับผู้ดูแล ช่วยบันทึกข้อมูลจากฉลากยาด้วย OCR โดยให้ผู้ดูแลตรวจก่อนบันทึก แจ้งเตือนตามมื้อยา ให้ผู้สูงอายุกดยืนยันทั้งมื้อด้วยการแตะเดียว และแจ้งผู้ดูแลเมื่อยังไม่ยืนยันหลังแจ้งเตือนครบ 3 ครั้ง MVP มี 5 FR
+
+**ความสำเร็จหมายถึง:** ผู้ดูแลไม่ต้องโทรหรือส่ง LINE ถามทุกมื้อ และรู้เมื่อมื้อใดยังไม่ได้รับการยืนยัน (ตัววัดใน Charter §6)
+
+### 1.2 Users and stakeholders
+
+| Name / role | Kind | What they need | What they fear / forbid |
+|---|---|---|---|
+| ผู้สูงอายุ (Senior) | primary user | เสียงเตือน รูปยา ตัวหนังสือใหญ่ ปุ่มใหญ่ กดไม่กี่ครั้ง; ให้ลูกตั้งค่าให้ (ผู้ให้สัมภาษณ์ 1, 3) | ต้องสมัครบัญชีและกรอกข้อมูลเอง (ผู้ให้สัมภาษณ์ 3) |
+| ลูกหลาน / ผู้ดูแล (Caregiver) | primary user | แจ้งเฉพาะตอนยังไม่ยืนยัน; ถ่ายรูปฉลากแล้วช่วยกรอกข้อมูล (ผู้ให้สัมภาษณ์ 2) | ต้องตรวจสอบทุกมื้อ; ข้อมูลยาผิดจาก OCR |
+
+---
 
 ## 2. Overall description
-### 2.1 Product context — what it does / does not (In scope | Out of scope)
+
+### 2.1 Product context — what it does / does not
+
+| IN SCOPE (MVP) | OUT OF SCOPE |
+|---|---|
+| • FR-01 จับคู่ Senior–Caregiver (QR / รหัสเชิญ)<br>• FR-02 สแกนฉลาก → ร่าง → Caregiver ตรวจ → บันทึก<br>• FR-03 แจ้งเตือนเมื่อถึงมื้อยา + แจ้งซ้ำ<br>• FR-04 ยืนยันการกินยาทั้งมื้อ<br>• FR-05 แจ้ง Caregiver + สถานะรายวัน | • OCR อ่านลายมือแพทย์<br>• บันทึกผล OCR โดยไม่ผ่านการตรวจ<br>• AI วินิจฉัย / แนะนำยา / แนะนำวิธีชดเชย<br>• เพิ่ม ลด เปลี่ยนวิธีใช้ยาโดยระบบ<br>• ตรวจว่ากินยาจริง<br>• เชื่อมโรงพยาบาล, Smart Pillbox, IoT, Smartwatch<br>• (ทั้งหมดใน §6) |
+
 ### 2.2 Assumptions and constraints
+- Constraint: การกดยืนยันเป็นการรายงานด้วยตนเอง ไม่ใช่หลักฐานว่ากินยาจริง
+- Constraint: ผล OCR ต้องผ่านการตรวจของ Caregiver ทุกครั้งก่อนบันทึก
+- Constraint: MVP รองรับเฉพาะยาเม็ด/แคปซูลที่มีเวลารับประทานแน่นอน
+- Constraint: M3 prototype เป็นหน้าเว็บคลิกได้ ไม่มี backend จริง — การแจ้งเตือน เวลา และ OCR เป็นการจำลอง
+- Assumption: ผู้สูงอายุมีสมาร์ทโฟนและอนุญาตการแจ้งเตือน **[รอยืนยันกับผู้ใช้]**
+- Assumption: ผู้ดูแลเป็นผู้ตั้งค่าหลักทั้งหมด (จากผู้ให้สัมภาษณ์ 3)
+- Assumption: จำนวน Caregiver ต่อ Senior: **[ทีมกำหนด]**
+
+---
 
 ## 3. Functional requirements
-รูปแบบ: As a <role>, I want <goal>, so that <benefit> · ทุก FR มี "Pain this traces to" และ Acceptance Criteria (Given/When/Then ทางถูกและทางผิด)
-FR-01 … FR-05
+
+รูปแบบ: As a <role>, I want <goal>, so that <benefit> · ทุก FR โยงกลับปัญหาและการสัมภาษณ์ · Acceptance criteria มีทั้งทางถูก (✓) และทางผิด/ขอบ (✗) และตรวจด้วย test ได้
+
+### FR-01 — จับคู่ Senior–Caregiver
+**User story:** As a caregiver, I want to pair with my parent's phone by scanning a QR code or entering an invite code, so that I can set up medicines and receive their status without my parent creating an account.\
+**Pain this traces to:** ผู้ดูแลไม่ได้อยู่ด้วย ต้องโทรถาม; ผู้สูงอายุไม่สะดวกสมัครบัญชี (ผู้ให้สัมภาษณ์ 3)\
+**Rules:** BR-01, BR-02
+
+| # | Given | When | Then |
+|---|---|---|---|
+| ✓1 | Senior เปิดแอปครั้งแรก | หน้าเริ่มต้นแสดง | เห็น QR และรหัสเชิญ โดยไม่ต้องสมัครบัญชีหรือพิมพ์ |
+| ✗2 | Senior ยังไม่กดยินยอม | Caregiver พยายามจับคู่ | จับคู่ไม่ได้ และแจ้งว่ารอการยินยอม |
+| ✓3 | Senior ยินยอมแล้ว | Caregiver สแกน/ใส่รหัสที่ถูกต้อง | ทั้งสองเครื่องแสดงว่าเชื่อมต่อแล้ว |
+| ✗4 | รหัสไม่ถูกต้องหรือหมดอายุ (BR-01) | Caregiver ใส่รหัส | ปฏิเสธพร้อมข้อความชัดเจน ไม่เชื่อมต่อ |
+
+### FR-02 — สแกนฉลากยาและสร้างข้อมูลยา
+**User story:** As a caregiver, I want to photograph a medication label and get a pre-filled draft that I can check and correct, so that I don't have to type every medicine by hand while staying in control of what is saved.\
+**Pain this traces to:** ผู้ดูแลอยากถ่ายรูปฉลากแล้วช่วยกรอก (ผู้ให้สัมภาษณ์ 2); ผู้สูงอายุอยากให้ลูกตั้งค่าให้ (ผู้ให้สัมภาษณ์ 3)\
+**Rules:** BR-03 – BR-07
+
+| # | Given | When | Then |
+|---|---|---|---|
+| ✓1 | รูปฉลากชัด | Caregiver ส่งรูป | แสดงร่าง (ชื่อยา, จำนวนเม็ดต่อครั้ง, มื้อ/เวลา, ข้อควรระวัง, ข้อห้ามใช้) และยังไม่บันทึกอะไร |
+| ✓2 | Caregiver แก้ช่องในร่าง | กดบันทึก | ค่าที่บันทึกคือค่าที่แก้ ไม่ใช่ค่าที่ OCR อ่าน |
+| ✗3 | มีช่องที่อ่านไม่ได้ | แสดงร่าง | ช่องนั้นว่าง + "กรุณาตรวจสอบ" (ไม่เดา); กดบันทึกไม่ได้จนช่องบังคับครบ |
+| ✗4 | ฉลากเป็นยาที่กินเมื่อมีอาการ | แสดงร่าง | แจ้ง "ระบบยังไม่รองรับยาเมื่อมีอาการ" และไม่สร้างตาราง |
+| ✗5 | สแกนล้มเหลว | ระบบอ่านรูปไม่ได้ | เปิดฟอร์มว่างให้กรอกเอง |
+| ✓6 | เพิ่มยาครั้งแรก | Caregiver ตั้งเวลามื้ออาหาร | เวลาเตือนของแต่ละมื้อคำนวณจากเวลามื้อที่ตั้ง |
+| ✗7 | อยู่ในหน้าร่าง | Caregiver กดยกเลิก | ไม่บันทึกอะไร |
+
+### FR-03 — แจ้งเตือนเมื่อถึงมื้อยา *(หัวใจ MVP)*
+**User story:** As an older adult, I want a reminder at each meal time that shows all of that meal's medicines on one screen, and to be reminded again if I haven't confirmed, so that I don't forget or mix up my medicines.\
+**Pain this traces to:** ลืมกินยา / กินไม่ตรงเวลา (ปัญหา); ปิดเสียงเตือนแล้วลืม (ผู้ให้สัมภาษณ์ 1)\
+**Rules:** BR-06, BR-08, BR-09
+
+| # | Given | When | Then |
+|---|---|---|---|
+| ✓1 | มื้อ 08:00 มียา 2 ตัว | ถึง 08:00 | แสดงเตือน ยาทั้ง 2 ตัว (ชื่อ จำนวนเม็ด ข้อควรระวัง ข้อห้ามใช้) ในหน้าเดียว + ปุ่ม "กินแล้ว" / "ยังไม่กิน" |
+| ✗2 | ยังไม่ยืนยัน | ถึง 08:05 และ 08:10 | แจ้งซ้ำครั้งที่ 1 และ 2 |
+| ✓3 | ยืนยันแล้ว | ถึงเวลาแจ้งซ้ำรอบถัดไป | ไม่แจ้งซ้ำ |
+
+### FR-04 — ยืนยันการกินยาทั้งมื้อ
+**User story:** As an older adult, I want to confirm the whole meal with one tap, so that I don't have to confirm each pill and my family knows I reported taking them.\
+**Pain this traces to:** จำไม่ได้ว่ากินแล้วหรือยัง (ปัญหา); อยากกดบอกลูกได้ง่าย ๆ (ผู้ให้สัมภาษณ์ 1); ปุ่มใหญ่ กดไม่กี่ครั้ง (ผู้ให้สัมภาษณ์ 3)\
+**Rules:** BR-10, BR-11, BR-12
+
+| # | Given | When | Then |
+|---|---|---|---|
+| ✓1 | เตือนมื้อ 08:00 อยู่ | Senior กด "กินแล้ว" เวลา 08:03 | สถานะ "กินแล้ว" + บันทึก 08:03 และหยุดเตือนมื้อนั้น |
+| ✗2 | มื้อยืนยันแล้ว | กด "กินแล้ว" อีกครั้ง | ไม่สร้างบันทึกซ้ำ |
+| ✓3 | เตือนรอบแรก 08:00 | Senior กด "ยังไม่กิน" | เตือนอีกครั้ง 08:05 |
+| ✗4 | เตือนรอบสุดท้าย 08:10 | Senior กด "ยังไม่กิน" | แจ้ง Caregiver ทันที (ไม่รอ 08:15) |
+
+### FR-05 — แจ้งเตือน Caregiver + สถานะรายวัน
+**User story:** As a caregiver, I want to be notified only when a meal is still not confirmed after the reminders, and to see today's status of every meal in one place, so that I don't have to call or message for every meal.\
+**Pain this traces to:** ต้องโทร/ส่ง LINE ถามทุกมื้อ; ไม่มีสถานะรวมไว้ที่เดียว (ปัญหา); อยากให้แจ้งเฉพาะตอนยังไม่ยืนยัน (ผู้ให้สัมภาษณ์ 2)\
+**Rules:** BR-11, BR-13, BR-14
+
+| # | Given | When | Then |
+|---|---|---|---|
+| ✓1 | Senior ยืนยันตอน 08:12 | ถึง 08:15 | ไม่แจ้ง Caregiver |
+| ✗2 | ไม่มีการยืนยัน | ถึง 08:15 | แจ้ง Caregiver "ยังไม่ยืนยันการกินยา" (ไม่ใช้คำว่า "ไม่ได้กิน") |
+| ✓3 | มีหลายมื้อในวัน | Caregiver เปิดหน้าสถานะ | เห็นทุกมื้อของวัน: "กินแล้ว" + เวลา / "ยังไม่ยืนยัน" / "รอถึงเวลา" |
+| ✗4 | ยังไม่มีมื้อยาในวัน | Caregiver เปิดหน้าสถานะ | แสดง "ยังไม่มีมื้อยาวันนี้" |
+
+---
 
 ## 4. Non-functional requirements
-ตาราง: ID · Kind · Statement (testable, มีตัวเลข) · How we will check
-ต้องมี NFR ด้าน security/privacy อย่างน้อย 1 ข้อ · คำห้ามถ้าไม่มีตัวเลข: fast, easy, user-friendly, smart, secure
-เพิ่มคอลัมน์ "ตรวจได้ในเทอมนี้ด้วยวิธีใด" (prototype เป็นเบราว์เซอร์ ไม่มี backend)
+
+คำห้ามถ้าไม่มีตัวเลข: fast, easy, user-friendly, smart, secure · NFR-04 คือ NFR ด้าน security/privacy ที่บังคับ · ตัวเลขเป็นเป้าของทีม **[ ] = ทีมต้องกำหนด**
+
+| ID | Kind | Statement (testable) | How we will check | ตรวจได้ในเทอมนี้? |
+|---|---|---|---|---|
+| NFR-01 | reliability | การแจ้งซ้ำเกิดที่ T+5 และ T+10 และแจ้ง Caregiver ที่ T+15 ตรงตามกำหนดทุกครั้งที่ยังไม่ยืนยัน | automated test ด้วยนาฬิกาจำลอง | ✅ |
+| NFR-02 | usability | ผู้สูงอายุอย่างน้อย **[ ] จาก [ ] คน** กดยืนยันได้ภายใน **[ ] วินาที** ในครั้งแรกโดยไม่มีคนช่วย | จับเวลาทดสอบกับ prototype | ✅ (ต้องมีผู้ทดลอง) |
+| NFR-03 | usability | ปุ่ม "กินแล้ว"/"ยังไม่กิน" มีขนาดอย่างน้อย **[ ]** และชื่อยาบนหน้าเตือนมีขนาดตัวอักษรอย่างน้อย **[ ]** | วัดใน prototype / design system | ✅ |
+| NFR-04 | security / privacy (required) | Caregiver เห็นเฉพาะข้อมูลของ Senior ที่จับคู่ไว้; การขอข้อมูลของ Senior อื่นต้องถูกปฏิเสธ | automated test เปลี่ยน ID ของ Senior แล้วต้องถูกปฏิเสธ | ✅ (ในโมดูลตรรกะ) |
+| NFR-05 | privacy | ไม่มีการเชื่อมต่อใดเกิดขึ้นก่อน Senior กดยินยอม (0 ครั้ง) | automated test (FR-01 ✗2) | ✅ |
+| NFR-06 | safety | ไม่มีข้อมูลยาใดถูกบันทึกโดยไม่ผ่านการตรวจของ Caregiver (0 รายการ) | automated test (FR-02) | ✅ |
+| NFR-07 | reliability | กดยืนยันซ้ำกี่ครั้งก็ตาม มีบันทึกยืนยันของมื้อนั้นเพียง 1 รายการ | automated test (FR-04 ✗2) | ✅ |
+| NFR-08 | performance | ร่างจาก OCR แสดงภายใน **[ ] วินาที** หลังส่งรูป | จับเวลา **[ ] ฉลาก** | ❌ prototype จำลอง OCR — ตรวจได้เมื่อมี OCR จริง |
+
+---
 
 ## 5. Use cases
-### 5.1 Use-case list (Use case · Actor · Related FR · Brief success story)
-### 5.2 Use-case diagram → `03-design/architecture.md`
+
+### 5.1 Use-case list
+
+| Use case | Actor | Related FR | Brief success story |
+|---|---|---|---|
+| UC-1 จับคู่อุปกรณ์ | Caregiver, Senior | FR-01 | Senior กดยินยอม → Caregiver สแกน QR → ทั้งสองเครื่องแสดงว่าเชื่อมต่อแล้ว |
+| UC-2 เพิ่มยาจากฉลาก | Caregiver | FR-02 | ถ่ายรูปฉลาก แก้ 1 ช่องในร่าง กดบันทึก → ยาและมื้อถูกบันทึก |
+| UC-3 รับการแจ้งเตือนมื้อยา | ระบบ → Senior | FR-03 | 08:00 Senior เห็นยามื้อเช้าทั้ง 2 ตัวในหน้าเดียว |
+| UC-4 ยืนยันการกินยา | Senior | FR-04 | Senior กด "กินแล้ว" → มื้อยืนยันแล้ว การเตือนหยุด |
+| UC-5 แจ้ง Caregiver เมื่อยังไม่ยืนยัน | ระบบ → Caregiver | FR-05 | ไม่มีการยืนยันจนถึง T+15 → Caregiver ได้รับ "ยังไม่ยืนยันการกินยา" |
+| UC-6 ดูสถานะรายวัน | Caregiver | FR-05 | Caregiver เปิดหน้าสถานะ เห็นทุกมื้อของวันพร้อมเวลา |
+
+### 5.2 Use-case diagram
+→ `docs/03-design/architecture.md` **[ยังไม่วาด]**
+
+---
 
 ## 6. Out of scope
+1. OCR อ่านลายมือแพทย์
+2. การบันทึกผล OCR โดยไม่ผ่านการตรวจสอบ
+3. AI วินิจฉัยโรคหรือแนะนำยา
+4. การเพิ่ม ลด หรือเปลี่ยนวิธีใช้ยาโดยระบบ
+5. การแนะนำวิธีชดเชยเมื่อลืมยา
+6. การตรวจสอบว่าผู้สูงอายุกินยาจริง ("กินแล้ว" เป็นการรายงานด้วยตนเอง)
+7. การยืนยันรายเม็ด / กินไม่ครบทุกรายการในมื้อ (MVP ยืนยันทั้งมื้อ ใช้ "ยังไม่กิน" แทน)
+8. ยาเมื่อมีอาการ, ยาน้ำ, ยาครึ่งเม็ด
+9. การเชื่อมต่อโรงพยาบาล
+10. Smart Pillbox, IoT และ Smartwatch
+11. ระบบค้นหาและจ้างผู้ดูแลมืออาชีพ
+12. การวิเคราะห์รูปแบบการพลาดยาขั้นสูง
+
+---
 
 ## 7. Traceability matrix (Golden Thread)
-Problem/pain → Requirement (FR) → Solution/design → Feature built → Test
+
+| Problem / pain | Requirement | Solution / design | Feature built | Test |
+|---|---|---|---|---|
+| ผู้สูงอายุไม่สะดวกสมัครบัญชี; ผู้ดูแลไม่อยู่ด้วย | FR-01 | **[Design]** | **[หน้าจอ]** | FR-01 AC 1–4 · NFR-04, NFR-05 |
+| ผู้ดูแลอยากให้ช่วยกรอกข้อมูลยาจากฉลาก | FR-02 | **[Design]** | **[หน้าจอ]** | FR-02 AC 1–7 · NFR-06 |
+| ลืมกินยา / กินไม่ตรงเวลา | FR-03 | **[Design: state machine การเตือน]** | **[หน้าเตือน]** | FR-03 AC 1–3 · NFR-01 |
+| จำไม่ได้ว่ากินแล้วหรือยัง | FR-04 | **[Design]** | **[ปุ่มยืนยัน]** | FR-04 AC 1–4 · NFR-02, NFR-03, NFR-07 |
+| ต้องโทร/ส่ง LINE ถามทุกมื้อ; ไม่มีสถานะรวม | FR-05 | **[Design]** | **[หน้าแจ้งเตือน + หน้าสถานะ]** | FR-05 AC 1–4 · NFR-01 |
+
+คอลัมน์ Design / Feature / Test result จะเติมเมื่อทำ Design และ prototype เสร็จ
+
+---
 
 ## 8. AI usage log
-ตาราง: Date · Tool/model · What we asked · What AI produced · What we changed/verified · What we learned
-บันทึกตามจริงเท่านั้น (log ว่าง/ไม่ตรงจริง = milestone ถูก cap 50%)
+
+ทุกครั้งที่ใช้ AI ร่างเนื้อหาต้องบันทึกตามจริง (log ว่าง/ไม่ตรงจริง = milestone ถูก cap 50%)
+
+| Date | Tool / model | What we asked | What AI produced | What we changed / verified | What we learned |
+|---|---|---|---|---|---|
+| 7–8 ต.ค. 2569 | Claude (Claude Code) | ตรวจเอกสารและเกณฑ์อาจารย์ (M4) และช่วยวิเคราะห์ปัญหาเทียบกับฟีเจอร์ | รายงานช่องโหว่: FR ไม่มีที่อยู่, จำนวนครั้งแจ้งซ้ำขัดกัน (2 กับ 3), การสัมภาษณ์เขียนว่า "ตอบจำลอง" | ทีมยืนยันว่าการสัมภาษณ์เป็นของจริงและแก้ถ้อยคำ; เลือกแจ้งเตือน 3 ครั้ง (T, T+5, T+10) แล้วแจ้ง Caregiver ที่ T+15; เพิ่มหน้าสถานะรายวันใน FR-05 | ต้องเช็กให้ตัวเลขเดียวกันตรงกันทุกที่ในเอกสาร ไม่งั้นเขียน test ไม่ได้ |
+| 7–8 ต.ค. 2569 | Claude (Claude Code) | ร่าง Charter, Business Rules, Acceptance Criteria และ SRS ฉบับนี้จากเอกสารปัญหาของทีม | ร่างเอกสาร + ข้อเสนอค่าเริ่มต้น (เช่น ปุ่ม "ยังไม่กิน", เวลามื้ออาหาร) | ทีมตัดสินใจกฎการเตือน ปุ่ม และข้อความถึงผู้ดูแลเอง; สั่งให้ไม่ใช้ข้อมูลจาก M1/M2 เดิม และตัดฟีเจอร์ให้เหลือ 5 FR ตามที่อาจารย์กำหนด | AI ร่างได้เร็ว แต่ขอบเขตและตัวเลขต้องให้ทีมตัดสินใจ และต้องตรวจว่า AI ไม่ดึงข้อมูลเก่าปนเข้ามา |
+| **[ ]** | **[ ]** | **[การใช้ AI อื่นของทีม — ทีมกรอกตามจริง]** | | | |
+
+---
 
 ## 9. Self-check
+
+- ☑ ทุก FR เป็น user story ที่มี "so that" และโยงกลับ pain (§3, §7)
+- ☑ ทุก FR มี acceptance criteria ทั้งทางถูกและทางผิด ที่ตรวจด้วย test ได้
+- ☐ NFR วัดได้ทุกข้อ — NFR-02, NFR-03, NFR-08 ยังรอทีมกำหนดตัวเลข
+- ☑ มี NFR ด้าน security/privacy (NFR-04)
+- ☑ ระบุขอบเขตและ Out of scope (§2.1, §6)
+- ☑ Use case ครอบคลุมทุก FR (§5.1)
+- ☐ Use-case diagram — ยังไม่วาด
+- ☐ AI log ครบ — ต้องเติมการใช้ AI อื่นของทีม
+- ☐ ช่อง [ ] ในหัวเอกสาร — รอทีมกรอก
