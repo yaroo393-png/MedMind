@@ -7,7 +7,7 @@
 3. Requirements & MoSCoW
 4. Golden Thread
 5. Architecture
-6. Live demo (FR-3 → FR-4 → …)
+6. Live demo (FR-03 → FR-04 → …)
 7. Testing
 8. AI-first reflection
 9. Q&A
