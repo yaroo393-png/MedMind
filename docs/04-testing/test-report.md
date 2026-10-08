@@ -1,4 +1,4 @@
-# Test Plan & Report — [ชื่อโปรเจกต์]
+# Test Plan & Report — MedMind
 
 > ใส่เฉพาะผลที่รันจริง ห้ามเขียนผลล่วงหน้า
 

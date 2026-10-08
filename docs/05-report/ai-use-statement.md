@@ -1,4 +1,4 @@
-# AI-Use Statement — [ชื่อโปรเจกต์]
+# AI-Use Statement — MedMind
 
 > บันทึกตามจริงเท่านั้น
 

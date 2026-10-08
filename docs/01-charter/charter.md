@@ -1,11 +1,11 @@
-# M1 — Team Charter · ทีม **[ชื่อทีม]**
+# M1 — Team Charter · ทีม **MedMind**
 
-**โปรเจกต์ [ชื่อโปรเจกต์]** — ระบบเตือนกินยาและแจ้งสถานะการกินยาให้ผู้ดูแลผู้สูงอายุ\
+**โปรเจกต์ MedMind** — ระบบเตือนกินยาและแจ้งสถานะการกินยาให้ผู้ดูแลผู้สูงอายุ\
 Intro to Software Engineering · ปีการศึกษา 2569 · Milestone 1
 
 | | |
 |---|---|
-| **Repo** | **[ใส่ลิงก์ repo]** |
+| **Repo** | https://github.com/yaroo393-png/SE-Project |
 | **Demo** | **[ใส่ลิงก์ prototype เมื่อมี]** |
 | **เอกสารที่ใช้อ้างอิง** | `docs/02-requirements/decision-log.md` · `docs/02-requirements/backlog.md` |
 

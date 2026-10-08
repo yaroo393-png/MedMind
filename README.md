@@ -1,4 +1,4 @@
-# [ชื่อโปรเจกต์] — ระบบเตือนกินยาและแจ้งสถานะให้ผู้ดูแลผู้สูงอายุ
+# MedMind — ระบบเตือนกินยาและแจ้งสถานะให้ผู้ดูแลผู้สูงอายุ
 
 [![Milestone](https://img.shields.io/badge/Milestone-M4%20Final%20Project-purple)](docs/05-report/final-report.md)
 [![Status](https://img.shields.io/badge/Status-In%20Progress-orange)](#สถานะปัจจุบัน-current-status)
@@ -6,8 +6,8 @@
 
 > **Intro to Software Engineering (15031001) — Academic Year 2569**
 > School of Applied Digital Technology, Mae Fah Luang University
-> **Team:** **[ชื่อทีม]**
-> **GitHub Repository:** **[ลิงก์ repo]**
+> **Team:** **MedMind**
+> **GitHub Repository:** https://github.com/yaroo393-png/SE-Project
 
 ---
 
@@ -27,7 +27,7 @@
 
 ## 📌 บทนำและภาพรวมของโครงการ (Project Overview)
 
-**[ชื่อโปรเจกต์]** คือระบบที่ช่วยให้ผู้สูงอายุที่ต้องกินยาตามเวลา ยืนยันการกินยาได้ด้วยการแตะเดียว และให้ผู้ดูแลที่ไม่ได้อยู่ด้วยรู้สถานะการกินยาแต่ละรอบ โดยไม่ต้องโทรหรือส่งข้อความถาม
+**MedMind** คือระบบที่ช่วยให้ผู้สูงอายุที่ต้องกินยาตามเวลา ยืนยันการกินยาได้ด้วยการแตะเดียว และให้ผู้ดูแลที่ไม่ได้อยู่ด้วยรู้สถานะการกินยาแต่ละรอบ โดยไม่ต้องโทรหรือส่งข้อความถาม
 
 **ปัญหา:** ผู้สูงอายุที่ต้องรับประทานยาเป็นประจำอาจลืมกินยา กินไม่ตรงเวลา หรือจำไม่ได้ว่ากินแล้วหรือยัง ขณะที่ลูกหลานต้องออกไปทำงานและไม่สามารถติดตามได้ตลอดวัน วิธีปัจจุบัน (นาฬิกาปลุก กล่องยา โทรถาม ส่ง LINE) ยังไม่สามารถยืนยันและสรุปสถานะการกินยาให้ผู้ดูแลทราบโดยอัตโนมัติได้ (รายละเอียด: [`docs/01-charter/charter.md`](docs/01-charter/charter.md))
 
@@ -76,7 +76,8 @@ docs/
 │   ├── architecture.md       # M2: Architecture, Use Case/Sequence/State, ERD, Module & Event
 │   └── design-system.md      # M2: Design tokens, Screen Map (หน้าจอ ↔ FR), error/empty states
 ├── 04-testing/
-│   └── test-report.md        # Test plan, test cases จาก AC, ผลรันจริง
+│   ├── test-report.md        # Test plan, test cases จาก AC, ผลรันจริง
+│   └── test.py               # Spike: อ่านฉลากยาด้วย Gemini (FR-02) — ไม่ใช่ automated test ของระบบ
 ├── 05-report/
 │   ├── final-report.md       # M3: Final Report + Golden Thread table
 │   └── ai-use-statement.md   # M3: บันทึกการใช้ AI ตามจริง
