@@ -42,7 +42,7 @@
 | FR-04 | ยืนยันการกินยาทั้งมื้อด้วยการกดครั้งเดียว |
 | FR-05 | แจ้ง Caregiver เมื่อยังไม่ยืนยัน (ไม่เกิน T+15) + หน้าสถานะรายวัน |
 
-**หลัง MVP (Should / Could — ดู [`backlog.md`](docs/02-requirements/backlog.md)):** หลาย Caregiver ต่อ Senior · ยาเมื่อมีอาการ/ยาน้ำ/ยาครึ่งเม็ด · สต็อกยา + แจ้งยาใกล้หมด · แก้ประวัติย้อนหลัง · วิเคราะห์รูปแบบการพลาดยา · นัดหมาย · ความดัน/น้ำตาล · ค่าใช้จ่าย · เชื่อมโรงพยาบาล · Smart Pillbox / IoT / Smartwatch · รูปยา · ยืนยันรายเม็ด
+**หลัง MVP (Should / Could — ดู SRS §3.6 ใน [`spec.md`](docs/02-requirements/spec.md)):** หลาย Caregiver ต่อ Senior · ยาเมื่อมีอาการ/ยาน้ำ/ยาครึ่งเม็ด · สต็อกยา + แจ้งยาใกล้หมด · แก้ประวัติย้อนหลัง · วิเคราะห์รูปแบบการพลาดยา · นัดหมาย · ความดัน/น้ำตาล · ค่าใช้จ่าย · เชื่อมโรงพยาบาล · Smart Pillbox / IoT / Smartwatch · รูปยา · ยืนยันรายเม็ด
 
 ---
 
@@ -68,15 +68,10 @@ docs/
 ├── 01-charter/
 │   └── charter.md            # M1: ปัญหา, ผู้ใช้, ขอบเขต in/out, ตัววัดความสำเร็จ, SDLC, บทบาททีม
 ├── 02-requirements/
-│   ├── decision-log.md       # บันทึกการตัดสินใจและเหตุผล (ทีมเลือกอะไร เพราะอะไร)
-│   ├── spec.md               # M2: SRS (Business Rules, User Story, AC, NFR, Use Case, Traceability)
-│   └── backlog.md            # M2: Product Backlog + MoSCoW
+│   └── spec.md               # M2: SRS (Business Rules, User Story, AC, MoSCoW, NFR, Use Case, Traceability)
 ├── 03-design/
 │   ├── architecture.md       # M2: Architecture, Use Case/Sequence/State, ERD, Module & Event
 │   └── design-system.md      # M2: Design tokens, Screen Map (หน้าจอ ↔ FR), error/empty states
-├── 04-testing/
-│   ├── test-report.md        # Test plan, test cases จาก AC, ผลรันจริง
-│   └── test.py               # Spike: อ่านฉลากยาด้วย Gemini (FR-02) — ไม่ใช่ automated test ของระบบ
 ├── 05-report/
 │   ├── final-report.md       # M3: Final Report + Golden Thread table
 │   └── ai-use-statement.md   # M3: บันทึกการใช้ AI ตามจริง

@@ -7,7 +7,7 @@ Intro to Software Engineering · ปีการศึกษา 2569 · Mileston
 |---|---|
 | **Repo** | https://github.com/yaroo393-png/SE-Project |
 | **Demo** | **[ใส่ลิงก์ prototype เมื่อมี]** |
-| **เอกสารที่ใช้อ้างอิง** | `docs/02-requirements/decision-log.md` · `docs/02-requirements/backlog.md` |
+| **เอกสารที่ใช้อ้างอิง** | `docs/02-requirements/spec.md` (SRS) |
 
 > แหล่งข้อมูลของเอกสารนี้: เอกสารปัญหาฉบับใหม่ของทีม + การตัดสินใจของทีม — ไม่ใช้ข้อมูลจาก M1/M2 ฉบับเดิม
 
@@ -114,7 +114,7 @@ Intro to Software Engineering · ปีการศึกษา 2569 · Mileston
 | การเพิ่ม ลด หรือเปลี่ยนวิธีใช้ยาโดยระบบ | ต้องเป็นตามฉลาก/คำสั่งแพทย์เท่านั้น |
 | การแนะนำวิธีชดเชยเมื่อลืมยา | เช่น ให้กินเพิ่มเป็น 2 เท่า อาจเกิดอันตราย — เป็นคำแนะนำทางการแพทย์ |
 
-> ฟีเจอร์ที่ยังไม่ทำใน MVP แต่จะพัฒนาต่อ (Should / Could) อยู่ใน `docs/02-requirements/backlog.md`
+> ฟีเจอร์ที่ยังไม่ทำใน MVP แต่จะพัฒนาต่อ (Should / Could) อยู่ใน SRS §3.6 (`docs/02-requirements/spec.md`)
 
 ---
 
@@ -165,7 +165,7 @@ Intro to Software Engineering · ปีการศึกษา 2569 · Mileston
 | 2 | **[ ]** | **[ ]** | **[ ]** | **System Designer** | **Use Case · Sequence · State Machine · ERD · Architecture (docs/03-design/architecture.md)** |
 | 3 | **[ ]** | **[ ]** | **[ ]** | **UX/UI Designer** | **Design tokens · Screen map · Wireframe ทุกหน้า · Demo slides (docs/03-design/design-system.md, docs/06-presentation/)** |
 | 4 | **[ ]** | **[ ]** | **[ ]** | **Prototype Developer** | **Prototype คลิกได้ Increment 1–2 · วิธีเปิดใน README (prototype/)** |
-| 5 | **[ ]** | **[ ]** | **[ ]** | **QA / Tester** | **Test plan จาก AC · Automated test · ทดสอบกับผู้ใช้ · Test report (docs/04-testing/, prototype/tests/)** |
+| 5 | **[ ]** | **[ ]** | **[ ]** | **QA / Tester** | **Test plan จาก AC · Automated test · ทดสอบกับผู้ใช้ · Test report (Final Report §6 การทดสอบ, prototype/tests/)** |
 
 ### กติกาการทำงานร่วมกัน
 - ติดตามงานผ่าน **GitHub Issues** — ทุกงานมี issue และมีผู้รับผิดชอบ 1 คน
