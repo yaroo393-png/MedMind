@@ -2,11 +2,11 @@
 
 | Field | ค่า |
 |---|---|
-| Team name | **[MedMind ]** |
-| Project title | **[MedMind]** — ระบบเตือนกินยาและแจ้งสถานะการกินยาให้ผู้ดูแลผู้สูงอายุ |
+| Team name | **MedMind** |
+| Project title | **MedMind** — ระบบเตือนกินยาและแจ้งสถานะการกินยาให้ผู้ดูแลผู้สูงอายุ |
 | SDLC chosen in M1 + reason | Incremental (AI-Assisted) — สร้างวงจร เตือน → ยืนยัน → แจ้งผู้ดูแล (FR-03–05) ก่อน แล้วจึงเพิ่มจับคู่ + OCR (FR-01, FR-02) · ดู Charter §8 |
-| Date / version | v2.0 (ร่าง) · **[]** — แทนที่ฉบับเดิมทั้งหมด |
-| GitHub repo | **[https://github.com/yaroo393-png/SE-Project/edit/Test/docs/02-requirements/spec.md ]** |
+| Date / version | v2.0 (ร่าง) · **รอการยืนยันจากอาจารย์** — แทนที่ฉบับเดิมทั้งหมด |
+| GitHub repo | **https://github.com/yaroo393-png/SE-Project/edit/Test/docs/02-requirements/spec.md** |
 
 > แหล่งข้อมูล: เอกสารปัญหาฉบับใหม่ของทีม (`docs/01-charter/charter.md`) + การตัดสินใจของทีม (`decision-log.md`) · ตัวเลขทุกตัวเป็นเป้าของทีม ต้องยืนยันกับผู้ใช้จริง · ช่อง **[ ]** = ยังไม่มีข้อมูลจริง
 
