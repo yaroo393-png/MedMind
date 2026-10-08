@@ -1,4 +1,4 @@
-# Software Requirements Specification (SRS) — [ชื่อโปรเจกต์]
+# Software Requirements Specification (SRS) — MedMind
 
 | Field | ค่า |
 |---|---|
