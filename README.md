@@ -15,8 +15,8 @@
 
 | ส่วน | สถานะ |
 |---|---|
-| M1 Charter | ร่างฉบับปรับปรุง (ยังมีช่อง **[ ]** รอข้อมูลทีม) |
-| M2 SRS / Requirements | SRS v2.0 ร่างแล้ว (`spec.md`): 5 FR, BR-01..17, AC, NFR-01..10, Use case, Traceability — ยังรอ: Use-case diagram, ช่อง **[ ]** ข้อมูลทีม |
+| M1 Charter | ร่างฉบับปรับปรุง (ข้อมูลสมาชิกกรอกแล้ว · ยังเหลือช่องวันที่ใน §8) |
+| M2 SRS / Requirements | SRS v2.0 ร่างแล้ว (`spec.md`): 5 FR, BR-01..17, AC, NFR-01..10, Use case, Traceability — ยังรอ: Use-case diagram, แถวว่างใน AI log (§8) |
 | M2 Design | ยังไม่เริ่ม |
 | M3 Prototype | ยังไม่เริ่ม |
 | Automated tests | ยังไม่มี — **ไม่มีผลทดสอบที่รายงานไว้ล่วงหน้า** |

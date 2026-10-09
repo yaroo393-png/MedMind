@@ -162,9 +162,6 @@ Intro to Software Engineering · ปีการศึกษา 2569 · Mileston
 | # | ชื่อ–นามสกุล | รหัสนักศึกษา | GitHub | บทบาท | รับผิดชอบ |
 |---|---|---|---|---|---|
 | 1 | **YAR OO** | **6931503064** | **yaroo393-png** | **Project Manager** | **วางแผนและแจกงานผ่าน GitHub Issues · ติดตามความคืบหน้า · Team Charter (M1) · SRS · ดูแลความเรียบร้อยของ repo** |
-| 2 | **[ ]** | **[ ]** | **[ ]** | **System Designer** | **Use Case · Sequence · State Machine · ERD · Architecture (docs/03-design/architecture.md)** |
-| 3 | **[ ]** | **[ ]** | **[ ]** | **UX/UI Designer** | **Design tokens · Screen map · Wireframe ทุกหน้า · Demo slides (docs/03-design/design-system.md, docs/06-presentation/)** |
-| 5 | **[ ]** | **[ ]** | **[ ]** | **QA / Tester** | **Test plan จาก AC · Automated test · ทดสอบกับผู้ใช้ · ผลทดสอบ (เขียนใน Final Report §6)** |
 
 ### กติกาการทำงานร่วมกัน
 - ติดตามงานผ่าน **GitHub Issues** — ทุกงานมี issue และมีผู้รับผิดชอบ 1 คน
@@ -180,6 +177,3 @@ Intro to Software Engineering · ปีการศึกษา 2569 · Mileston
 | ชื่อ | รับทราบ (วันที่) |
 |---|---|
 | YAR OO | **8/10/69** |
-| **[ ]** | **[ ]** |
-| **[ ]** | **[ ]** |
-| **[ ]** | **[ ]** |
