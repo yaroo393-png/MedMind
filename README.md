@@ -16,7 +16,7 @@
 | ส่วน | สถานะ |
 |---|---|
 | M1 Charter | ร่างฉบับปรับปรุง (ข้อมูลสมาชิกกรอกแล้ว · ยังเหลือช่องวันที่ใน §8) |
-| M2 SRS / Requirements | SRS v2.0 ร่างแล้ว (`spec.md`): 5 FR, BR-01..17, AC, NFR-01..10, Use case, Traceability — ยังรอ: Use-case diagram, แถวว่างใน AI log (§8) |
+| M2 SRS / Requirements | SRS v2.0 ร่างแล้ว (`spec.md`): FR-01..08 (Must 5 · Should 1 · Could 2), BR-01..17, AC, NFR-01..10, Use case, Traceability — ยังรอ: Use-case diagram, แถวว่างใน AI log (§8) |
 | M2 Design | ยังไม่เริ่ม |
 | M3 Prototype | ยังไม่เริ่ม |
 | Automated tests | ยังไม่มี — **ไม่มีผลทดสอบที่รายงานไว้ล่วงหน้า** |
@@ -74,14 +74,14 @@ docs/
 │   ├── spec.md               # M2: SRS (Business Rules, User Story, AC, MoSCoW, NFR, Use Case, Traceability)
 │   └── backlog.md            # Product Backlog: MoSCoW รายข้อ + Traced pain + สถานะการพัฒนา
 ├── 03-design/
-│   ├── architecture.md       # M2: Architecture, Use Case/Sequence/State, ERD, Module & Event
-│   └── design-system.md      # M2: Design tokens, Screen Map (หน้าจอ ↔ FR), error/empty states
+│   ├── architecture.md       # M2: Architecture, Use Case/Sequence/State, ERD, Module & Event (โครง — มีแค่ตาราง Module & Event)
+│   └── design-system.md      # M2: Design tokens, Screen Map (หน้าจอ ↔ FR), error/empty states (โครง)
 ├── 05-report/
-│   ├── final-report.md       # M3: Final Report + Golden Thread table
-│   └── ai-use-statement.md   # M3: บันทึกการใช้ AI ตามจริง
+│   ├── final-report.md       # M3: Final Report + Golden Thread table (โครง)
+│   └── ai-use-statement.md   # M3: บันทึกการใช้ AI ตามจริง (โครง — บันทึกปัจจุบันอยู่ใน spec.md §8)
 ├── 06-presentation/
-│   └── demo-slides.md        # M3: โครง Demo (Problem → Solution)
-prototype/                    # Clickable prototype + tests
+│   └── demo-slides.md        # M3: โครง Demo (Problem → Solution) (โครง)
+prototype/                    # Clickable prototype + tests (ยังไม่มี — มีแค่ README)
 ```
 
 ---
@@ -115,7 +115,11 @@ Prototype เป็น HTML/CSS/JS เปิดในเบราว์เซอ
 
 ## 👥 สมาชิกและส่วนร่วม (Team & Contribution)
 
-ดู `docs/01-charter/charter.md` §9 (รอทีมกรอก)
+| ชื่อ–นามสกุล | GitHub | บทบาท |
+|---|---|---|
+| YAR OO | [yaroo393-png](https://github.com/yaroo393-png) | Project Manager |
+
+รหัสนักศึกษาและหน้าที่รับผิดชอบอยู่ใน [`docs/01-charter/charter.md`](docs/01-charter/charter.md) §9
 
 ส่วนร่วมรายคนวัดจาก GitHub contribution (commits, PRs, issues, เอกสารที่ commit) — ทุกคน commit ด้วยบัญชีของตัวเอง
 
@@ -123,4 +127,11 @@ Prototype เป็น HTML/CSS/JS เปิดในเบราว์เซอ
 
 ## 📚 แหล่งอ้างอิง (References)
 
-**[รอทีมกรอก]**
+- ข้อมูลผู้ใช้: การสัมภาษณ์ 3 คน (4/9/69 ผ่านการโทร) — Charter §4
+- W3C. *WCAG 2.2 — Understanding SC 2.5.5: Target Size (Enhanced)* — https://www.w3.org/WAI/WCAG22/Understanding/target-size-enhanced.html (NFR-03)
+- W3C. *WCAG 2.2 — Understanding SC 1.4.3: Contrast (Minimum)* — https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html (NFR-03)
+- Apple. *Human Interface Guidelines — Accessibility* — https://developer.apple.com/design/human-interface-guidelines/accessibility (NFR-03)
+- Google. *Material Design — Accessibility* — https://m2.material.io/design/usability/accessibility.html (NFR-03)
+- Nielsen, J. *Why You Only Need to Test with 5 Users*. Nielsen Norman Group — https://www.nngroup.com/articles/why-you-only-need-to-test-with-5-users/ (NFR-02, ตัววัดความสำเร็จ)
+- พระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA) (NFR-09, NFR-10, BR-17)
+- เอกสารรายวิชา Intro to Software Engineering 2569: คู่มือ M2 (SRS) และ Milestone 4 — Final Project: Submit & Grading
