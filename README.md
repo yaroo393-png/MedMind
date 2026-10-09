@@ -15,11 +15,12 @@
 
 | ส่วน | สถานะ |
 |---|---|
-| M1 Charter | ร่างฉบับปรับปรุง (ข้อมูลสมาชิกกรอกแล้ว · ยังเหลือช่องวันที่ใน §8) |
+| M1 Charter | ฉบับปรับปรุง (ข้อมูลสมาชิกกรอกแล้ว · กำหนดเสร็จ Increment ใน §8 ใส่แล้ว) |
 | M2 SRS / Requirements | SRS v2.0 ร่างแล้ว (`spec.md`): FR-01..08 (Must 5 · Should 1 · Could 2), BR-01..17, AC, NFR-01..10, Use case, Traceability — ยังรอ: Use-case diagram, แถวว่างใน AI log (§8) |
 | M2 Design | ยังไม่เริ่ม |
 | M3 Prototype | ยังไม่เริ่ม |
 | Automated tests | ยังไม่มี — **ไม่มีผลทดสอบที่รายงานไว้ล่วงหน้า** |
+| Final Report / AI-Use Statement | ร่างแล้ว: Report §1–3, §7–10 (§8–9 บางส่วน) · AI-Use Statement สรุปจาก `spec.md` §8 — ยังรอ: §4 Design, §5 Prototype, §6 ผลทดสอบ |
 
 > README นี้จะอัปเดตเมื่อมีผลจริง ช่อง **[ ]** = ยังไม่มีข้อมูลจริง ไม่เดา
 
@@ -77,8 +78,8 @@ docs/
 │   ├── architecture.md       # M2: Architecture, Use Case/Sequence/State, ERD, Module & Event (โครง — มีแค่ตาราง Module & Event)
 │   └── design-system.md      # M2: Design tokens, Screen Map (หน้าจอ ↔ FR), error/empty states (โครง)
 ├── 05-report/
-│   ├── final-report.md       # M3: Final Report + Golden Thread table (โครง)
-│   └── ai-use-statement.md   # M3: บันทึกการใช้ AI ตามจริง (โครง — บันทึกปัจจุบันอยู่ใน spec.md §8)
+│   ├── final-report.md       # M3: Final Report + Golden Thread table (ร่าง — §4–6 รอ Design / Prototype / Test)
+│   └── ai-use-statement.md   # M3: บันทึกการใช้ AI ตามจริง (ร่าง — สรุปจาก spec.md §8)
 ├── 06-presentation/
 │   └── demo-slides.md        # M3: โครง Demo (Problem → Solution) (โครง)
 prototype/                    # Clickable prototype + tests (ยังไม่มี — มีแค่ README)
