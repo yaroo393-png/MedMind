@@ -10,7 +10,7 @@
 | 7–8 ต.ค. 2569 | Claude (Claude Code) | ตรวจเอกสารเทียบเกณฑ์ M4 · ร่าง Charter, Business Rules, Acceptance Criteria และ SRS v2.0 จากเอกสารปัญหาของทีม |
 | 8 ต.ค. 2569 | Claude (Claude Code) | กู้ไฟล์ที่ลบจากประวัติ git · ร่างกติกาการทำงานร่วมกัน · ตรวจความสอดคล้องทุกไฟล์ (Golden Thread) · รีวิว PR #1 |
 | 8 ต.ค. 2569 | Claude (Claude Code) | เสนอค่า NFR พร้อมที่มา (WCAG 2.2, Apple, Material, Nielsen) · ตรวจตัววัดความสำเร็จ · ตรวจ SRS เทียบคู่มือ M2 · จัดไฟล์ให้ตรง checklist M4 |
-| 9 ต.ค. 2569 | Claude (Claude Code) | ตรวจ commit เทียบกติกา Charter §9 · ตรวจทั้ง repo เทียบไฟล์ M4 · ร่าง GitHub Issues ของสมาชิก · ช่วยวางกำหนดเสร็จของ Increment · ร่างรายงานนี้ |
+| 9 ต.ค. 2569 | Claude (Claude Code) | ตรวจ commit เทียบกติกา Charter §9 · ตรวจทั้ง repo เทียบไฟล์ M4 · ช่วยวางกำหนดเสร็จของ Increment · ร่างรายงานนี้ |
 | 9 ต.ค. 2569 | Claude (Claude Code) | ระบุข้อจำกัดเว็บแอปใน SRS (เตือนเฉพาะขณะเปิดหน้าเว็บ) · ตรวจ Final Report เทียบตัวอย่าง M4 แล้วแก้เลข PR, ลิงก์, ชื่อบัญชี และ Priority ของ NFR · ตอบว่า prototype ต้องมีเสียงไหม และควรทำเว็บหรือแอป |
 
 ## 2. อะไรเวิร์ค
