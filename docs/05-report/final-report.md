@@ -60,7 +60,7 @@
 
 ## 3. สรุป Requirements (จาก M2 — `spec.md`)
 
-**SDLC:** Incremental (AI-Assisted) — สร้างวงจร เตือน → ยืนยัน → แจ้งผู้ดูแล (FR-03–05) ก่อน แล้วจึงเพิ่มจับคู่ + OCR (FR-01, FR-02) (`charter.md` §8)
+**SDLC:** Incremental — สร้างวงจร เตือน → ยืนยัน → แจ้งผู้ดูแล (FR-03–05) ก่อน แล้วจึงเพิ่มจับคู่ + OCR (FR-01, FR-02) (`charter.md` §8)
 
 ### Functional requirements (MoSCoW — `spec.md` §3, §3.6)
 
@@ -100,7 +100,7 @@ T+15   ยังไม่ยืนยัน → แจ้ง Caregiver "ยั�
 | NFR-05 | privacy | เชื่อมต่อก่อน Senior ยินยอม = 0 ครั้ง | Must (MVP) |
 | NFR-06 | safety | ข้อมูลยาที่บันทึกโดยไม่ผ่านการตรวจของ Caregiver = 0 รายการ | Must (MVP) |
 | NFR-07 | reliability | กดยืนยันซ้ำกี่ครั้ง มีบันทึกของมื้อนั้น 1 รายการ | Must (MVP) |
-| NFR-08 | performance | ร่าง OCR แสดงใน 10 วินาที ใน ≥ 18 จาก 20 ฉลาก (ตรวจได้เมื่อมี OCR จริง) | Should |
+| NFR-08 | performance | ร่างที่อ่านจากรูปฉลากแสดงใน 10 วินาที ใน ≥ 18 จาก 20 ฉลาก (ตรวจได้เมื่อมีการอ่านฉลากจริง) | Should |
 | NFR-09 | privacy / PDPA | ไม่เก็บเลขบัตร ที่อยู่ วันเกิด เบอร์โทร HN (0 field) | Must (MVP) |
 | NFR-10 | privacy / PDPA | หลังยกเลิกการจับคู่ ดูข้อมูลได้ 0 ครั้ง และข้อมูลของคู่นั้นเหลือ 0 รายการ | Must (MVP) |
 
