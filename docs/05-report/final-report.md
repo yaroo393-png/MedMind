@@ -91,18 +91,18 @@ T+15   ยังไม่ยืนยัน → แจ้ง Caregiver "ยั�
 
 ### Non-functional requirements (`spec.md` §4)
 
-| ID | ประเภท | เป้าหมาย (วัดได้) |
-|---|---|---|
-| NFR-01 | reliability | แจ้งซ้ำที่ T+5, T+10 และแจ้ง Caregiver ไม่เกิน T+15 ทุกครั้ง · 1 ครั้งต่อมื้อ |
-| NFR-02 | usability | ผู้สูงอายุ ≥ 4 จาก 5 คน กดยืนยันได้ภายใน 10 วินาที ครั้งแรกโดยไม่มีคนช่วย |
-| NFR-03 | usability | ปุ่ม ≥ 64 px · ชื่อยา ≥ 24 px · ข้อความ ≥ 18 px · contrast ≥ 4.5:1 |
-| NFR-04 | security / privacy | Caregiver ขอข้อมูลของ Senior ที่ไม่ได้จับคู่ → ถูกปฏิเสธ |
-| NFR-05 | privacy | เชื่อมต่อก่อน Senior ยินยอม = 0 ครั้ง |
-| NFR-06 | safety | ข้อมูลยาที่บันทึกโดยไม่ผ่านการตรวจของ Caregiver = 0 รายการ |
-| NFR-07 | reliability | กดยืนยันซ้ำกี่ครั้ง มีบันทึกของมื้อนั้น 1 รายการ |
-| NFR-08 | performance | ร่าง OCR แสดงใน 10 วินาที ใน ≥ 18 จาก 20 ฉลาก (ตรวจได้เมื่อมี OCR จริง) |
-| NFR-09 | privacy / PDPA | ไม่เก็บเลขบัตร ที่อยู่ วันเกิด เบอร์โทร HN (0 field) |
-| NFR-10 | privacy / PDPA | หลังยกเลิกการจับคู่ ดูข้อมูลได้ 0 ครั้ง และข้อมูลของคู่นั้นเหลือ 0 รายการ |
+| ID | ประเภท | เป้าหมาย (วัดได้) | Priority |
+|---|---|---|---|
+| NFR-01 | reliability | แจ้งซ้ำที่ T+5, T+10 และแจ้ง Caregiver ไม่เกิน T+15 ทุกครั้ง · 1 ครั้งต่อมื้อ | Must (MVP) |
+| NFR-02 | usability | ผู้สูงอายุ ≥ 4 จาก 5 คน กดยืนยันได้ภายใน 10 วินาที ครั้งแรกโดยไม่มีคนช่วย | Must (MVP) |
+| NFR-03 | usability | ปุ่ม ≥ 64 px · ชื่อยา ≥ 24 px · ข้อความ ≥ 18 px · contrast ≥ 4.5:1 | Must (MVP) |
+| NFR-04 | security / privacy | Caregiver ขอข้อมูลของ Senior ที่ไม่ได้จับคู่ → ถูกปฏิเสธ | Must (MVP) |
+| NFR-05 | privacy | เชื่อมต่อก่อน Senior ยินยอม = 0 ครั้ง | Must (MVP) |
+| NFR-06 | safety | ข้อมูลยาที่บันทึกโดยไม่ผ่านการตรวจของ Caregiver = 0 รายการ | Must (MVP) |
+| NFR-07 | reliability | กดยืนยันซ้ำกี่ครั้ง มีบันทึกของมื้อนั้น 1 รายการ | Must (MVP) |
+| NFR-08 | performance | ร่าง OCR แสดงใน 10 วินาที ใน ≥ 18 จาก 20 ฉลาก (ตรวจได้เมื่อมี OCR จริง) | Should |
+| NFR-09 | privacy / PDPA | ไม่เก็บเลขบัตร ที่อยู่ วันเกิด เบอร์โทร HN (0 field) | Must (MVP) |
+| NFR-10 | privacy / PDPA | หลังยกเลิกการจับคู่ ดูข้อมูลได้ 0 ครั้ง และข้อมูลของคู่นั้นเหลือ 0 รายการ | Must (MVP) |
 
 ---
 
@@ -141,7 +141,7 @@ T+15   ยังไม่ยืนยัน → แจ้ง Caregiver "ยั�
 
 | สมาชิก | งานที่รับผิดชอบ | Issue | หลักฐาน |
 |---|---|---|---|
-| YAR OO | Team Charter, SRS, Product Backlog, README, วางแผนและแจกงาน, รวมเล่มรายงาน | #22, #23, #27, #28, #30, #31 | Charter/SRS/Backlog (PR #1–#6, #8–#21, #33 · บางส่วนร่างด้วย AI ดู §7), `b390fac`, `6d84a27`, `1fb8925`, `430bf68`, `d99fd5d` |
+| YAR OO | Team Charter, SRS, Product Backlog, README, วางแผนและแจกงาน, รวมเล่มรายงาน | [#22](https://github.com/yaroo393-png/SE-Project/issues/22), [#23](https://github.com/yaroo393-png/SE-Project/issues/23), [#27](https://github.com/yaroo393-png/SE-Project/issues/27), [#28](https://github.com/yaroo393-png/SE-Project/issues/28), [#30](https://github.com/yaroo393-png/SE-Project/issues/30), [#31](https://github.com/yaroo393-png/SE-Project/issues/31), [#32](https://github.com/yaroo393-png/SE-Project/issues/32) | Charter/SRS/Backlog: [PR ที่ merge แล้วทั้งหมดของ yaroo393-png](https://github.com/yaroo393-png/SE-Project/pulls?q=is%3Apr+is%3Amerged+author%3Ayaroo393-png) (บางส่วนร่างด้วย AI ดู §7) · commit: [`b390fac`](https://github.com/yaroo393-png/SE-Project/commit/b390fac), [`6d84a27`](https://github.com/yaroo393-png/SE-Project/commit/6d84a27), [`1fb8925`](https://github.com/yaroo393-png/SE-Project/commit/1fb8925), [`430bf68`](https://github.com/yaroo393-png/SE-Project/commit/430bf68), [`d99fd5d`](https://github.com/yaroo393-png/SE-Project/commit/d99fd5d), [`bf594a0`](https://github.com/yaroo393-png/SE-Project/commit/bf594a0) |
 
 ---
 
