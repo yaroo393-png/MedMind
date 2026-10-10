@@ -121,12 +121,13 @@
     const el = document.getElementById('senior');
     const scr = seniorScreen();
     const covers = { S1: 'S1 · Covers: FR-01', S2: 'S2 · Covers: FR-03, FR-04', S3: 'S3 · Covers: FR-04 (BR-15)' }[scr];
+    const hero = (title, sub) => '<div class="hero"><h3>' + title + '</h3>' + (sub ? '<div class="sub">' + sub + '</div>' : '') + '</div>';
+    const soundBanner = !S.soundOn && scr !== 'S1' ? '<div class="banner" data-act="sound">🔔 แตะที่นี่เพื่อเปิดเสียงเตือน</div>' : '';
     let body = '';
-    if (!S.soundOn && scr !== 'S1') body += '<div class="banner" data-act="sound">🔔 แตะที่นี่เพื่อเปิดเสียงเตือน</div>';
 
     if (scr === 'S1') {
       const inv = S.store.invite, expired = S.now >= inv.expiresAt || inv.usedAt !== null;
-      body += '<h3>เชื่อมต่อกับลูกหลาน</h3><div class="card center">' +
+      body += hero('เชื่อมต่อ<br>กับลูกหลาน', 'ให้ลูกหลานสแกน QR หรือใส่รหัส 6 หลัก') + '<div class="card center">' +
         '<canvas class="qr" id="qr"></canvas><div class="muted">(QR จำลอง)</div>' +
         '<div class="code">' + inv.code + '</div>' +
         '<div class="muted">' + (expired ? 'รหัสนี้หมดอายุแล้ว — กดสร้างรหัสใหม่' : 'ใช้ได้ 1 ครั้ง ถึงเวลา ' + fmt(inv.expiresAt)) + '</div></div>' +
@@ -138,7 +139,7 @@
 
     if (scr === 'S2') {
       const due = M.dueSessions(S.store, S.now).filter((x) => !S.dismissed[x.id]);
-      body += '<h3>ถึงเวลากินยา</h3>' + due.map(function (sess) {
+      body += hero('ถึงเวลากินยา', 'เวลา ' + fmt(S.now) + ' น.') + soundBanner + due.map(function (sess) {
         const late = sess.status === 'unconfirmed';
         return '<div class="card"><div class="meal-head"><span class="meal-time">มื้อ ' + fmt(sess.T) + '</span>' +
           (late ? badge(sess) : '<span class="muted">รอบ ' + sess.round + '/3</span>') + '</div>' + medLines(sess, true) +
@@ -148,7 +149,7 @@
     }
 
     if (scr === 'S3') {
-      body += '<h3>วันนี้</h3>' + msg(S.srMsg);
+      body += hero('วันนี้', 'เวลา ' + fmt(S.now) + ' น.') + soundBanner + msg(S.srMsg);
       if (!S.store.sessions.length) body += '<div class="card center muted">ยังไม่มีมื้อยาวันนี้</div>';
       S.store.sessions.forEach(function (sess) {
         const canLate = M.canConfirmLate(S.store, sess, S.now);
@@ -184,21 +185,26 @@
     if (tab === 'C1') body = caregiverPairing();
     if (tab === 'C2') body = caregiverAddMedication();
     if (tab === 'C3') body = caregiverStatus();
-    el.innerHTML = '<div class="covers">' + covers + '</div>' + tabs + '<div class="screen">' + body + '</div>' + unpairDialog('caregiver');
+    const bottom = tab === 'C2' && S.draft
+      ? '<div class="bottom-bar"><button class="btn taken" id="save-btn" data-act="save">บันทึก</button>' +
+        '<button class="btn ghost" data-act="cancel-draft">ยกเลิก</button></div>' : '';
+    el.innerHTML = '<div class="covers">' + covers + '</div>' + tabs + '<div class="screen">' + body + '</div>' + bottom + unpairDialog('caregiver');
   }
 
   function caregiverPairing() {
     if (paired()) {
-      return '<h3>การจับคู่</h3><div class="msg ok">เชื่อมต่อแล้ว กับโทรศัพท์ของผู้สูงอายุ</div>' + msg(S.cgMsg) +
+      return cgHero('การจับคู่', 'โทรศัพท์ของผู้สูงอายุ') + '<div class="msg ok">เชื่อมต่อแล้ว กับโทรศัพท์ของผู้สูงอายุ</div>' + msg(S.cgMsg) +
         '<button class="btn danger" data-act="unpair-ask" data-side="caregiver">ยกเลิกการจับคู่</button>';
     }
-    return '<h3>เชื่อมต่อกับผู้สูงอายุ</h3>' +
+    return cgHero('เชื่อมต่อ<br>กับผู้สูงอายุ', 'สแกน QR หรือใส่รหัสจากโทรศัพท์ผู้สูงอายุ') +
       (S.cameraAllowed
         ? '<button class="btn" data-act="scan-qr">สแกน QR (จำลอง)</button><p class="center muted">หรือใส่รหัส 6 หลัก</p>'
         : '<div class="msg info">ไม่ได้รับอนุญาตใช้กล้อง — ใส่รหัส 6 หลักแทน</div>') +
       '<div class="field"><label for="code-in">รหัสเชิญ</label><input id="code-in" inputmode="numeric" maxlength="6" placeholder="000000"></div>' +
       '<button class="btn" data-act="pair-code">เชื่อมต่อ</button>' + msg(S.cgMsg);
   }
+
+  function cgHero(title, sub) { return '<div class="hero"><h3>' + title + '</h3><div class="sub">' + sub + '</div></div>'; }
 
   const PAIR_ERRORS = {
     NO_CONSENT: 'รอผู้สูงอายุกดยินยอมก่อน ยังไม่เชื่อมต่อ',
@@ -213,9 +219,9 @@
   }
 
   function caregiverAddMedication() {
-    let h = '<h3>เพิ่มยาจากฉลาก</h3>' + msg(S.cgMsg);
+    let h = cgHero('เพิ่มยาจากฉลาก', S.draft ? 'ตรวจและแก้ร่างก่อนบันทึก' : 'ถ่ายรูปฉลากยา แล้วตรวจก่อนบันทึก') + msg(S.cgMsg);
     if (S.saved) {
-      h += '<div class="card"><b>ยาที่บันทึกแล้ว</b>' + S.store.medications.map(function (m) {
+      h += '<div class="card"><div class="section-label">ยาที่บันทึกแล้ว</div>' + S.store.medications.map(function (m) {
         return '<div class="med">' + esc(m.name) + ' · ' + m.tabletsPerDose + ' เม็ด · เตือน ' + fmt(m.reminderTime) + '</div>';
       }).join('') + '</div>';
     }
@@ -249,9 +255,7 @@
           return '<div class="field"><label>' + k[1] + '</label><input type="time" data-meal="' + k[0] + '" value="' + fmt(md[k[0]]) + '"></div>';
         }).join('') + '</div></div>';
     }
-    h += '<div class="muted" id="preview"></div>' +
-      '<button class="btn taken" id="save-btn" data-act="save">บันทึก</button>' +
-      '<button class="btn ghost" data-act="cancel-draft">ยกเลิก</button>';
+    h += '<div class="msg info" id="preview"></div>';
     return h;
   }
 
@@ -276,10 +280,10 @@
   function caregiverStatus() {
     const st = M.dailyStatus(S.store, CAREGIVER);
     if (!st.ok) return '<div class="msg error">ไม่มีสิทธิ์ดูข้อมูลนี้</div>';
-    let h = '<h3>สถานะวันนี้</h3>';
+    let h = cgHero('วันนี้', 'สถานะการกินยาของผู้สูงอายุ');
     const notes = S.store.notifications.slice().reverse();
     if (notes.length) {
-      h += '<b>การแจ้งเตือน</b>' + notes.map(function (n) {
+      h += '<div class="section-label">การแจ้งเตือน</div>' + notes.map(function (n) {
         return '<div class="note ' + n.type + '">' + esc(n.message) + '<div class="muted">' + fmt(n.sentAt) + '</div></div>';
       }).join('');
     }

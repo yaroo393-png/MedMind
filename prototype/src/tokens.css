@@ -1,23 +1,28 @@
-/* Design tokens — ค่าตาม docs/03-design/design-system.md §1 (NFR-03) */
+/* Design tokens — ค่าตาม docs/03-design/design-system.md §1 (NFR-03)
+   โทนสี: พื้นเทาอ่อน + มิ้นต์ (ตามภาพอ้างอิง) · ตัวอักษรกรมท่าเข้ม · ปุ่มเข้มพอให้ตัวขาวผ่าน contrast ≥ 4.5:1 */
 :root {
-  --color-bg: #F8FAFC;
-  --color-surface: #FFFFFF;
-  --color-text: #111827;
-  --color-text-muted: #4B5563;
-  --color-primary: #1D4ED8;
-  --color-taken: #15803D;
-  --color-not-yet: #B91C1C;
+  --color-bg: #F1F3F4;           /* พื้นหลังหน้า */
+  --color-header: #CDE7E0;       /* แถบหัวมิ้นต์อ่อน */
+  --color-mint-soft: #E4F3EE;    /* พื้นรายการยาในการ์ด / ปุ่มรอง */
+  --color-surface: #FFFFFF;      /* การ์ด */
+  --color-text: #1F3A5F;         /* ข้อความหลัก (กรมท่า) */
+  --color-text-muted: #4B5563;   /* ข้อความรอง */
+  --color-title: #0F5F58;        /* หัวข้อใหญ่บนแถบมิ้นต์ */
+  --color-primary: #0F766E;      /* ปุ่มหลัก / ลิงก์ (เขียวอมฟ้าเข้ม) */
+  --color-taken: #15803D;        /* ปุ่ม "กินแล้ว" (เขียว) */
+  --color-not-yet: #BE123C;      /* ปุ่ม "ยังไม่กิน" (แดงอมชมพู) */
   --color-check-bg: #FEF3C7;
   --color-check-text: #92400E;
-  --color-covers-bg: #374151;
+  --color-covers-bg: #1F3A5F;
 
   --badge-taken-fg: #14532D;     --badge-taken-bg: #DCFCE7;
   --badge-late-fg: #134E4A;      --badge-late-bg: #CCFBF1;
   --badge-reminding-fg: #1E3A8A; --badge-reminding-bg: #DBEAFE;
-  --badge-unconf-fg: #7F1D1D;    --badge-unconf-bg: #FEE2E2;
+  --badge-unconf-fg: #7F1D1D;    --badge-unconf-bg: #FFE4E1;
   --badge-waiting-fg: #374151;   --badge-waiting-bg: #F3F4F6;
 
   --font-family: "Sarabun", "Noto Sans Thai", "Leelawadee UI", "Tahoma", sans-serif;
+  --font-hero: 36px;
   --font-medicine: 24px;
   --font-title: 28px;
   --font-body: 18px;
@@ -25,7 +30,8 @@
   --button-height: 64px;
 
   --space-1: 8px; --space-2: 16px; --space-3: 24px; --space-4: 32px;
-  --radius-card: 16px;
-  --radius-button: 12px;
+  --radius-card: 22px;
+  --radius-button: 999px;        /* ปุ่มทรงแคปซูล */
   --radius-badge: 999px;
+  --shadow-card: 0 6px 18px rgba(31, 58, 95, .08);
 }
