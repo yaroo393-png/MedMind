@@ -5,7 +5,7 @@
  */
 (function () {
   'use strict';
-  const M = window.MedMind, LABEL = window.ReadLabelMock, fmt = M.fmt, T = M.parseTime;
+  const M = window.MedMind, LABEL = window.ReadLabelMock, I = window.Icons, fmt = M.fmt, T = M.parseTime;
   const CAREGIVER = 'caregiver-1';
   const MEAL_OPTIONS = [['breakfast', 'เช้า'], ['lunch', 'กลางวัน'], ['dinner', 'เย็น']];
   const DEFAULT_MEALS = { breakfast: T('07:00'), lunch: T('12:00'), dinner: T('18:00'), bedtime: T('21:00') };
@@ -94,13 +94,15 @@
   const msg = (m) => m ? '<div class="msg ' + m.kind + '">' + esc(m.text) + '</div>' : '';
   function medLines(sess, full) {
     return M.medsOf(S.store, sess).map(function (m) {
-      return '<div class="med"><div class="' + (full ? 'med-name' : '') + '">' + esc(m.name) + '</div>' +
+      return '<div class="med">' + I.svg('pill', full ? 26 : 22, 'med-ic') + '<div class="med-body"><div class="' + (full ? 'med-name' : 'med-title') + '">' + esc(m.name) + '</div>' +
         '<div>' + m.tabletsPerDose + ' เม็ด</div>' +
         (full && m.warnings ? '<div class="muted">ข้อควรระวัง: ' + esc(m.warnings) + '</div>' : '') +
         (full && m.contraindications ? '<div class="muted">ข้อห้ามใช้: ' + esc(m.contraindications) + '</div>' : '') +
-        '</div>';
+        '</div></div>';
     }).join('');
   }
+  const statusBar = () => '<div class="statusbar"><span>' + fmt(S.now) + '</span><span class="sb-ic">' + I.svg('signal', 16) + I.svg('battery', 20) + '</span></div>';
+  const mealHead = (sess, right) => '<div class="meal-head"><span class="meal-time">' + I.svg('clock', 24) + ' ' + fmt(sess.T) + ' น.</span>' + right + '</div>';
   function unpairDialog(side) {
     if (S.dialog !== side) return '';
     return '<div class="dialog"><div class="card"><h3>ยกเลิกการจับคู่?</h3>' +
@@ -121,13 +123,14 @@
     const el = document.getElementById('senior');
     const scr = seniorScreen();
     const covers = { S1: 'S1 · Covers: FR-01', S2: 'S2 · Covers: FR-03, FR-04', S3: 'S3 · Covers: FR-04 (BR-15)' }[scr];
-    const hero = (title, sub) => '<div class="hero"><h3>' + title + '</h3>' + (sub ? '<div class="sub">' + sub + '</div>' : '') + '</div>';
-    const soundBanner = !S.soundOn && scr !== 'S1' ? '<div class="banner" data-act="sound">🔔 แตะที่นี่เพื่อเปิดเสียงเตือน</div>' : '';
+    const hero = (title, sub, withMascot) => '<div class="hero">' + (withMascot ? '<div class="hero-mascot">' + I.mascot(76) + '</div>' : '') +
+      '<h3>' + title + '</h3>' + (sub ? '<div class="sub">' + sub + '</div>' : '') + '</div>';
+    const soundBanner = !S.soundOn && scr !== 'S1' ? '<div class="banner" data-act="sound">' + I.svg('bell', 22) + ' แตะที่นี่เพื่อเปิดเสียงเตือน</div>' : '';
     let body = '';
 
     if (scr === 'S1') {
       const inv = S.store.invite, expired = S.now >= inv.expiresAt || inv.usedAt !== null;
-      body += hero('เชื่อมต่อ<br>กับลูกหลาน', 'ให้ลูกหลานสแกน QR หรือใส่รหัส 6 หลัก') + '<div class="card center">' +
+      body += hero('เชื่อมต่อ<br>กับลูกหลาน', 'ให้ลูกหลานสแกน QR หรือใส่รหัส 6 หลัก', true) + '<div class="card center">' +
         '<canvas class="qr" id="qr"></canvas><div class="muted">(QR จำลอง)</div>' +
         '<div class="code">' + inv.code + '</div>' +
         '<div class="muted">' + (expired ? 'รหัสนี้หมดอายุแล้ว — กดสร้างรหัสใหม่' : 'ใช้ได้ 1 ครั้ง ถึงเวลา ' + fmt(inv.expiresAt)) + '</div></div>' +
@@ -141,8 +144,7 @@
       const due = M.dueSessions(S.store, S.now).filter((x) => !S.dismissed[x.id]);
       body += hero('ถึงเวลากินยา', 'เวลา ' + fmt(S.now) + ' น.') + soundBanner + due.map(function (sess) {
         const late = sess.status === 'unconfirmed';
-        return '<div class="card"><div class="meal-head"><span class="meal-time">มื้อ ' + fmt(sess.T) + '</span>' +
-          (late ? badge(sess) : '<span class="muted">รอบ ' + sess.round + '/3</span>') + '</div>' + medLines(sess, true) +
+        return '<div class="card">' + mealHead(sess, late ? badge(sess) : '<span class="muted">รอบ ' + sess.round + '/3</span>') + medLines(sess, true) +
           '<button class="btn taken" data-act="taken" data-id="' + sess.id + '">กินแล้ว</button>' +
           '<button class="btn not-yet" data-act="not-yet" data-id="' + sess.id + '">ยังไม่กิน</button></div>';
       }).join('');
@@ -153,7 +155,7 @@
       if (!S.store.sessions.length) body += '<div class="card center muted">ยังไม่มีมื้อยาวันนี้</div>';
       S.store.sessions.forEach(function (sess) {
         const canLate = M.canConfirmLate(S.store, sess, S.now);
-        body += '<div class="card"><div class="meal-head"><span class="meal-time">' + fmt(sess.T) + '</span>' + badge(sess) + '</div>' +
+        body += '<div class="card">' + mealHead(sess, badge(sess)) +
           medLines(sess, false) +
           (sess.status === 'reminding' ? '<button class="btn" data-act="open-reminder">ดูหน้าเตือน</button>' : '') +
           (canLate ? '<div class="muted">ยืนยันช้าได้ถึง ' + fmt(Math.min(M.lateUntil(S.store, sess), M.DAY_END)) + '</div>' +
@@ -163,7 +165,8 @@
       body += '<button class="link" data-act="unpair-ask" data-side="senior">ยกเลิกการจับคู่</button>';
     }
 
-    el.innerHTML = '<div class="covers">' + covers + '</div><div class="screen' + (S.ringing && scr === 'S2' ? ' ring' : '') + '">' +
+    document.getElementById('senior-covers').textContent = covers;
+    el.innerHTML = statusBar() + '<div class="screen' + (S.ringing && scr === 'S2' ? ' ring' : '') + '">' +
       body + '</div>' + unpairDialog('senior');
     if (scr === 'S1') drawQR(document.getElementById('qr'), S.store.invite.code);
   }
@@ -177,8 +180,8 @@
     const covers = { C1: 'C1 · Covers: FR-01', C2: 'C2 · Covers: FR-02', C3: 'C3 · Covers: FR-05' }[tab];
     let tabs = '';
     if (paired()) {
-      tabs = '<nav class="tabs">' + [['C3', 'สถานะวันนี้'], ['C2', 'เพิ่มยา'], ['C1', 'การจับคู่']].map(function (t) {
-        return '<button class="' + (t[0] === tab ? 'active' : '') + '" data-act="tab" data-tab="' + t[0] + '">' + t[1] + '</button>';
+      tabs = '<nav class="tabs">' + [['C3', 'วันนี้', 'home'], ['C2', 'เพิ่มยา', 'plus'], ['C1', 'การจับคู่', 'link']].map(function (t) {
+        return '<button class="' + (t[0] === tab ? 'active' : '') + '" data-act="tab" data-tab="' + t[0] + '">' + I.svg(t[2], 24) + '<span>' + t[1] + '</span></button>';
       }).join('') + '</nav>';
     }
     let body = '';
@@ -188,7 +191,8 @@
     const bottom = tab === 'C2' && S.draft
       ? '<div class="bottom-bar"><button class="btn taken" id="save-btn" data-act="save">บันทึก</button>' +
         '<button class="btn ghost" data-act="cancel-draft">ยกเลิก</button></div>' : '';
-    el.innerHTML = '<div class="covers">' + covers + '</div>' + tabs + '<div class="screen">' + body + '</div>' + bottom + unpairDialog('caregiver');
+    document.getElementById('caregiver-covers').textContent = covers;
+    el.innerHTML = statusBar() + '<div class="screen">' + body + '</div>' + bottom + tabs + unpairDialog('caregiver');
   }
 
   function caregiverPairing() {
@@ -198,13 +202,16 @@
     }
     return cgHero('เชื่อมต่อ<br>กับผู้สูงอายุ', 'สแกน QR หรือใส่รหัสจากโทรศัพท์ผู้สูงอายุ') +
       (S.cameraAllowed
-        ? '<button class="btn" data-act="scan-qr">สแกน QR (จำลอง)</button><p class="center muted">หรือใส่รหัส 6 หลัก</p>'
+        ? '<button class="btn" data-act="scan-qr">' + I.svg('qr', 26) + ' สแกน QR (จำลอง)</button><p class="center muted">หรือใส่รหัส 6 หลัก</p>'
         : '<div class="msg info">ไม่ได้รับอนุญาตใช้กล้อง — ใส่รหัส 6 หลักแทน</div>') +
       '<div class="field"><label for="code-in">รหัสเชิญ</label><input id="code-in" inputmode="numeric" maxlength="6" placeholder="000000"></div>' +
       '<button class="btn" data-act="pair-code">เชื่อมต่อ</button>' + msg(S.cgMsg);
   }
 
-  function cgHero(title, sub) { return '<div class="hero"><h3>' + title + '</h3><div class="sub">' + sub + '</div></div>'; }
+  function cgHero(title, sub, withMascot) {
+    return '<div class="hero">' + (withMascot ? '<div class="hero-mascot">' + I.mascot(76) + '</div>' : '') +
+      '<h3>' + title + '</h3><div class="sub">' + sub + '</div></div>';
+  }
 
   const PAIR_ERRORS = {
     NO_CONSENT: 'รอผู้สูงอายุกดยินยอมก่อน ยังไม่เชื่อมต่อ',
@@ -219,7 +226,7 @@
   }
 
   function caregiverAddMedication() {
-    let h = cgHero('เพิ่มยาจากฉลาก', S.draft ? 'ตรวจและแก้ร่างก่อนบันทึก' : 'ถ่ายรูปฉลากยา แล้วตรวจก่อนบันทึก') + msg(S.cgMsg);
+    let h = cgHero('เพิ่มยาจากฉลาก', S.draft ? 'ตรวจและแก้ร่างก่อนบันทึก' : 'ถ่ายรูปฉลากยา แล้วตรวจก่อนบันทึก', true) + msg(S.cgMsg);
     if (S.saved) {
       h += '<div class="card"><div class="section-label">ยาที่บันทึกแล้ว</div>' + S.store.medications.map(function (m) {
         return '<div class="med">' + esc(m.name) + ' · ' + m.tabletsPerDose + ' เม็ด · เตือน ' + fmt(m.reminderTime) + '</div>';
@@ -228,7 +235,7 @@
     if (!S.draft) {
       return h + (S.cameraAllowed
         ? '<p>ถ่ายรูปฉลากยา (จำลอง: เลือกฉลากตัวอย่าง)</p><div class="samples">' + LABEL.SAMPLES.map(function (x) {
-            return '<button data-act="scan-label" data-id="' + x.id + '">📷 ' + esc(x.label) + '<small>' + x.covers + '</small></button>';
+            return '<button data-act="scan-label" data-id="' + x.id + '">' + I.svg('camera', 26) + '<span>' + esc(x.label) + '<small>' + x.covers + '</small></span></button>';
           }).join('') + '</div>'
         : '<div class="msg info">ไม่ได้รับอนุญาตใช้กล้อง — กรอกข้อมูลยาเอง</div>') +
         '<button class="btn ghost" data-act="manual">กรอกข้อมูลเอง</button>';
@@ -284,12 +291,12 @@
     const notes = S.store.notifications.slice().reverse();
     if (notes.length) {
       h += '<div class="section-label">การแจ้งเตือน</div>' + notes.map(function (n) {
-        return '<div class="note ' + n.type + '">' + esc(n.message) + '<div class="muted">' + fmt(n.sentAt) + '</div></div>';
+        return '<div class="note ' + n.type + '">' + I.svg('bell', 20, 'note-ic') + esc(n.message) + '<div class="muted">' + fmt(n.sentAt) + '</div></div>';
       }).join('');
     }
     if (!S.store.sessions.length) return h + '<div class="card center muted">ยังไม่มีมื้อยาวันนี้</div>';
     return h + S.store.sessions.map(function (sess) {
-      return '<div class="card"><div class="meal-head"><span class="meal-time">' + fmt(sess.T) + '</span>' + badge(sess) + '</div>' +
+      return '<div class="card">' + mealHead(sess, badge(sess)) +
         medLines(sess, false) + '</div>';
     }).join('');
   }

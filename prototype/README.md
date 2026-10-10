@@ -18,6 +18,7 @@ Clickable prototype (HTML / CSS / JavaScript) — **เปิดในเบร�
 | `index.html` | Presentation | หน้าเว็บ + โทรศัพท์ 2 เครื่อง |
 | `src/app.js` | Presentation | วาดหน้าจอ S1–S3, C1–C3 และรับการกด — ไม่มีกฎอยู่ในไฟล์นี้ |
 | `src/logic.js` | Logic | กฎทั้งหมด: การจับคู่ (BR-01, 02, 17), ร่างและเวลาเตือน (BR-03..07), รอบเตือน ยืนยัน แจ้งผู้ดูแล (BR-08..16) · รับเวลาจากภายนอก (ADR-02) จึงใช้กับ automated test ใน Node ได้ |
+| `src/icons.js` | Presentation | ไอคอนเส้นชุดเดียว (วาดเอง) + มาสคอตเม็ดยา |
 | `src/readLabel.mock.js` | Logic (adapter) | อ่านฉลากแบบจำลอง — เลือกฉลากตัวอย่างแทนการถ่ายรูปจริง (ADR-03) |
 | `src/tokens.css`, `src/app.css` | Presentation | สี ฟอนต์ ขนาด ตาม `docs/03-design/design-system.md` §1 (NFR-03) |
 
@@ -32,7 +33,7 @@ Clickable prototype (HTML / CSS / JavaScript) — **เปิดในเบร�
 | C2 สแกนฉลาก → ร่าง → ตั้งเวลามื้อ → บันทึก | Caregiver | FR-02 |
 | C3 การแจ้งเตือน + สถานะรายวัน | Caregiver | FR-05 |
 
-ทุกหน้าจอมีแถบ "Covers: FR-x" บนสุด · ภาพหน้าจอใน [`docs/03-design/screens/`](../docs/03-design/screens/)
+ทุกหน้าจอมีป้าย "Covers: FR-x" เหนือจอโทรศัพท์ · ภาพหน้าจอใน [`docs/03-design/screens/`](../docs/03-design/screens/)
 
 ## ลำดับการ demo (ตาม acceptance criteria ใน SRS §3)
 
