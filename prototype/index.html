@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedMind — Prototype</title>
+  <link rel="stylesheet" href="src/tokens.css">
+  <link rel="stylesheet" href="src/app.css">
+</head>
+<body>
+  <!-- แถบเครื่องมือ demo: จำลองเวลาและสถานการณ์ (ADR-02) — ไม่ใช่ส่วนของแอปจริง -->
+  <section class="demo" id="demo"></section>
+
+  <main class="phones">
+    <div class="phone-wrap">
+      <h2>ผู้สูงอายุ (Senior)</h2>
+      <div class="phone" id="senior"></div>
+    </div>
+    <div class="phone-wrap">
+      <h2>ลูกหลาน / ผู้ดูแล (Caregiver)</h2>
+      <div class="phone" id="caregiver"></div>
+    </div>
+  </main>
+
+  <script src="src/logic.js"></script>
+  <script src="src/readLabel.mock.js"></script>
+  <script src="src/app.js"></script>
+</body>
+</html>

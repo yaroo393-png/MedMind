@@ -18,7 +18,7 @@
 | M1 Charter | ฉบับปรับปรุง (ข้อมูลสมาชิกกรอกแล้ว · กำหนดเสร็จ Increment ใน §8 ใส่แล้ว) |
 | M2 SRS / Requirements | SRS v2.0 ร่างแล้ว (`spec.md`): FR-01..08 (Must 5 · Should 1 · Could 2), BR-01..17, AC, NFR-01..10, Use case, Traceability — ยังรอ: แถวว่างใน AI log (§8) |
 | M2 Design | Design Doc เสร็จ (`architecture.md`: Architecture + ADR, Use Case, Sequence 2 อัน, State Machine, ERD, Module/Event, Coverage) · Design system เสร็จ (`design-system.md`: tokens ตาม NFR-03 + contrast, Screen Map S1–S3 / C1–C3, error/empty states) — ยังรอ: ภาพหน้าจอจาก prototype |
-| M3 Prototype | ยังไม่เริ่ม |
+| M3 Prototype | คลิกได้ครบ FR-01..05 ทั้งทางถูกและทางผิด (`prototype/index.html`) — นาฬิกาจำลอง, อ่านฉลากจำลอง, ไม่มี server |
 | Automated tests | ยังไม่มี — **ไม่มีผลทดสอบที่รายงานไว้ล่วงหน้า** |
 | Final Report / AI-Use Statement | ร่างแล้ว: Report §1–3, §7–10 (§8–9 บางส่วน) · AI-Use Statement สรุปจาก `spec.md` §8 — ยังรอ: §4 Design, §5 Prototype, §6 ผลทดสอบ |
 
@@ -52,11 +52,11 @@
 
 | ปัญหา (Problem) | → Requirement | → Design | → Feature | → Test |
 |---|---|---|---|---|
-| ผู้สูงอายุไม่สะดวกสมัครบัญชี; ผู้ดูแลไม่อยู่ด้วย | **FR-01** | Use Case UC-1 · ERD Pairing / InviteCode · ADR-04 (architecture.md §2, §5) | (M3 Prototype) | FR-01 AC 1–6 · NFR-04, NFR-05, NFR-10 |
-| ผู้ดูแลอยากให้ช่วยกรอกข้อมูลยาจากฉลาก | **FR-02** | Sequence สแกนฉลาก → ร่าง → ตรวจ → บันทึก · ERD Medication / MealTimes · ADR-03 (architecture.md §3.2, §5) | (M3 Prototype) | FR-02 AC 1–10 · NFR-06, NFR-09 |
-| ลืมกินยา / กินไม่ตรงเวลา | **FR-03** | State machine ของมื้อยา: รอถึงเวลา → กำลังเตือน (T, T+5, T+10) → กินแล้ว / ยังไม่ยืนยัน / ยืนยันช้า · Sequence เตือน → ยืนยัน → แจ้งผู้ดูแล (architecture.md §3.1, §4) | หน้าเตือน: ยาทั้งมื้อ + เสียง + ปุ่ม "กินแล้ว" / "ยังไม่กิน" *(planned)* | FR-03 AC 1–4 · NFR-01 *(planned)* |
-| จำไม่ได้ว่ากินแล้วหรือยัง | **FR-04** | State machine: กินแล้ว / กินแล้ว (ยืนยันช้า) · Sequence เตือน → ยืนยัน (architecture.md §3.1, §4) | (M3 Prototype) | FR-04 AC 1–6 · NFR-02, NFR-03, NFR-07 |
-| ต้องโทร/ส่ง LINE ถามทุกมื้อ; ไม่มีสถานะรวม | **FR-05** | Sequence แจ้ง Caregiver 1 ครั้งต่อมื้อ · module escalation · ERD NotificationLog (architecture.md §3.1, §5, §6) | (M3 Prototype) | FR-05 AC 1–6 · NFR-01 |
+| ผู้สูงอายุไม่สะดวกสมัครบัญชี; ผู้ดูแลไม่อยู่ด้วย | **FR-01** | Use Case UC-1 · ERD Pairing / InviteCode · ADR-04 (architecture.md §2, §5) | S1 QR + ยินยอม · C1 จับคู่ / ยกเลิกการจับคู่ (prototype) | FR-01 AC 1–6 · NFR-04, NFR-05, NFR-10 |
+| ผู้ดูแลอยากให้ช่วยกรอกข้อมูลยาจากฉลาก | **FR-02** | Sequence สแกนฉลาก → ร่าง → ตรวจ → บันทึก · ERD Medication / MealTimes · ADR-03 (architecture.md §3.2, §5) | C2 สแกนฉลาก (จำลอง) → ร่าง + "กรุณาตรวจสอบ" → ตั้งเวลามื้อ → บันทึก (prototype) | FR-02 AC 1–10 · NFR-06, NFR-09 |
+| ลืมกินยา / กินไม่ตรงเวลา | **FR-03** | State machine ของมื้อยา: รอถึงเวลา → กำลังเตือน (T, T+5, T+10) → กินแล้ว / ยังไม่ยืนยัน / ยืนยันช้า · Sequence เตือน → ยืนยัน → แจ้งผู้ดูแล (architecture.md §3.1, §4) | S2 หน้าเตือน: ยาทั้งมื้อ + เสียง + ปุ่ม "กินแล้ว" / "ยังไม่กิน" · นาฬิกาจำลอง T, T+5, T+10 (prototype) | FR-03 AC 1–4 · NFR-01 *(planned)* |
+| จำไม่ได้ว่ากินแล้วหรือยัง | **FR-04** | State machine: กินแล้ว / กินแล้ว (ยืนยันช้า) · Sequence เตือน → ยืนยัน (architecture.md §3.1, §4) | S2 ปุ่ม "กินแล้ว" / "ยังไม่กิน" · S3 หน้าแรก + ยืนยันช้า (prototype) | FR-04 AC 1–6 · NFR-02, NFR-03, NFR-07 |
+| ต้องโทร/ส่ง LINE ถามทุกมื้อ; ไม่มีสถานะรวม | **FR-05** | Sequence แจ้ง Caregiver 1 ครั้งต่อมื้อ · module escalation · ERD NotificationLog (architecture.md §3.1, §5, §6) | C3 การแจ้งเตือน + สถานะรายวัน 5 คำ + "ยังไม่มีมื้อยาวันนี้" (prototype) | FR-05 AC 1–6 · NFR-01 |
 | ผู้ดูแลไม่ได้อยู่ด้วยตลอด บางครั้งโทรไม่ได้ | **FR-06** (Should) | (หลัง MVP) | (หลัง MVP) | (หลัง MVP — AC เขียนเมื่อย้ายเข้า increment) |
 | ไม่รู้ว่ามื้อนี้/วันนี้ต้องกินยาอะไร | **FR-07** (Could) | (หลัง MVP) | (หลัง MVP) | (หลัง MVP — AC เขียนเมื่อย้ายเข้า increment) |
 | อยากเห็นรูปยา (ผู้ให้สัมภาษณ์ 1) | **FR-08** (Could) | (หลัง MVP) | (หลัง MVP) | (หลัง MVP — AC เขียนเมื่อย้ายเข้า increment) |
@@ -82,20 +82,19 @@ docs/
 │   └── ai-use-statement.md   # M3: บันทึกการใช้ AI ตามจริง (ร่าง — สรุปจาก spec.md §8)
 ├── 06-presentation/
 │   └── demo-slides.md        # M3: โครง Demo (Problem → Solution) (โครง)
-prototype/                    # Clickable prototype + tests (ยังไม่มี — มีแค่ README)
+prototype/                    # Clickable prototype: index.html + src/ (logic.js = กฎของระบบ แยกจากหน้าจอ)
 ```
 
 ---
 
 ## 🚀 วิธีการเปิดใช้งาน Prototype และการรันระบบ (Quick Start)
 
-> **ยังไม่มี prototype** — ส่วนนี้จะเขียนเมื่อ prototype เสร็จและทดสอบแล้ว
-
 ### 1. วิธีเปิดดู Prototype ในเว็บเบราว์เซอร์ (Clickable Prototype)
 Prototype เป็น HTML/CSS/JS เปิดในเบราว์เซอร์ได้โดยตรง **ไม่ต้องมี server หรือฐานข้อมูล** (ข้อมูลเป็นข้อมูลจำลอง; การแจ้งเตือนและเวลาเป็นการจำลอง)
 
-1. เปิดผ่านลิงก์ GitHub Pages: **[ลิงก์ เมื่อมี]**
-2. หรือดาวน์โหลด repo แล้วเปิดไฟล์ **[`prototype/index.html`]** ด้วยเบราว์เซอร์
+1. ดาวน์โหลด repo (Code → Download ZIP) แล้วแตกไฟล์
+2. ดับเบิลคลิกเปิด [`prototype/index.html`](prototype/index.html) ด้วย Chrome / Edge / Safari
+3. ใช้แถบด้านบนเลื่อนเวลาจำลอง และกดปุ่ม "สถานการณ์" เพื่อดูแต่ละ flow — รายละเอียดใน [`prototype/README.md`](prototype/README.md)
 
 ### 2. วิธีรันชุดทดสอบอัตโนมัติ (Automated Tests)
 ```bash

@@ -252,16 +252,16 @@ FR-06 ถึง FR-08 เขียนเป็น user story เพราะม�
 
 | Problem / pain | Requirement | Solution / design | Feature built | Test |
 |---|---|---|---|---|
-| ผู้สูงอายุไม่สะดวกสมัครบัญชี; ผู้ดูแลไม่อยู่ด้วย | FR-01 | Use Case UC-1 · ERD Pairing / InviteCode · ADR-04 (architecture.md §2, §5) | (M3 Prototype) | FR-01 AC 1–6 · NFR-04, NFR-05, NFR-10 |
-| ผู้ดูแลอยากให้ช่วยกรอกข้อมูลยาจากฉลาก | FR-02 | Sequence สแกนฉลาก → ร่าง → ตรวจ → บันทึก · ERD Medication / MealTimes · ADR-03 (architecture.md §3.2, §5) | (M3 Prototype) | FR-02 AC 1–10 · NFR-06, NFR-09 |
-| ลืมกินยา / กินไม่ตรงเวลา | FR-03 | State machine ของมื้อยา: รอถึงเวลา → กำลังเตือน (T, T+5, T+10) → กินแล้ว / ยังไม่ยืนยัน / ยืนยันช้า · Sequence เตือน → ยืนยัน → แจ้งผู้ดูแล (architecture.md §3.1, §4) | หน้าเตือน: ยาทั้งมื้อ + เสียง + ปุ่ม "กินแล้ว" / "ยังไม่กิน" *(planned)* | FR-03 AC 1–4 · NFR-01 *(planned)* |
-| จำไม่ได้ว่ากินแล้วหรือยัง | FR-04 | State machine: กินแล้ว / กินแล้ว (ยืนยันช้า) · Sequence เตือน → ยืนยัน (architecture.md §3.1, §4) | (M3 Prototype) | FR-04 AC 1–6 · NFR-02, NFR-03, NFR-07 |
-| ต้องโทร/ส่ง LINE ถามทุกมื้อ; ไม่มีสถานะรวม | FR-05 | Sequence แจ้ง Caregiver 1 ครั้งต่อมื้อ · module escalation · ERD NotificationLog (architecture.md §3.1, §5, §6) | (M3 Prototype) | FR-05 AC 1–6 · NFR-01 |
+| ผู้สูงอายุไม่สะดวกสมัครบัญชี; ผู้ดูแลไม่อยู่ด้วย | FR-01 | Use Case UC-1 · ERD Pairing / InviteCode · ADR-04 (architecture.md §2, §5) | S1 QR + ยินยอม · C1 จับคู่ / ยกเลิกการจับคู่ (prototype) | FR-01 AC 1–6 · NFR-04, NFR-05, NFR-10 |
+| ผู้ดูแลอยากให้ช่วยกรอกข้อมูลยาจากฉลาก | FR-02 | Sequence สแกนฉลาก → ร่าง → ตรวจ → บันทึก · ERD Medication / MealTimes · ADR-03 (architecture.md §3.2, §5) | C2 สแกนฉลาก (จำลอง) → ร่าง + "กรุณาตรวจสอบ" → ตั้งเวลามื้อ → บันทึก (prototype) | FR-02 AC 1–10 · NFR-06, NFR-09 |
+| ลืมกินยา / กินไม่ตรงเวลา | FR-03 | State machine ของมื้อยา: รอถึงเวลา → กำลังเตือน (T, T+5, T+10) → กินแล้ว / ยังไม่ยืนยัน / ยืนยันช้า · Sequence เตือน → ยืนยัน → แจ้งผู้ดูแล (architecture.md §3.1, §4) | S2 หน้าเตือน: ยาทั้งมื้อ + เสียง + ปุ่ม "กินแล้ว" / "ยังไม่กิน" · นาฬิกาจำลอง T, T+5, T+10 (prototype) | FR-03 AC 1–4 · NFR-01 *(planned)* |
+| จำไม่ได้ว่ากินแล้วหรือยัง | FR-04 | State machine: กินแล้ว / กินแล้ว (ยืนยันช้า) · Sequence เตือน → ยืนยัน (architecture.md §3.1, §4) | S2 ปุ่ม "กินแล้ว" / "ยังไม่กิน" · S3 หน้าแรก + ยืนยันช้า (prototype) | FR-04 AC 1–6 · NFR-02, NFR-03, NFR-07 |
+| ต้องโทร/ส่ง LINE ถามทุกมื้อ; ไม่มีสถานะรวม | FR-05 | Sequence แจ้ง Caregiver 1 ครั้งต่อมื้อ · module escalation · ERD NotificationLog (architecture.md §3.1, §5, §6) | C3 การแจ้งเตือน + สถานะรายวัน 5 คำ + "ยังไม่มีมื้อยาวันนี้" (prototype) | FR-05 AC 1–6 · NFR-01 |
 | ผู้ดูแลไม่ได้อยู่ด้วยตลอด บางครั้งโทรไม่ได้ | FR-06 (Should) | (หลัง MVP) | (หลัง MVP) | (หลัง MVP — AC เขียนเมื่อย้ายเข้า increment) |
 | ไม่รู้ว่ามื้อนี้/วันนี้ต้องกินยาอะไร | FR-07 (Could) | (หลัง MVP) | (หลัง MVP) | (หลัง MVP — AC เขียนเมื่อย้ายเข้า increment) |
 | อยากเห็นรูปยา (ผู้ให้สัมภาษณ์ 1) | FR-08 (Could) | (หลัง MVP) | (หลัง MVP) | (หลัง MVP — AC เขียนเมื่อย้ายเข้า increment) |
 
-คอลัมน์ Design อ้าง `docs/03-design/architecture.md` · แถว FR-03 (หัวใจ MVP) เติม Feature แบบ *planned* ตามตัวอย่างของอาจารย์ · FR-06–08 อยู่นอก MVP (§3.6) · คอลัมน์ Feature เติมเมื่อ Prototype เสร็จ · คอลัมน์ Test เปลี่ยนเป็นผลจริงเมื่อรัน test แล้ว
+คอลัมน์ Design อ้าง `docs/03-design/architecture.md` · คอลัมน์ Feature อ้างหน้าจอใน `prototype/` (รหัสหน้าจอตาม `docs/03-design/design-system.md` §2) · FR-06–08 อยู่นอก MVP (§3.6) · คอลัมน์ Test เปลี่ยนเป็นผลจริงเมื่อรัน test แล้ว
 
 ---
 

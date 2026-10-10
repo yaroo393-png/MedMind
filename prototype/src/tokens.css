@@ -1,0 +1,31 @@
+/* Design tokens — ค่าตาม docs/03-design/design-system.md §1 (NFR-03) */
+:root {
+  --color-bg: #F8FAFC;
+  --color-surface: #FFFFFF;
+  --color-text: #111827;
+  --color-text-muted: #4B5563;
+  --color-primary: #1D4ED8;
+  --color-taken: #15803D;
+  --color-not-yet: #B91C1C;
+  --color-check-bg: #FEF3C7;
+  --color-check-text: #92400E;
+  --color-covers-bg: #374151;
+
+  --badge-taken-fg: #14532D;     --badge-taken-bg: #DCFCE7;
+  --badge-late-fg: #134E4A;      --badge-late-bg: #CCFBF1;
+  --badge-reminding-fg: #1E3A8A; --badge-reminding-bg: #DBEAFE;
+  --badge-unconf-fg: #7F1D1D;    --badge-unconf-bg: #FEE2E2;
+  --badge-waiting-fg: #374151;   --badge-waiting-bg: #F3F4F6;
+
+  --font-family: "Sarabun", "Noto Sans Thai", "Leelawadee UI", "Tahoma", sans-serif;
+  --font-medicine: 24px;
+  --font-title: 28px;
+  --font-body: 18px;
+  --font-button: 22px;
+  --button-height: 64px;
+
+  --space-1: 8px; --space-2: 16px; --space-3: 24px; --space-4: 32px;
+  --radius-card: 16px;
+  --radius-button: 12px;
+  --radius-badge: 999px;
+}
