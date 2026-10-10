@@ -17,7 +17,7 @@
 |---|---|
 | M1 Charter | ฉบับปรับปรุง (ข้อมูลสมาชิกกรอกแล้ว · กำหนดเสร็จ Increment ใน §8 ใส่แล้ว) |
 | M2 SRS / Requirements | SRS v2.0 ร่างแล้ว (`spec.md`): FR-01..08 (Must 5 · Should 1 · Could 2), BR-01..17, AC, NFR-01..10, Use case, Traceability — ยังรอ: แถวว่างใน AI log (§8) |
-| M2 Design | Design Doc เสร็จ (`architecture.md`: Architecture + ADR, Use Case, Sequence 2 อัน, State Machine, ERD, Module/Event, Coverage) — ยังรอ: Design system / Screen Map (`design-system.md`) |
+| M2 Design | Design Doc เสร็จ (`architecture.md`: Architecture + ADR, Use Case, Sequence 2 อัน, State Machine, ERD, Module/Event, Coverage) · Design system เสร็จ (`design-system.md`: tokens ตาม NFR-03 + contrast, Screen Map S1–S3 / C1–C3, error/empty states) — ยังรอ: ภาพหน้าจอจาก prototype |
 | M3 Prototype | ยังไม่เริ่ม |
 | Automated tests | ยังไม่มี — **ไม่มีผลทดสอบที่รายงานไว้ล่วงหน้า** |
 | Final Report / AI-Use Statement | ร่างแล้ว: Report §1–3, §7–10 (§8–9 บางส่วน) · AI-Use Statement สรุปจาก `spec.md` §8 — ยังรอ: §4 Design, §5 Prototype, §6 ผลทดสอบ |
@@ -76,7 +76,7 @@ docs/
 │   └── backlog.md            # Product Backlog: MoSCoW รายข้อ + Traced pain + สถานะการพัฒนา
 ├── 03-design/
 │   ├── architecture.md       # M2: Architecture, Use Case/Sequence/State, ERD, Module & Event (โครง — มีแค่ตาราง Module & Event)
-│   └── design-system.md      # M2: Design tokens, Screen Map (หน้าจอ ↔ FR), error/empty states (โครง)
+│   └── design-system.md      # M2: Design tokens, Screen Map (หน้าจอ ↔ FR), error/empty states
 ├── 05-report/
 │   ├── final-report.md       # M3: Final Report + Golden Thread table (ร่าง — §4–6 รอ Design / Prototype / Test)
 │   └── ai-use-statement.md   # M3: บันทึกการใช้ AI ตามจริง (ร่าง — สรุปจาก spec.md §8)
