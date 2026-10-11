@@ -58,6 +58,9 @@ button, input, select, textarea { font: inherit; }
 .bottom-bar .btn + .btn { margin-top: 8px; }
 
 .code { font-size: 44px; font-weight: 700; letter-spacing: 8px; font-variant-numeric: tabular-nums; color: var(--color-text); }
+/* letter-spacing เติมช่องว่างหลังตัวสุดท้าย — เติมด้านซ้ายเท่ากันให้ตัวเลขอยู่กลางพอดี */
+.code { padding-left: 8px; }
+#code-in { text-align: center; font-family: var(--font-display); font-size: 26px; letter-spacing: 8px; padding-left: 24px; font-variant-numeric: tabular-nums; }
 canvas.qr { width: 168px; height: 168px; image-rendering: pixelated; display: block; margin: 0 auto var(--space-1); }
 
 .badge { display: inline-block; border-radius: var(--radius-badge); padding: 2px 12px; font-size: var(--font-body); font-weight: 600; white-space: nowrap; }
