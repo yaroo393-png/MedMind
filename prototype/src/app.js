@@ -1,7 +1,7 @@
 /*
  * MedMind prototype — หน้าจอ (ชั้น Presentation) · กฎทั้งหมดอยู่ใน logic.js
  * จำลองโทรศัพท์ 2 เครื่องในหน้าเดียว (ไม่มี server) และนาฬิกาจำลอง (ADR-02)
- * รหัสหน้าจอ S1–S3 / C1–C3 ตาม docs/03-design/design-system.md §2
+ * รหัสหน้าจอ R0, S1–S3 / C1–C3 ตาม docs/03-design/design-system.md §2 · เลย์เอาต์ตาม design canvas (ธีมฟ้ามิ้นต์)
  */
 (function () {
   'use strict';
@@ -14,6 +14,7 @@
   function reset(startAt) {
     S = {
       store: M.createStore(), now: startAt === undefined ? T('07:30') : startAt,
+      role: { senior: false, caregiver: false },   // หน้า R0: แต่ละเครื่องเลือกบทบาทของตัวเองก่อน
       soundOn: false, reminderOpen: false, dismissed: {}, ringing: false,
       cgTab: 'C1', cgMsg: null, srMsg: null, cameraAllowed: true,
       draft: null, draftNote: null, unreadable: [], mealDraft: null, saved: null,
@@ -92,17 +93,33 @@
 
   const badge = (sess) => '<span class="badge ' + sess.status + '">' + esc(M.statusLabel(sess)) + '</span>';
   const msg = (m) => m ? '<div class="msg ' + m.kind + '">' + esc(m.text) + '</div>' : '';
-  function medLines(sess, full) {
+  const STATUS_ICON = { waiting: 'clock', reminding: 'bell', unconfirmed: 'clock', taken: 'check', takenLate: 'check' };
+  const statusIcon = (status) => '<span class="row-ic ' + status + '">' + I.svg(STATUS_ICON[status] || 'clock', 22) + '</span>';
+  const medSummary = (sess) => M.medsOf(S.store, sess).map((m) => esc(m.name) + ' ' + m.tabletsPerDose + ' เม็ด').join(' · ');
+  // การ์ดยาบนหน้าเตือน (S2): ชื่อยา 24 px + จำนวนเม็ด + ข้อควรระวัง / ข้อห้ามใช้
+  function medCards(sess) {
     return M.medsOf(S.store, sess).map(function (m) {
-      return '<div class="med">' + I.svg('pill', full ? 26 : 22, 'med-ic') + '<div class="med-body"><div class="' + (full ? 'med-name' : 'med-title') + '">' + esc(m.name) + '</div>' +
-        '<div>' + m.tabletsPerDose + ' เม็ด</div>' +
-        (full && m.warnings ? '<div class="muted">ข้อควรระวัง: ' + esc(m.warnings) + '</div>' : '') +
-        (full && m.contraindications ? '<div class="muted">ข้อห้ามใช้: ' + esc(m.contraindications) + '</div>' : '') +
-        '</div></div>';
+      return '<div class="card med-card"><div class="med-row"><span class="med-ic-box">' + I.svg('pill', 26) + '</span>' +
+        '<div class="med-name">' + esc(m.name) + '</div><span class="chip-dose">' + m.tabletsPerDose + ' เม็ด</span></div>' +
+        (m.warnings ? '<div><b>ข้อควรระวัง:</b> ' + esc(m.warnings) + '</div>' : '') +
+        (m.contraindications ? '<div><b>ข้อห้ามใช้:</b> ' + esc(m.contraindications) + '</div>' : '') +
+        '</div>';
     }).join('');
   }
   const statusBar = () => '<div class="statusbar"><span>' + fmt(S.now) + '</span><span class="sb-ic">' + I.svg('signal', 16) + I.svg('battery', 20) + '</span></div>';
   const mealHead = (sess, right) => '<div class="meal-head"><span class="meal-time">' + I.svg('clock', 24) + ' ' + fmt(sess.T) + ' น.</span>' + right + '</div>';
+  // แถวบน: ปุ่มย้อนกลับ หรือรูปโปรไฟล์ + คำทักทาย + หัวข้อ
+  function topbar(o) {
+    return '<div class="topbar">' +
+      (o.back ? '<button class="round-btn" data-act="role-back" data-side="' + o.back + '" aria-label="ย้อนกลับ">' + I.svg('back', 24) + '</button>' : '') +
+      (o.avatar ? I.avatar(o.avatar, 56) : '') +
+      '<div class="topbar-text">' + (o.hello ? '<span class="muted">' + o.hello + '</span>' : '') +
+      (o.title ? '<span class="topbar-title">' + o.title + '</span>' : '') + '</div>' + (o.right || '') + '</div>';
+  }
+  // การ์ดหลักสีฟ้ามิ้นต์ (ตัวอักษรเข้ม --color-on-mint)
+  const heroCard = (inner, art, cls) => '<div class="hero-card' + (cls ? ' ' + cls : '') + '">' + (art ? '<div class="hero-art">' + art + '</div>' : '') + inner + '</div>';
+  const pillArt = () => '<svg width="104" height="104" viewBox="0 0 80 80" aria-hidden="true"><g transform="rotate(-35 40 40)">' +
+    '<rect x="8" y="26" width="64" height="28" rx="14" fill="#FFFFFF"/><path d="M40 26h18a14 14 0 0 1 0 28H40z" fill="#0B7A7D"/></g></svg>';
   function unpairDialog(side) {
     if (S.dialog !== side) return '';
     return '<div class="dialog"><div class="card"><h3>ยกเลิกการจับคู่?</h3>' +
@@ -111,9 +128,28 @@
       '<button class="btn ghost" data-act="unpair-cancel">ไม่ยกเลิก</button></div></div>';
   }
 
+  /* ---------- R0 เลือกบทบาท (ขึ้นทั้ง 2 เครื่อง · แต่ละเครื่องเลือกได้เฉพาะบทบาทของตัวเอง) ---------- */
+
+  function roleScreen(side) {
+    const owner = side === 'senior' ? 'ผู้สูงอายุ' : 'ผู้ดูแล';
+    const card = (key, title, desc, art, tone) => {
+      const mine = key === side;
+      return '<button class="role-card" data-act="role" data-side="' + side + '"' + (mine ? '' : ' disabled') + '>' +
+        '<span class="role-art ' + tone + '">' + art + '</span>' +
+        '<span class="role-body"><span class="role-text"><span class="role-title">' + title + '</span>' +
+        '<span class="muted">' + (mine ? desc : 'เครื่องนี้จำลองเป็นโทรศัพท์ของ' + owner) + '</span></span>' +
+        (mine ? '<span class="role-go">' + I.svg('arrow', 24) + '</span>' : '') + '</span></button>';
+    };
+    return '<div class="brand">' + I.mascot(40) + '<span>MedMind</span></div>' +
+      '<h3 class="page-title">ยินดีต้อนรับ</h3><p class="muted lead">คุณใช้ MedMind ในฐานะใคร</p>' +
+      card('senior', 'ผู้สูงอายุ', 'รับการเตือนกินยา กดยืนยันได้ในแตะเดียว', I.couple(236, 'คุณตาและคุณยาย'), 'mint') +
+      card('caregiver', 'ผู้ดูแล / ลูกหลาน', 'เพิ่มยาและดูสถานะการกินยา', I.carer(124, 'ลูกหลานผู้ดูแล'), 'soft');
+  }
+
   /* ---------- Senior ---------- */
 
   function seniorScreen() {
+    if (!S.role.senior) return 'R0';
     if (!paired()) return 'S1';
     const due = M.dueSessions(S.store, S.now).filter((x) => !S.dismissed[x.id]);
     return S.reminderOpen && due.length ? 'S2' : 'S3';
@@ -122,50 +158,68 @@
   function renderSenior() {
     const el = document.getElementById('senior');
     const scr = seniorScreen();
-    const covers = { S1: 'S1 · Covers: FR-01', S2: 'S2 · Covers: FR-03, FR-04', S3: 'S3 · Covers: FR-04 (BR-15)' }[scr];
-    const hero = (title, sub, withMascot) => '<div class="hero">' + (withMascot ? '<div class="hero-mascot">' + I.mascot(76) + '</div>' : '') +
-      '<h3>' + title + '</h3>' + (sub ? '<div class="sub">' + sub + '</div>' : '') + '</div>';
-    const soundBanner = !S.soundOn && scr !== 'S1' ? '<div class="banner" data-act="sound">' + I.svg('bell', 22) + ' แตะที่นี่เพื่อเปิดเสียงเตือน</div>' : '';
+    const covers = { R0: 'R0 · เลือกบทบาท', S1: 'S1 · Covers: FR-01', S2: 'S2 · Covers: FR-03, FR-04', S3: 'S3 · Covers: FR-04 (BR-15)' }[scr];
+    const soundBanner = !S.soundOn && scr !== 'S1' && scr !== 'R0'
+      ? '<button class="banner" data-act="sound">' + I.svg('sound', 22) + ' แตะที่นี่เพื่อเปิดเสียงเตือน</button>' : '';
     let body = '';
+
+    if (scr === 'R0') body = roleScreen('senior');
 
     if (scr === 'S1') {
       const inv = S.store.invite, expired = S.now >= inv.expiresAt || inv.usedAt !== null;
-      body += hero('เชื่อมต่อ<br>กับลูกหลาน', 'ให้ลูกหลานสแกน QR หรือใส่รหัส 6 หลัก', true) + '<div class="card center">' +
-        '<canvas class="qr" id="qr"></canvas><div class="muted">(QR จำลอง)</div>' +
-        '<div class="code">' + inv.code + '</div>' +
-        '<div class="muted">' + (expired ? 'รหัสนี้หมดอายุแล้ว — กดสร้างรหัสใหม่' : 'ใช้ได้ 1 ครั้ง ถึงเวลา ' + fmt(inv.expiresAt)) + '</div></div>' +
+      body += topbar({ back: 'senior' }) +
+        '<div class="intro">' + I.couple(186, 'คุณตาและคุณยาย') + '<h3 class="page-title">เชื่อมต่อกับลูกหลาน</h3>' +
+        '<p class="muted lead">ให้ลูกหลานสแกน QR หรือใส่รหัส 6 หลัก</p></div>' +
+        '<div class="card center"><div class="qr-frame"><canvas class="qr" id="qr"></canvas></div><div class="muted small">(QR จำลอง)</div>' +
+        '<div class="muted">' + (expired ? 'รหัสนี้หมดอายุแล้ว — กดสร้างรหัสใหม่' : 'รหัสเชิญ · ใช้ได้ 1 ครั้ง ถึงเวลา ' + fmt(inv.expiresAt)) + '</div>' +
+        '<div class="code">' + inv.code + '</div></div>' +
         (S.store.senior.consentAt === null
-          ? '<button class="btn taken" data-act="consent">ยินยอมให้ลูกหลานเชื่อมต่อ</button>'
+          ? '<button class="btn taken" data-act="consent">' + I.svg('check', 24) + ' ยินยอมให้ลูกหลานเชื่อมต่อ</button>'
           : '<div class="msg ok">ยินยอมแล้ว · รอลูกหลานสแกน QR หรือใส่รหัส</div>') +
         '<button class="btn ghost" data-act="new-code">สร้างรหัสใหม่</button>' + msg(S.srMsg);
     }
 
     if (scr === 'S2') {
       const due = M.dueSessions(S.store, S.now).filter((x) => !S.dismissed[x.id]);
-      body += hero('ถึงเวลากินยา', 'เวลา ' + fmt(S.now) + ' น.') + soundBanner + due.map(function (sess) {
-        const late = sess.status === 'unconfirmed';
-        return '<div class="card">' + mealHead(sess, late ? badge(sess) : '<span class="muted">รอบ ' + sess.round + '/3</span>') + medLines(sess, true) +
-          '<button class="btn taken" data-act="taken" data-id="' + sess.id + '">กินแล้ว</button>' +
-          '<button class="btn not-yet" data-act="not-yet" data-id="' + sess.id + '">ยังไม่กิน</button></div>';
-      }).join('');
+      const only = due.length === 1 && due[0].status === 'reminding' ? due[0] : null;
+      body += '<div class="alarm-band"><span class="chip">' + (only ? 'เตือนครั้งที่ ' + only.round + ' จาก 3' : 'มีมื้อที่ต้องยืนยัน ' + due.length + ' มื้อ') + '</span>' +
+        '<span class="alarm-bell">' + I.svg('bell', 34) + '</span><h3>ถึงเวลากินยา</h3><div class="alarm-sub">เวลา ' + fmt(S.now) + ' น.</div></div>' +
+        soundBanner + due.map(function (sess) {
+          const late = sess.status === 'unconfirmed';
+          return '<section class="dose">' + mealHead(sess, late ? badge(sess) : '<span class="muted">รอบ ' + sess.round + '/3</span>') +
+            '<div class="muted">ยาในมื้อนี้ ' + M.medsOf(S.store, sess).length + ' ตัว</div>' + medCards(sess) +
+            '<button class="btn taken" data-act="taken" data-id="' + sess.id + '">' + I.svg('check', 26) + ' กินแล้ว</button>' +
+            '<button class="btn not-yet" data-act="not-yet" data-id="' + sess.id + '">' + I.svg('x', 24) + ' ยังไม่กิน</button></section>';
+        }).join('');
     }
 
     if (scr === 'S3') {
-      body += hero('วันนี้', 'เวลา ' + fmt(S.now) + ' น.') + soundBanner + msg(S.srMsg);
-      if (!S.store.sessions.length) body += '<div class="card center muted">ยังไม่มีมื้อยาวันนี้</div>';
-      S.store.sessions.forEach(function (sess) {
+      const sessions = S.store.sessions;
+      const next = sessions.find((x) => x.status === 'reminding') || sessions.find((x) => x.status === 'waiting');
+      body += topbar({ avatar: 'senior', hello: 'สวัสดี', title: 'วันนี้ · ' + fmt(S.now) + ' น.' });
+      if (next) {
+        body += heroCard('<span class="chip">มื้อถัดไป</span><div class="hero-time">' + fmt(next.T) + '</div>' +
+          '<div class="hero-sub">ยา ' + M.medsOf(S.store, next).length + ' ตัว</div><div>' + badge(next) + '</div>' +
+          (next.status === 'reminding' ? '<button class="btn white" data-act="open-reminder">ดูยามื้อนี้ ' + I.svg('arrow', 22) + '</button>' : ''), pillArt());
+      } else if (sessions.length) {
+        body += heroCard('<span class="chip">วันนี้</span><div class="hero-big">ไม่มีมื้อที่รออยู่แล้ว</div>', pillArt());
+      }
+      body += soundBanner + msg(S.srMsg) + '<h4 class="section-title">ตารางยาวันนี้</h4>';
+      if (!sessions.length) body += '<div class="card center muted">ยังไม่มีมื้อยาวันนี้</div>';
+      sessions.forEach(function (sess) {
         const canLate = M.canConfirmLate(S.store, sess, S.now);
-        body += '<div class="card">' + mealHead(sess, badge(sess)) +
-          medLines(sess, false) +
+        body += '<div class="card row-card' + (canLate ? ' alert' : '') + '"><div class="row-main">' + statusIcon(sess.status) +
+          '<div class="row-text"><span class="row-time">' + fmt(sess.T) + ' น.</span><span class="muted">' + medSummary(sess) + '</span>' + badge(sess) + '</div></div>' +
           (sess.status === 'reminding' ? '<button class="btn" data-act="open-reminder">ดูหน้าเตือน</button>' : '') +
           (canLate ? '<div class="muted">ยืนยันช้าได้ถึง ' + fmt(Math.min(M.lateUntil(S.store, sess), M.DAY_END)) + '</div>' +
-                     '<button class="btn taken" data-act="taken" data-id="' + sess.id + '">กินแล้ว</button>' : '') +
+                     '<button class="btn taken" data-act="taken" data-id="' + sess.id + '">' + I.svg('check', 24) + ' กินแล้ว</button>' : '') +
           '</div>';
       });
-      body += '<button class="link" data-act="unpair-ask" data-side="senior">ยกเลิกการจับคู่</button>';
+      body += '<div class="center"><button class="link" data-act="unpair-ask" data-side="senior">ยกเลิกการจับคู่</button></div>';
     }
 
     document.getElementById('senior-covers').textContent = covers;
+    el.className = 'phone' + (scr === 'S2' ? ' mint-top' : '');
     el.innerHTML = statusBar() + '<div class="screen' + (S.ringing && scr === 'S2' ? ' ring' : '') + '">' +
       body + '</div>' + unpairDialog('senior');
     if (scr === 'S1') drawQR(document.getElementById('qr'), S.store.invite.code);
@@ -176,41 +230,44 @@
   function renderCaregiver() {
     const el = document.getElementById('caregiver');
     if (!paired()) S.cgTab = 'C1';
-    const tab = S.cgTab;
-    const covers = { C1: 'C1 · Covers: FR-01', C2: 'C2 · Covers: FR-02', C3: 'C3 · Covers: FR-05' }[tab];
+    const tab = S.role.caregiver ? S.cgTab : 'R0';
+    const covers = { R0: 'R0 · เลือกบทบาท', C1: 'C1 · Covers: FR-01', C2: 'C2 · Covers: FR-02', C3: 'C3 · Covers: FR-05' }[tab];
+    const drafting = tab === 'C2' && S.draft;
     let tabs = '';
-    if (paired()) {
-      tabs = '<nav class="tabs">' + [['C3', 'วันนี้', 'home'], ['C2', 'เพิ่มยา', 'plus'], ['C1', 'การจับคู่', 'link']].map(function (t) {
-        return '<button class="' + (t[0] === tab ? 'active' : '') + '" data-act="tab" data-tab="' + t[0] + '">' + I.svg(t[2], 24) + '<span>' + t[1] + '</span></button>';
+    if (tab !== 'R0' && paired() && !drafting) {
+      tabs = '<nav class="tabs" aria-label="เมนูหลัก">' + [['C3', 'สถานะ', 'home'], ['C2', 'เพิ่มยา', 'plus'], ['C1', 'จับคู่', 'link']].map(function (t) {
+        return '<button class="' + (t[0] === tab ? 'active' : '') + '" data-act="tab" data-tab="' + t[0] + '"' + (t[0] === tab ? ' aria-current="page"' : '') + '>' +
+          I.svg(t[2], 22) + '<span>' + t[1] + '</span></button>';
       }).join('') + '</nav>';
     }
     let body = '';
+    if (tab === 'R0') body = roleScreen('caregiver');
     if (tab === 'C1') body = caregiverPairing();
     if (tab === 'C2') body = caregiverAddMedication();
     if (tab === 'C3') body = caregiverStatus();
-    const bottom = tab === 'C2' && S.draft
-      ? '<div class="bottom-bar"><button class="btn taken" id="save-btn" data-act="save">บันทึก</button>' +
-        '<button class="btn ghost" data-act="cancel-draft">ยกเลิก</button></div>' : '';
+    const bottom = drafting
+      ? '<div class="bottom-bar"><button class="btn ghost" data-act="cancel-draft">ยกเลิก</button>' +
+        '<button class="btn taken" id="save-btn" data-act="save">บันทึก</button></div>' : '';
     document.getElementById('caregiver-covers').textContent = covers;
-    el.innerHTML = statusBar() + '<div class="screen">' + body + '</div>' + bottom + tabs + unpairDialog('caregiver');
+    el.innerHTML = statusBar() + '<div class="screen' + (tabs ? ' has-tabs' : '') + '">' + body + '</div>' + bottom + tabs + unpairDialog('caregiver');
   }
+
+  const cgTop = (title, right) => topbar({ avatar: 'caregiver', hello: 'สวัสดี ผู้ดูแล', title: title, right: right });
 
   function caregiverPairing() {
     if (paired()) {
-      return cgHero('การจับคู่', 'โทรศัพท์ของผู้สูงอายุ') + '<div class="msg ok">เชื่อมต่อแล้ว กับโทรศัพท์ของผู้สูงอายุ</div>' + msg(S.cgMsg) +
-        '<button class="btn danger" data-act="unpair-ask" data-side="caregiver">ยกเลิกการจับคู่</button>';
+      return cgTop('การจับคู่') +
+        heroCard('<div class="hero-text"><span class="hero-title">เชื่อมต่อแล้ว</span><span class="hero-sub">กับโทรศัพท์ของผู้สูงอายุ</span></div>', I.couple(124), 'with-art') +
+        msg(S.cgMsg) + '<button class="btn danger" data-act="unpair-ask" data-side="caregiver">ยกเลิกการจับคู่</button>';
     }
-    return cgHero('เชื่อมต่อ<br>กับผู้สูงอายุ', 'สแกน QR หรือใส่รหัสจากโทรศัพท์ผู้สูงอายุ') +
+    return topbar({ back: 'caregiver', title: 'จับคู่' }) +
+      heroCard('<div class="hero-text"><span class="hero-title">เชื่อมต่อกับผู้สูงอายุ</span><span class="hero-sub">สแกน QR หรือใส่รหัสจากโทรศัพท์ผู้สูงอายุ</span></div>', I.couple(124), 'with-art') +
+      '<div class="card">' +
       (S.cameraAllowed
-        ? '<button class="btn" data-act="scan-qr">' + I.svg('qr', 26) + ' สแกน QR (จำลอง)</button><p class="center muted">หรือใส่รหัส 6 หลัก</p>'
+        ? '<button class="btn" data-act="scan-qr">' + I.svg('qr', 26) + ' สแกน QR (จำลอง)</button><div class="divider">หรือใส่รหัส 6 หลัก</div>'
         : '<div class="msg info">ไม่ได้รับอนุญาตใช้กล้อง — ใส่รหัส 6 หลักแทน</div>') +
       '<div class="field"><label for="code-in">รหัส 6 หลัก</label><input id="code-in" inputmode="numeric" maxlength="6" placeholder="000000"></div>' +
-      '<button class="btn" data-act="pair-code">เชื่อมต่อ</button>' + msg(S.cgMsg);
-  }
-
-  function cgHero(title, sub, withMascot) {
-    return '<div class="hero">' + (withMascot ? '<div class="hero-mascot">' + I.mascot(76) + '</div>' : '') +
-      '<h3>' + title + '</h3><div class="sub">' + sub + '</div></div>';
+      '<button class="btn" data-act="pair-code">เชื่อมต่อ</button></div>' + msg(S.cgMsg);
   }
 
   const PAIR_ERRORS = {
@@ -226,16 +283,18 @@
   }
 
   function caregiverAddMedication() {
-    let h = cgHero('เพิ่มยาจากฉลาก', S.draft ? 'ตรวจและแก้ร่างก่อนบันทึก' : 'ถ่ายรูปฉลากยา แล้วตรวจก่อนบันทึก', true) + msg(S.cgMsg);
+    let h = cgTop('เพิ่มยา') +
+      heroCard('<div class="hero-row"><span class="hero-ic">' + I.svg('camera', 26) + '</span><div class="hero-text"><span class="hero-title">เพิ่มยาจากฉลาก</span>' +
+        '<span class="hero-sub">' + (S.draft ? 'ระบบอ่านฉลากให้แล้ว แก้ให้ถูกก่อนบันทึก' : 'ถ่ายรูปฉลากยา แล้วตรวจก่อนบันทึก') + '</span></div></div>') + msg(S.cgMsg);
     if (S.saved) {
       h += '<div class="card"><div class="section-label">ยาที่บันทึกแล้ว</div>' + S.store.medications.map(function (m) {
-        return '<div class="med">' + esc(m.name) + ' · ' + m.tabletsPerDose + ' เม็ด · เตือน ' + fmt(m.reminderTime) + '</div>';
+        return '<div class="med">' + I.svg('pill', 22, 'med-ic') + '<span>' + esc(m.name) + ' · ' + m.tabletsPerDose + ' เม็ด · เตือน ' + fmt(m.reminderTime) + '</span></div>';
       }).join('') + '</div>';
     }
     if (!S.draft) {
       return h + (S.cameraAllowed
-        ? '<p>ถ่ายรูปฉลากยา (จำลอง: เลือกฉลากตัวอย่าง)</p><div class="samples">' + LABEL.SAMPLES.map(function (x) {
-            return '<button data-act="scan-label" data-id="' + x.id + '">' + I.svg('camera', 26) + '<span>' + esc(x.label) + '<small>' + x.covers + '</small></span></button>';
+        ? '<h4 class="section-title">ถ่ายรูปฉลากยา (จำลอง: เลือกฉลากตัวอย่าง)</h4><div class="samples">' + LABEL.SAMPLES.map(function (x) {
+            return '<button data-act="scan-label" data-id="' + x.id + '"><span class="row-ic waiting">' + I.svg('camera', 22) + '</span><span>' + esc(x.label) + '<small>' + x.covers + '</small></span></button>';
           }).join('') + '</div>'
         : '<div class="msg info">ไม่ได้รับอนุญาตใช้กล้อง — กรอกข้อมูลยาเอง</div>') +
         '<button class="btn ghost" data-act="manual">กรอกข้อมูลเอง</button>';
@@ -257,7 +316,7 @@
       '</div>';
     if (!S.store.mealTimes) {
       const md = S.mealDraft;
-      h += '<div class="card"><b>ตั้งเวลามื้อ (ครั้งแรก)</b><div class="grid2">' +
+      h += '<div class="card"><h4 class="section-title">ตั้งเวลามื้อ (ครั้งแรก)</h4><div class="grid2">' +
         [['breakfast', 'มื้อเช้า'], ['lunch', 'มื้อกลางวัน'], ['dinner', 'มื้อเย็น'], ['bedtime', 'เข้านอน']].map(function (k) {
           return '<div class="field"><label>' + k[1] + '</label><input type="time" data-meal="' + k[0] + '" value="' + fmt(md[k[0]]) + '"></div>';
         }).join('') + '</div></div>';
@@ -287,18 +346,26 @@
   function caregiverStatus() {
     const st = M.dailyStatus(S.store, CAREGIVER);
     if (!st.ok) return '<div class="msg error">ไม่มีสิทธิ์ดูข้อมูลนี้</div>';
-    let h = cgHero('วันนี้', 'สถานะการกินยาของผู้สูงอายุ');
+    const sessions = S.store.sessions;
     const notes = S.store.notifications.slice().reverse();
+    const alertDot = notes.some((n) => n.type === 'UNCONFIRMED') ? '<span class="dot"></span>' : '';
+    let h = cgTop('สถานะวันนี้', '<span class="round-btn" aria-hidden="true">' + I.svg('bell', 24) + alertDot + '</span>');
+    if (sessions.length) {
+      const done = sessions.filter((x) => x.status === 'taken' || x.status === 'takenLate').length;
+      h += heroCard('<span class="hero-sub">สถานะการกินยาของผู้สูงอายุ</span><div class="hero-big">กินแล้ว ' + done + ' จาก ' + sessions.length + ' มื้อ</div>' +
+        '<div class="progress"><span style="width:' + Math.round(done * 100 / sessions.length) + '%"></span></div>');
+    }
     if (notes.length) {
-      h += '<div class="section-label">การแจ้งเตือน</div>' + notes.map(function (n) {
-        return '<div class="note ' + n.type + '">' + I.svg('bell', 20, 'note-ic') + esc(n.message) + '<div class="muted">' + fmt(n.sentAt) + '</div></div>';
+      h += '<h4 class="section-title">การแจ้งเตือน</h4>' + notes.map(function (n) {
+        const bad = n.type === 'UNCONFIRMED';
+        return '<div class="card note ' + n.type + '">' + statusIcon(bad ? 'unconfirmed' : 'taken') +
+          '<div><b>' + esc(n.message) + '</b><div class="muted">แจ้งเมื่อ ' + fmt(n.sentAt) + '</div></div></div>';
       }).join('');
     }
-    if (!S.store.sessions.length) return h + '<div class="card center muted">ยังไม่มีมื้อยาวันนี้</div>';
-    return h + S.store.sessions.map(function (sess) {
-      return '<div class="card">' + mealHead(sess, badge(sess)) +
-        medLines(sess, false) + '</div>';
-    }).join('');
+    if (!sessions.length) return h + '<div class="card center muted">ยังไม่มีมื้อยาวันนี้</div>';
+    return h + '<h4 class="section-title">ทุกมื้อวันนี้</h4><div class="card list-card">' + sessions.map(function (sess) {
+      return '<div class="list-row"><div class="row-text"><span class="row-time">' + fmt(sess.T) + ' น.</span><span class="muted">' + medSummary(sess) + '</span></div>' + badge(sess) + '</div>';
+    }).join('') + '</div>';
   }
 
   /* ---------- แถบ demo ---------- */
@@ -329,6 +396,7 @@
     stopAuto();
     const basic = name === 'basic';
     reset(basic ? T('07:55') : T('06:40'));
+    S.role = { senior: true, caregiver: true };   // สถานการณ์ตัวอย่างข้ามหน้าเลือกบทบาท
     M.consent(S.store, S.now); tryPair(CAREGIVER, S.store.invite.code);
     M.setMealTimes(S.store, basic ? { breakfast: T('08:00'), lunch: T('12:00'), dinner: T('18:00'), bedtime: T('21:00') }
                                   : { breakfast: T('07:00'), lunch: T('12:00'), dinner: T('18:00'), bedtime: T('21:00') });
@@ -368,6 +436,8 @@
         log('Caregiver คนที่ 2 → ' + (r.ok ? 'จับคู่สำเร็จ' : PAIR_ERRORS[r.error]));
         break;
       }
+      case 'role': S.role[t.dataset.side] = true; log((t.dataset.side === 'senior' ? 'Senior' : 'Caregiver') + ' เลือกบทบาท'); break;
+      case 'role-back': S.role[t.dataset.side] = false; break;
       case 'sound': enableSound(); break;
       case 'consent': M.consent(S.store, S.now); log('Senior กดยินยอม'); break;
       case 'new-code': M.newInviteCode(S.store, S.now); S.srMsg = { kind: 'info', text: 'สร้างรหัสใหม่แล้ว' }; log('สร้างรหัสเชิญใหม่'); break;
