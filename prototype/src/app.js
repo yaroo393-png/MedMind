@@ -204,7 +204,7 @@
       (S.cameraAllowed
         ? '<button class="btn" data-act="scan-qr">' + I.svg('qr', 26) + ' สแกน QR (จำลอง)</button><p class="center muted">หรือใส่รหัส 6 หลัก</p>'
         : '<div class="msg info">ไม่ได้รับอนุญาตใช้กล้อง — ใส่รหัส 6 หลักแทน</div>') +
-      '<div class="field"><label for="code-in">รหัสเชิญ</label><input id="code-in" inputmode="numeric" maxlength="6" placeholder="000000"></div>' +
+      '<div class="field"><label for="code-in">รหัส 6 หลัก</label><input id="code-in" inputmode="numeric" maxlength="6" placeholder="000000"></div>' +
       '<button class="btn" data-act="pair-code">เชื่อมต่อ</button>' + msg(S.cgMsg);
   }
 
