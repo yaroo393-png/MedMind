@@ -114,18 +114,6 @@ Prototype เป็น HTML/CSS/JS เปิดในเบราว์เซอ
 
 ---
 
-## 👥 สมาชิกและส่วนร่วม (Team & Contribution)
-
-| ชื่อ–นามสกุล | GitHub | บทบาท |
-|---|---|---|
-| YAR OO | [yaroo393-png](https://github.com/yaroo393-png) | Project Manager |
-
-รหัสนักศึกษาและหน้าที่รับผิดชอบอยู่ใน [`docs/01-charter/charter.md`](docs/01-charter/charter.md) §9
-
-ส่วนร่วมรายคนวัดจาก GitHub contribution (commits, PRs, issues, เอกสารที่ commit) — ทุกคน commit ด้วยบัญชีของตัวเอง
-
----
-
 ## 📚 แหล่งอ้างอิง (References)
 
 - ข้อมูลผู้ใช้: การสัมภาษณ์ 3 คน (4/9/69 ผ่านการโทร) — Charter §4
