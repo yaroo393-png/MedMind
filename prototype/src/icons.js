@@ -18,6 +18,8 @@
     signal: '<path d="M4 18v-2M9 18v-5M14 18v-8M19 18V6"/>',
     battery: '<rect x="3" y="8" width="16" height="8" rx="2"/><path d="M21 11v2"/><rect x="5" y="10" width="10" height="4" fill="currentColor" stroke="none"/>',
     back: '<path d="M15 5l-7 7 7 7"/>',
+    play: '<path d="M8 5l11 7-11 7z"/>',
+    stop: '<rect x="6" y="6" width="12" height="12" rx="2"/>',
     arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
     x: '<path d="M6 6l12 12M18 6L6 18"/>',
     alert: '<path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17v.5"/>',

@@ -32,6 +32,7 @@
       medications: [],       // MEDICATION
       sessions: [],          // DOSE_SESSION (+ items = DOSE_ITEM)
       notifications: [],     // NOTIFICATION_LOG
+      today: null,           // วันที่จำลอง 'YYYY-MM-DD' (ใช้กับความถี่ / วันเริ่ม–สิ้นสุดของยา)
       lastTick: null,
       seq: 0,
     };
@@ -91,7 +92,36 @@
     if (!['after', 'before', 'bedtime'].includes(t.type)) problems.push('timing');
     if ((t.type === 'after' || t.type === 'before') && !MEALS[t.meal]) problems.push('meal');
     if (t.type === 'before' && !(Number(t.minutes) > 0)) problems.push('minutes');   // FR-02 ✗10
+    if (d.schedule && !validSchedule(d.schedule)) problems.push('schedule');
     return problems;
+  }
+
+  /* ---------- ความถี่ + วันเริ่ม–สิ้นสุดของยา ----------
+   * schedule = { type: 'weekdays', days: [0..6] }   วันในสัปดาห์ (0 = อาทิตย์)
+   *          | { type: 'interval', every: N }       ทุก N วัน นับจากวันเริ่ม
+   *          | { type: 'cycle', on: N, off: M }      กิน N วัน หยุด M วัน วนซ้ำ
+   *   + start: 'YYYY-MM-DD', end: 'YYYY-MM-DD' | null (null = ไม่มีวันสิ้นสุด)
+   * ยาที่ไม่มี schedule = กินทุกวัน */
+  const dayNo = (iso) => Math.round(Date.parse(iso + 'T00:00:00Z') / 86400000);
+  const isDate = (iso) => /^\d{4}-\d{2}-\d{2}$/.test(String(iso || '')) && !isNaN(dayNo(iso));
+  const posInt = (n) => Number.isInteger(Number(n)) && Number(n) >= 1;
+  function validSchedule(sc) {
+    if (!isDate(sc.start)) return false;
+    if (sc.end !== null && sc.end !== undefined && (!isDate(sc.end) || sc.end < sc.start)) return false;
+    if (sc.type === 'weekdays') return Array.isArray(sc.days) && sc.days.length > 0;
+    if (sc.type === 'interval') return posInt(sc.every);
+    if (sc.type === 'cycle') return posInt(sc.on) && posInt(sc.off);
+    return false;
+  }
+  // วันนี้ต้องกินยาตัวนี้ไหม
+  function takesOn(sc, iso) {
+    if (!sc || !iso) return true;
+    if (iso < sc.start || (sc.end && iso > sc.end)) return false;
+    const n = dayNo(iso) - dayNo(sc.start);
+    if (sc.type === 'weekdays') return sc.days.includes(new Date(iso + 'T00:00:00Z').getUTCDay());
+    if (sc.type === 'interval') return n % Number(sc.every) === 0;
+    if (sc.type === 'cycle') return n % (Number(sc.on) + Number(sc.off)) < Number(sc.on);
+    return true;
   }
 
   // BR-06: เวลาเตือนตามคำสั่งบนฉลากเท่านั้น
@@ -121,6 +151,7 @@
       name: String(draft.name).trim(), tabletsPerDose: Number(draft.tabletsPerDose),
       timing: Object.assign({}, draft.timing), reminderTime: t,
       warnings: draft.warnings || '', contraindications: draft.contraindications || '',
+      schedule: draft.schedule ? JSON.parse(JSON.stringify(draft.schedule)) : null,
       savedAt: now,
     };
     s.medications.push(med);
@@ -131,6 +162,7 @@
   // ยาที่เวลาเตือนตรงกันรวมเป็นมื้อเดียว (BR-06) · prototype จำลองวันเดียว: มื้อที่เลยเวลาไปแล้วเริ่มพรุ่งนี้
   function addToTodaySessions(s, med, now) {
     const T = med.reminderTime;
+    if (!takesOn(med.schedule, s.today)) return;                                     // วันนี้ไม่ใช่วันกินยาตามความถี่
     let sess = s.sessions.find(function (x) { return x.T === T; });
     if (sess) { if (sess.status === 'waiting') sess.items.push(med.id); return; }
     if (T < now) return;
@@ -256,6 +288,7 @@
     validateDraft: validateDraft, reminderTime: reminderTime, setMealTimes: setMealTimes, saveMedication: saveMedication,
     tick: tick, confirm: confirm, notYet: notYet, lateUntil: lateUntil, canConfirmLate: canConfirmLate,
     dueSessions: dueSessions, statusLabel: statusLabel, dailyStatus: dailyStatus, medsOf: medsOf,
+    validSchedule: validSchedule, takesOn: takesOn,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.MedMind = api;

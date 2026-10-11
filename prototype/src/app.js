@@ -9,6 +9,11 @@
   const CAREGIVER = 'caregiver-1';
   const MEAL_OPTIONS = [['breakfast', 'เช้า'], ['lunch', 'กลางวัน'], ['dinner', 'เย็น']];
   const DEFAULT_MEALS = { breakfast: T('07:00'), lunch: T('12:00'), dinner: T('18:00'), bedtime: T('21:00') };
+  const DAYS = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
+  const pad2 = (n) => String(n).padStart(2, '0');
+  const isoOf = (d) => d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+  const addDays = (iso, n) => { const d = new Date(iso + 'T00:00:00'); d.setDate(d.getDate() + n); return isoOf(d); };
+  const thDate = (iso) => new Date(iso + 'T00:00:00').toLocaleDateString('th-TH', { day: 'numeric', month: 'short' });
 
   let S;
   function reset(startAt) {
@@ -20,6 +25,7 @@
       draft: null, draftNote: null, unreadable: [], mealDraft: null, saved: null,
       dialog: null, log: [], autoTimer: null,
     };
+    S.store.today = isoOf(new Date());   // วันที่จำลอง = วันนี้ของเครื่อง
     M.newInviteCode(S.store, S.now);
     M.tick(S.store, S.now);
     log('เริ่มใหม่ เวลา ' + fmt(S.now));
@@ -196,7 +202,7 @@
     if (scr === 'S3') {
       const sessions = S.store.sessions;
       const next = sessions.find((x) => x.status === 'reminding') || sessions.find((x) => x.status === 'waiting');
-      body += topbar({ avatar: 'senior', hello: 'สวัสดี', title: 'วันนี้ · ' + fmt(S.now) + ' น.' });
+      body += topbar({ avatar: 'senior', hello: 'สวัสดี · วันนี้ ' + thDate(S.store.today), title: 'เวลา ' + fmt(S.now) + ' น.' });
       if (next) {
         body += heroCard('<span class="chip">มื้อถัดไป</span><div class="hero-time">' + fmt(next.T) + '</div>' +
           '<div class="hero-sub">ยา ' + M.medsOf(S.store, next).length + ' ตัว</div><div>' + badge(next) + '</div>' +
@@ -288,7 +294,8 @@
         '<span class="hero-sub">' + (S.draft ? 'ระบบอ่านฉลากให้แล้ว แก้ให้ถูกก่อนบันทึก' : 'ถ่ายรูปฉลากยา แล้วตรวจก่อนบันทึก') + '</span></div></div>') + msg(S.cgMsg);
     if (S.saved) {
       h += '<div class="card"><div class="section-label">ยาที่บันทึกแล้ว</div>' + S.store.medications.map(function (m) {
-        return '<div class="med">' + I.svg('pill', 22, 'med-ic') + '<span>' + esc(m.name) + ' · ' + m.tabletsPerDose + ' เม็ด · เตือน ' + fmt(m.reminderTime) + '</span></div>';
+        return '<div class="med">' + I.svg('pill', 22, 'med-ic') + '<span>' + esc(m.name) + ' · ' + m.tabletsPerDose + ' เม็ด · เตือน ' + fmt(m.reminderTime) +
+          '<span class="muted block">' + scheduleLabel(m.schedule) + '</span></span></div>';
       }).join('') + '</div>';
     }
     if (!S.draft) {
@@ -313,7 +320,7 @@
       (t.type === 'before' ? '<div class="field' + flag('minutes') + '"><label>ก่อนอาหารกี่นาที' + tag('minutes') + '</label><input data-f="minutes" type="number" min="1" value="' + esc(t.minutes) + '"></div>' : '') +
       '<div class="field"><label>ข้อควรระวัง (ถ้าฉลากมี)</label><input data-f="warnings" value="' + esc(d.warnings) + '"></div>' +
       '<div class="field"><label>ข้อห้ามใช้ (ถ้าฉลากมี)</label><input data-f="contraindications" value="' + esc(d.contraindications) + '"></div>' +
-      '</div>';
+      '</div>' + scheduleForm(d.schedule);
     if (!S.store.mealTimes) {
       const md = S.mealDraft;
       h += '<div class="card"><h4 class="section-title">ตั้งเวลามื้อ (ครั้งแรก)</h4><div class="grid2">' +
@@ -323,6 +330,36 @@
     }
     h += '<div class="msg info" id="preview"></div>';
     return h;
+  }
+
+  // ความถี่ + วันเริ่ม–สิ้นสุด (กฎอยู่ใน logic.js: validSchedule, takesOn)
+  function scheduleLabel(sc) {
+    if (!sc) return 'ทุกวัน';
+    const f = sc.type === 'weekdays' ? (sc.days.length === 7 ? 'ทุกวัน' : 'ทุก ' + sc.days.map((d) => DAYS[d]).join(' '))
+      : sc.type === 'interval' ? 'ทุก ' + sc.every + ' วัน' : 'กิน ' + sc.on + ' วัน หยุด ' + sc.off + ' วัน';
+    return f + ' · ' + thDate(sc.start) + (sc.end ? ' – ' + thDate(sc.end) : ' เป็นต้นไป');
+  }
+  function scheduleForm(sc) {
+    const opt = (type, title, sub, extra) => '<label class="freq-opt' + (sc.type === type ? ' on' : '') + '">' +
+      '<input type="radio" name="freq" data-s="type" value="' + type + '"' + (sc.type === type ? ' checked' : '') + '>' +
+      '<span class="freq-text"><b>' + title + '</b><span class="muted">' + sub + '</span></span></label>' +
+      (sc.type === type ? '<div class="freq-extra">' + extra + '</div>' : '');
+    const num = (key, label) => '<label class="num-field"><span>' + label + '</span><input type="number" min="1" inputmode="numeric" data-s="' + key + '" value="' + esc(sc[key]) + '"><span>วัน</span></label>';
+    const days = '<div class="day-chips" role="group" aria-label="วันที่จะกินยา">' + DAYS.map(function (d, i) {
+      const on = sc.days.includes(i);
+      return '<label class="day-chip' + (on ? ' on' : '') + '"><input type="checkbox" data-day="' + i + '"' + (on ? ' checked' : '') + '><span>' + d + '</span></label>';
+    }).join('') + '</div>';
+    return '<h4 class="section-title">ความถี่</h4><div class="card freq-card">' +
+      opt('weekdays', 'วันในสัปดาห์', 'เลือกวันที่จะกิน', days) +
+      opt('interval', 'ช่วงเวลา', 'กินเว้นเป็นช่วง ทุก N วัน', num('every', 'ทุก')) +
+      opt('cycle', 'รอบ', 'ช่วงกิน + ช่วงหยุด วนซ้ำ', num('on', 'กิน') + num('off', 'หยุด')) +
+      '<div class="freq-opt disabled"><span class="freq-dot" aria-hidden="true"></span><span class="freq-text"><b>เมื่อจำเป็น</b>' +
+      '<span class="muted">ยังไม่รองรับยาที่กินเมื่อมีอาการ</span></span></div></div>' +
+      '<div class="date-grid"><div class="card date-card"><label for="sc-start">' + I.svg('play', 18) + ' เริ่มต้น</label>' +
+      '<input id="sc-start" type="date" data-s="start" value="' + sc.start + '"></div>' +
+      '<div class="card date-card"><label for="sc-end">' + I.svg('stop', 18) + ' วันสิ้นสุด</label>' +
+      (sc.end ? '<input id="sc-end" type="date" data-s="end" min="' + sc.start + '" value="' + sc.end + '">' : '<div class="date-none">ไม่มี</div>') +
+      '<label class="no-end"><input type="checkbox" data-s="noEnd"' + (sc.end ? '' : ' checked') + '> ไม่มีวันสิ้นสุด</label></div></div>';
   }
 
   function isEmptyField(f) {
@@ -339,8 +376,10 @@
     btn.disabled = problems.length > 0;
     const mt = S.store.mealTimes || S.mealDraft;
     document.getElementById('preview').textContent = problems.length
-      ? 'กรอกช่องที่จำเป็นให้ครบก่อนบันทึก (ชื่อยา, จำนวนเม็ด, มื้อ/เวลา)'
-      : 'เวลาเตือน: ' + fmt(M.reminderTime(S.draft.timing, mt));
+      ? (problems.includes('schedule') && problems.length === 1
+          ? 'ตั้งความถี่ให้ถูกต้อง: เลือกอย่างน้อย 1 วัน · ตัวเลขอย่างน้อย 1 · วันสิ้นสุดต้องไม่ก่อนวันเริ่ม'
+          : 'กรอกช่องที่จำเป็นให้ครบก่อนบันทึก (ชื่อยา, จำนวนเม็ด, มื้อ/เวลา)')
+      : 'เวลาเตือน: ' + fmt(M.reminderTime(S.draft.timing, mt)) + ' · ' + scheduleLabel(S.draft.schedule);
   }
 
   function caregiverStatus() {
@@ -467,7 +506,9 @@
         if (!r.ok) { S.cgMsg = { kind: 'error', text: 'บันทึกไม่ได้ — กรอกช่องที่จำเป็นให้ครบ' }; break; }
         S.draft = null; S.draftNote = null; S.saved = true;
         const late = r.medication.reminderTime < S.now;
-        S.cgMsg = { kind: 'ok', text: 'บันทึกแล้ว · เตือน ' + fmt(r.medication.reminderTime) + (late ? ' (เลยเวลาวันนี้แล้ว เริ่มพรุ่งนี้)' : '') };
+        const notToday = !M.takesOn(r.medication.schedule, S.store.today);
+        S.cgMsg = { kind: 'ok', text: 'บันทึกแล้ว · เตือน ' + fmt(r.medication.reminderTime) +
+          (notToday ? ' · วันนี้ไม่ใช่วันกินยาตามความถี่ที่ตั้ง' : late ? ' (เลยเวลาวันนี้แล้ว เริ่มพรุ่งนี้)' : '') };
         log('บันทึกยา "' + r.medication.name + '" เตือน ' + fmt(r.medication.reminderTime));
         handleEvents(M.tick(S.store, S.now));
         break;
@@ -496,17 +537,30 @@
 
   function startDraft(draft) {
     S.draft = draft || { name: '', tabletsPerDose: '', timing: { type: 'after', meal: 'breakfast', minutes: '' }, warnings: '', contraindications: '' };
+    // ความถี่เริ่มต้น: ทุกวัน เริ่มวันนี้ ไม่มีวันสิ้นสุด (ผู้ดูแลเปลี่ยนได้)
+    S.draft.schedule = { type: 'weekdays', days: [0, 1, 2, 3, 4, 5, 6], every: 2, on: 21, off: 7, start: S.store.today, end: null };
     S.unreadable = draft ? ['name', 'tabletsPerDose', 'minutes'].filter(isEmptyField) : [];
     S.draftNote = S.unreadable.length ? { kind: 'info', text: 'บางช่องอ่านจากฉลากไม่ได้ — กรุณาตรวจสอบและกรอกเอง' } : null;
   }
 
   document.addEventListener('input', function (ev) {
-    const f = ev.target.dataset.f, meal = ev.target.dataset.meal;
+    const f = ev.target.dataset.f, meal = ev.target.dataset.meal, sk = ev.target.dataset.s;
     if (!S.draft) return;
+    if (['every', 'on', 'off', 'start', 'end'].includes(sk)) { S.draft.schedule[sk] = ev.target.value; refreshDraft(); return; }
     if (meal) { const v = T(ev.target.value); if (v !== null) S.mealDraft[meal] = v; }
     else if (f === 'type' || f === 'meal' || f === 'minutes') S.draft.timing[f] = ev.target.value;
     else if (f) S.draft[f] = ev.target.value;
     refreshDraft();
+  });
+  document.addEventListener('change', function (ev) {   // เปลี่ยนความถี่ / วัน / วันสิ้นสุด = วาดฟอร์มใหม่
+    const sc = S.draft && S.draft.schedule, el = ev.target;
+    if (sc && el.dataset.s === 'type') { sc.type = el.value; render(); return; }
+    if (sc && el.dataset.day !== undefined) {
+      const d = Number(el.dataset.day);
+      sc.days = el.checked ? sc.days.concat(d).sort() : sc.days.filter((x) => x !== d);
+      render(); return;
+    }
+    if (sc && el.dataset.s === 'noEnd') { sc.end = el.checked ? null : addDays(sc.start, 6); render(); return; }
   });
   document.addEventListener('change', function (ev) {   // เปลี่ยนชนิดเวลาหรือมื้อ = วาดฟอร์มใหม่ (ช่องนาทีโผล่/หาย)
     if (S.draft && (ev.target.dataset.f === 'type' || ev.target.dataset.f === 'meal')) render();
