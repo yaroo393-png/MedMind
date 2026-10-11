@@ -34,21 +34,21 @@ button, input, select, textarea { font: inherit; }
 /* แถบหัวสีทึบ (แบน) + หัวข้อใหญ่ */
 .hero { background: var(--color-header); margin: 0 calc(-1 * var(--space-2)) var(--space-2); padding: var(--space-1) var(--space-2) var(--space-3); }
 .hero::after { content: ""; display: block; clear: both; }
-.hero h3 { font-size: var(--font-hero); color: var(--color-title); margin: 0; line-height: 1.15; }
+.hero h3 { font-family: var(--font-display); font-weight: 500; font-size: var(--font-hero); color: var(--color-title); margin: 0; line-height: 1.15; }
 .hero .sub { color: var(--color-text); font-weight: 600; margin-top: 6px; }
 .hero-mascot { float: right; margin: 0 0 0 8px; }
 
-.card { background: var(--color-surface); border-radius: var(--radius-card); padding: var(--space-2); margin-bottom: 12px; }
+.card { background: var(--color-surface); border-radius: var(--radius-card); box-shadow: var(--shadow-card); padding: var(--space-2); margin-bottom: 12px; }
 .muted { color: var(--color-text-muted); }
 .center { text-align: center; }
 
 .btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: var(--button-height); border: 0;
-  border-radius: var(--radius-button); font-size: var(--font-button); font-weight: 700; color: #fff; background: var(--color-primary);
+  border-radius: var(--radius-button); font-size: var(--font-button); font-weight: 700; color: var(--color-on-mint); background: var(--color-mint);
   cursor: pointer; margin-top: 12px; }
 .btn:disabled { background: #9CA3AF; cursor: not-allowed; }
-.btn.taken { background: var(--color-taken); }
-.btn.not-yet { background: var(--color-not-yet); }
-.btn.danger { background: var(--color-not-yet); }
+.btn.taken { background: var(--color-taken); color: #fff; }
+.btn.not-yet { background: var(--color-not-yet); color: #fff; }
+.btn.danger { background: var(--color-not-yet); color: #fff; }
 .btn.ghost { background: var(--color-mint-soft); color: var(--color-title); }
 .link { background: none; border: 0; color: var(--color-primary); text-decoration: underline; cursor: pointer; padding: 8px 0; font-size: var(--font-body); }
 
@@ -58,6 +58,9 @@ button, input, select, textarea { font: inherit; }
 .bottom-bar .btn + .btn { margin-top: 8px; }
 
 .code { font-size: 44px; font-weight: 700; letter-spacing: 8px; font-variant-numeric: tabular-nums; color: var(--color-text); }
+/* letter-spacing เติมช่องว่างหลังตัวสุดท้าย — เติมด้านซ้ายเท่ากันให้ตัวเลขอยู่กลางพอดี */
+.code { padding-left: 8px; }
+#code-in { text-align: center; font-family: var(--font-display); font-size: 26px; letter-spacing: 8px; padding-left: 24px; font-variant-numeric: tabular-nums; }
 canvas.qr { width: 168px; height: 168px; image-rendering: pixelated; display: block; margin: 0 auto var(--space-1); }
 
 .badge { display: inline-block; border-radius: var(--radius-badge); padding: 2px 12px; font-size: var(--font-body); font-weight: 600; white-space: nowrap; }
