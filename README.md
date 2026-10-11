@@ -17,7 +17,7 @@
 |---|---|
 | M1 Charter | ฉบับปรับปรุง (ข้อมูลสมาชิกกรอกแล้ว · กำหนดเสร็จ Increment ใน §8 ใส่แล้ว) |
 | M2 SRS / Requirements | SRS v2.0 ร่างแล้ว (`spec.md`): FR-01..08 (Must 5 · Should 1 · Could 2), BR-01..17, AC, NFR-01..10, Use case, Traceability — ยังรอ: แถวว่างใน AI log (§8) |
-| M2 Design | Design Doc เสร็จ (`architecture.md`: Architecture + ADR, Use Case, Sequence 2 อัน, State Machine, ERD, Module/Event, Coverage) · Design system เสร็จ (`design-system.md`: tokens ตาม NFR-03 + contrast, Screen Map S1–S3 / C1–C3, error/empty states) — ยังรอ: ภาพหน้าจอจาก prototype |
+| M2 Design | Design Doc เสร็จ (`architecture.md`: Architecture + ADR, Use Case, Sequence 2 อัน, State Machine, ERD, Module/Event, Coverage) · Design system เสร็จ (`design-system.md`: tokens ตาม NFR-03 + contrast, Screen Map R0, S1–S3 / C1–C3, error/empty states) · ภาพหน้าจอจาก prototype เสร็จครบ 7 หน้า ([`docs/03-design/screens/`](docs/03-design/screens/)) |
 | M3 Prototype | คลิกได้ครบ FR-01..05 ทั้งทางถูกและทางผิด (`prototype/index.html`) — นาฬิกาจำลอง, อ่านฉลากจำลอง, ไม่มี server |
 | Automated tests | ยังไม่มี — **ไม่มีผลทดสอบที่รายงานไว้ล่วงหน้า** |
 | Final Report / AI-Use Statement | ร่างแล้ว: Report §1–3, §7–10 (§8–9 บางส่วน) · AI-Use Statement สรุปจาก `spec.md` §8 — ยังรอ: §4 Design, §5 Prototype, §6 ผลทดสอบ |
