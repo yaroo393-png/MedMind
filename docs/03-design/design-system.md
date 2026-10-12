@@ -170,7 +170,7 @@
 | เมนูล่าง (Tabs) | `.tabs` | สลับ สถานะ / เพิ่มยา / จับคู่ ของผู้ดูแล | `--color-surface`, `--shadow-nav`, `--color-mint` (แท็บที่เลือก) | ซ่อนระหว่างกรอกร่างยา (ใช้แถบปุ่มล่างแทน) | C1–C3 |
 | แถบปุ่มล่าง (Bottom bar) | `.bottom-bar` | ยกเลิก / บันทึก ของฟอร์ม | `--shadow-bar` | บันทึกกดไม่ได้จนกรอกครบ | C2 |
 | กล่องยืนยัน (Dialog) | `.dialog` | ยืนยันการกระทำที่กู้ไม่ได้ (ยกเลิกการจับคู่ BR-17) | `--color-scrim`, `--color-disabled-bg` (ที่จับ) | — | S3, C1 |
-| การ์ดเลือกบทบาท (Role card) | `.role-card` | เลือกผู้สูงอายุ / ผู้ดูแล | `--color-mint`, `--color-mint-soft`, `--color-mint-ring` | `:disabled` บทบาทของอีกเครื่อง | R0 |
+| การ์ดเลือกบทบาท (Role card) | `.role-card` | เลือกผู้สูงอายุ / ผู้ดูแล | `--color-mint`, `--color-mint-soft`, `--color-mint-ring` | เลือกได้ทั้ง 2 ใบ · `:disabled` เมื่ออีกเครื่องเลือกบทบาทนั้นแล้ว | R0 |
 | ปุ่มเลือกวัน (Day chips) | `.day-chip` | เลือกวันในสัปดาห์ที่กินยา | `--color-mint` (เลือก) / `--color-mint-soft` | ไม่เลือกเลย = การ์ด `.missing` | C2 |
 | การ์ดวันที่ (Date card) | `.date-card` | วันเริ่มต้น / วันสิ้นสุด (ตัวเลือกวันที่ ไม่ต้องพิมพ์) | `--color-mint-soft` | "ไม่มีวันสิ้นสุด" · `.missing` วันสิ้นสุดก่อนวันเริ่ม | C2 |
 | แถบเปิดเสียง (Banner) | `.banner` | ขอให้แตะเพื่อเปิดเสียงเตือน (ADR-01) | `--color-mint-soft`, `--color-primary` | — | S2, S3 |

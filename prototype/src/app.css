@@ -20,6 +20,7 @@ button, input, select, textarea { font: inherit; }
 
 /* ---------- โทรศัพท์ 2 เครื่อง ---------- */
 .phones { display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; padding: 20px 12px 40px; }
+.phones.swapped > .phone-wrap:first-child { order: 2; }   /* เครื่องซ้ายเลือก "ผู้ดูแล" */
 .phone-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .phone-wrap h2 { margin: 0; font-size: 18px; color: var(--color-text-muted); }
 /* ป้าย "Covers: FR-x" อยู่นอกจอโทรศัพท์ (ป้ายสำหรับผู้ตรวจตอน demo) */
