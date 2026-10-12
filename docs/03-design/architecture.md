@@ -13,11 +13,12 @@
 ```mermaid
 graph TD
     subgraph P["1. Presentation — หน้าจอ"]
+        R0["ทั้งสองฝ่าย: เลือกบทบาท ผู้สูงอายุ / ผู้ดูแล (ก่อน FR-01)"]
         S1["Senior: หน้าเริ่มต้น / QR + ยินยอม (FR-01)"]
         S2["Senior: หน้าเตือน (FR-03, FR-04)"]
         S3["Senior: หน้าแรก — มื้อของวัน + ยืนยันช้า (FR-04)"]
         C1["Caregiver: จับคู่ — สแกน QR / ใส่รหัส (FR-01)"]
-        C2["Caregiver: สแกนฉลาก → ร่าง → ตรวจ → บันทึก + ตั้งเวลามื้อ (FR-02)"]
+        C2["Caregiver: สแกนฉลาก → ร่าง → ตรวจ → บันทึก + ตั้งเวลามื้อ + ความถี่ / วันเริ่ม–สิ้นสุด (FR-02)"]
         C3["Caregiver: หน้าสถานะรายวัน + การแจ้งเตือน (FR-05)"]
     end
 
@@ -36,6 +37,8 @@ graph TD
 
     EXT["ผู้ให้บริการอ่านฉลาก (ภายนอก)"]
 
+    R0 -.-> S1
+    R0 -.-> C1
     S1 --> M1
     C1 --> M1
     C2 --> M2
@@ -287,6 +290,9 @@ erDiagram
         time reminderTime "คำนวณตาม BR-06"
         string warnings "ถ้าฉลากมี"
         string contraindications "ถ้าฉลากมี"
+        string scheduleDays "วันในสัปดาห์ที่กิน อา–ส (ค่าเริ่มต้น ทุกวัน)"
+        date startDate "วันเริ่มต้น (ค่าเริ่มต้น วันที่เพิ่มยา)"
+        date endDate "วันสิ้นสุด (ว่าง = ไม่มีวันสิ้นสุด)"
         datetime savedAt "Caregiver กดบันทึก (NFR-06)"
     }
     DOSE_SESSION {
