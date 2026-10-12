@@ -14,6 +14,7 @@
   const isoOf = (d) => d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
   const addDays = (iso, n) => { const d = new Date(iso + 'T00:00:00'); d.setDate(d.getDate() + n); return isoOf(d); };
   const thDate = (iso) => new Date(iso + 'T00:00:00').toLocaleDateString('th-TH', { day: 'numeric', month: 'short' });
+  const thDay = (iso) => DAYS[new Date(iso + 'T00:00:00').getDay()] + ' ' + thDate(iso);
 
   let S;
   function reset(startAt) {
@@ -403,6 +404,8 @@
   function renderDemo() {
     document.getElementById('demo').innerHTML =
       '<h1>MedMind — Clickable Prototype</h1>' +
+      '<div class="row"><span>วันที่จำลอง</span><span class="day">' + thDay(S.store.today) + '</span>' +
+      '<button data-act="next-day">ไปวันถัดไป (06:00)</button></div>' +
       '<div class="row"><span>เวลาจำลอง</span><span class="clock">' + fmt(S.now) + '</span>' +
       '<button data-act="adv" data-min="1">+1 นาที</button><button data-act="adv" data-min="5">+5 นาที</button>' +
       '<button data-act="adv" data-min="15">+15 นาที</button>' +
@@ -460,6 +463,14 @@
         break;
       case 'scenario': scenario(t.dataset.s); return;
       case 'reset': stopAuto(); reset(); break;
+      case 'next-day': {
+        stopAuto();
+        M.startDay(S.store, addDays(S.store.today, 1));
+        S.now = T('06:00'); S.reminderOpen = false; S.dismissed = {}; S.srMsg = null; S.cgMsg = null;
+        log('ขึ้นวันใหม่ ' + thDay(S.store.today) + ' · มื้อยาวันนี้ ' + S.store.sessions.length + ' มื้อ');
+        handleEvents(M.tick(S.store, S.now));
+        break;
+      }
       case 'camera': S.cameraAllowed = !t.checked; break;
       case 'caregiver2': {
         const r = tryPair('caregiver-2', S.store.invite.code);

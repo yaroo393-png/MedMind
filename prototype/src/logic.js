@@ -158,6 +158,16 @@
     s.sessions.sort(function (a, b) { return a.T - b.T; });
   }
 
+  // ขึ้นวันใหม่: สร้างมื้อของวันนั้นจากยาที่บันทึกไว้ (ตามความถี่ / วันเริ่ม–สิ้นสุด) · สถานะและการแจ้งเตือนเริ่มใหม่ทั้งหมด
+  function startDay(s, iso) {
+    s.today = iso;
+    s.sessions = [];
+    s.notifications = [];
+    s.lastTick = null;
+    s.medications.forEach(function (med) { addToTodaySessions(s, med, 0); });
+    return s.sessions;
+  }
+
   /* ---------- doseSession (FR-03, FR-04) + escalation (FR-05) ---------- */
 
   // BR-15: ยืนยันช้าได้ถึงเวลาเตือนของมื้อถัดไปที่เริ่มหลัง T+15 ของมื้อนี้ (ไม่มี = 23:59)
@@ -275,7 +285,7 @@
     validateDraft: validateDraft, reminderTime: reminderTime, setMealTimes: setMealTimes, saveMedication: saveMedication,
     tick: tick, confirm: confirm, notYet: notYet, lateUntil: lateUntil, canConfirmLate: canConfirmLate,
     dueSessions: dueSessions, statusLabel: statusLabel, dailyStatus: dailyStatus, medsOf: medsOf,
-    validSchedule: validSchedule, takesOn: takesOn,
+    validSchedule: validSchedule, takesOn: takesOn, startDay: startDay,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.MedMind = api;

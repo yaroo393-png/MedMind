@@ -10,6 +10,7 @@ button, input, select, textarea { font: inherit; }
 .demo button { background: #374151; color: #F9FAFB; border: 1px solid #6B7280; border-radius: 8px; padding: 6px 10px; cursor: pointer; font-size: 15px; }
 .demo button:hover { background: #4B5563; }
 .demo input[type=time] { padding: 4px 6px; border-radius: 6px; border: 1px solid #6B7280; }
+.demo .day { font-size: 22px; font-weight: 700; min-width: 92px; }
 .demo .clock { font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; min-width: 92px; }
 .demo .log { margin: 6px 0 0; padding: 0; list-style: none; font-size: 14px; color: #D1D5DB; max-height: 96px; overflow: auto; }
 .demo label { display: inline-flex; gap: 6px; align-items: center; }
