@@ -362,17 +362,34 @@
   }
 
   // อัปเดตปุ่มบันทึกและเวลาเตือนโดยไม่วาดฟอร์มใหม่ (ไม่ให้ช่องที่กำลังพิมพ์หลุด)
+  // ช่องที่ยังขาด → ชื่อที่แสดงในข้อความ + กล่องที่ขึ้นกรอบสีส้ม
+  const MISSING = {
+    name: ['ชื่อยา', '[data-f=name]'], tabletsPerDose: ['จำนวนเม็ดต่อครั้ง', '[data-f=tabletsPerDose]'],
+    timing: ['เวลากินตามฉลาก', '[data-f=type]'], meal: ['มื้อ', '[data-f=meal]'], minutes: ['ก่อนอาหารกี่นาที', '[data-f=minutes]'],
+  };
+  function scheduleProblem(sc) {
+    if (!sc.days.length) return ['ความถี่ (เลือกอย่างน้อย 1 วัน)', '.freq-card'];
+    if (!sc.start) return ['วันเริ่มต้น', '#sc-start'];
+    return ['วันสิ้นสุด (ต้องไม่ก่อนวันเริ่มต้น)', '#sc-end'];
+  }
   function refreshDraft() {
     const btn = document.getElementById('save-btn'); if (!btn) return;
     const problems = M.validateDraft(S.draft);
     btn.disabled = problems.length > 0;
-    const mt = S.store.mealTimes || S.mealDraft;
-    document.getElementById('preview').textContent = problems.length
-      ? (problems.includes('schedule') && problems.length === 1
-          ? 'ตั้งความถี่ให้ถูกต้อง: เลือกอย่างน้อย 1 วัน · วันสิ้นสุดต้องไม่ก่อนวันเริ่ม'
-          : 'กรอกช่องที่จำเป็นให้ครบก่อนบันทึก (ชื่อยา, จำนวนเม็ด, มื้อ/เวลา)')
+    const root = document.getElementById('caregiver');
+    root.querySelectorAll('.missing').forEach((el) => el.classList.remove('missing'));
+    const found = problems.map((p) => p === 'schedule' ? scheduleProblem(S.draft.schedule) : MISSING[p]).filter(Boolean);
+    found.forEach(function (m) {
+      const el = root.querySelector(m[1]);
+      if (el) (el.closest('.field') || el.closest('.date-card') || el).classList.add('missing');
+    });
+    const preview = document.getElementById('preview'), mt = S.store.mealTimes || S.mealDraft;
+    preview.className = 'msg ' + (found.length ? 'warn' : 'info');
+    preview.textContent = found.length
+      ? 'ยังกรอกไม่ครบ: ' + found.map((m) => m[0]).join(', ') + ' — แก้ช่องที่มีกรอบสีส้มก่อนบันทึก'
       : 'เวลาเตือน: ' + fmt(M.reminderTime(S.draft.timing, mt)) + ' · ' + scheduleLabel(S.draft.schedule);
   }
+
 
   function caregiverStatus() {
     const st = M.dailyStatus(S.store, CAREGIVER);

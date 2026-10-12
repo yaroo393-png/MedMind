@@ -174,6 +174,10 @@ canvas.qr { width: 150px; height: 150px; image-rendering: pixelated; display: bl
 .msg.error { background: var(--badge-unconf-bg); color: var(--badge-unconf-fg); }
 .msg.ok { background: var(--badge-taken-bg); color: var(--badge-taken-fg); }
 .msg.info { background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow-card); }
+.msg.warn { background: var(--color-check-bg); color: var(--color-check-text); }
+/* ช่องบังคับที่ยังขาด (เทียบกับ "กรุณาตรวจสอบ") */
+.field.missing input, .field.missing select, .date-card.missing input[type=date] { background: #FFFBEB; border-color: #D97706; }
+.freq-card.missing, .date-card.missing { box-shadow: var(--shadow-card), inset 0 0 0 2px #D97706; }
 
 /* เมนูล่างของ Caregiver: แถบลอยทรงแคปซูล */
 .tabs { position: absolute; left: 20px; right: 20px; bottom: 16px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; padding: 8px;
