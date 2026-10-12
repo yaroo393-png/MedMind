@@ -32,6 +32,7 @@
       medications: [],       // MEDICATION
       sessions: [],          // DOSE_SESSION (+ items = DOSE_ITEM)
       notifications: [],     // NOTIFICATION_LOG
+      today: null,           // วันที่จำลอง 'YYYY-MM-DD' (ใช้กับความถี่ / วันเริ่ม–สิ้นสุดของยา)
       lastTick: null,
       seq: 0,
     };
@@ -91,7 +92,23 @@
     if (!['after', 'before', 'bedtime'].includes(t.type)) problems.push('timing');
     if ((t.type === 'after' || t.type === 'before') && !MEALS[t.meal]) problems.push('meal');
     if (t.type === 'before' && !(Number(t.minutes) > 0)) problems.push('minutes');   // FR-02 ✗10
+    if (d.schedule && !validSchedule(d.schedule)) problems.push('schedule');
     return problems;
+  }
+
+  /* ---------- ความถี่ + วันเริ่ม–สิ้นสุดของยา ----------
+   * schedule = { days: [0..6] (วันในสัปดาห์ที่กิน, 0 = อาทิตย์), start: 'YYYY-MM-DD', end: 'YYYY-MM-DD' | null }
+   * end = null คือไม่มีวันสิ้นสุด · ยาที่ไม่มี schedule = กินทุกวัน */
+  const isDate = (iso) => /^\d{4}-\d{2}-\d{2}$/.test(String(iso || '')) && !isNaN(Date.parse(iso + 'T00:00:00Z'));
+  function validSchedule(sc) {
+    if (!Array.isArray(sc.days) || !sc.days.length || !isDate(sc.start)) return false;
+    return sc.end === null || sc.end === undefined || (isDate(sc.end) && sc.end >= sc.start);
+  }
+  // วันนี้ต้องกินยาตัวนี้ไหม
+  function takesOn(sc, iso) {
+    if (!sc || !iso) return true;
+    if (iso < sc.start || (sc.end && iso > sc.end)) return false;
+    return sc.days.includes(new Date(iso + 'T00:00:00Z').getUTCDay());
   }
 
   // BR-06: เวลาเตือนตามคำสั่งบนฉลากเท่านั้น
@@ -121,6 +138,7 @@
       name: String(draft.name).trim(), tabletsPerDose: Number(draft.tabletsPerDose),
       timing: Object.assign({}, draft.timing), reminderTime: t,
       warnings: draft.warnings || '', contraindications: draft.contraindications || '',
+      schedule: draft.schedule ? JSON.parse(JSON.stringify(draft.schedule)) : null,
       savedAt: now,
     };
     s.medications.push(med);
@@ -131,12 +149,23 @@
   // ยาที่เวลาเตือนตรงกันรวมเป็นมื้อเดียว (BR-06) · prototype จำลองวันเดียว: มื้อที่เลยเวลาไปแล้วเริ่มพรุ่งนี้
   function addToTodaySessions(s, med, now) {
     const T = med.reminderTime;
+    if (!takesOn(med.schedule, s.today)) return;                                     // วันนี้ไม่ใช่วันกินยาตามความถี่
     let sess = s.sessions.find(function (x) { return x.T === T; });
     if (sess) { if (sess.status === 'waiting') sess.items.push(med.id); return; }
     if (T < now) return;
     s.sessions.push({ id: nextId(s, 'dose'), T: T, status: 'waiting', round: 0,
                       items: [med.id], confirmedAt: null, alertedAt: null });
     s.sessions.sort(function (a, b) { return a.T - b.T; });
+  }
+
+  // ขึ้นวันใหม่: สร้างมื้อของวันนั้นจากยาที่บันทึกไว้ (ตามความถี่ / วันเริ่ม–สิ้นสุด) · สถานะและการแจ้งเตือนเริ่มใหม่ทั้งหมด
+  function startDay(s, iso) {
+    s.today = iso;
+    s.sessions = [];
+    s.notifications = [];
+    s.lastTick = null;
+    s.medications.forEach(function (med) { addToTodaySessions(s, med, 0); });
+    return s.sessions;
   }
 
   /* ---------- doseSession (FR-03, FR-04) + escalation (FR-05) ---------- */
@@ -256,6 +285,7 @@
     validateDraft: validateDraft, reminderTime: reminderTime, setMealTimes: setMealTimes, saveMedication: saveMedication,
     tick: tick, confirm: confirm, notYet: notYet, lateUntil: lateUntil, canConfirmLate: canConfirmLate,
     dueSessions: dueSessions, statusLabel: statusLabel, dailyStatus: dailyStatus, medsOf: medsOf,
+    validSchedule: validSchedule, takesOn: takesOn, startDay: startDay,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.MedMind = api;
