@@ -7,7 +7,7 @@
 > **Intro to Software Engineering (15031001) — Academic Year 2569**
 > School of Applied Digital Technology, Mae Fah Luang University
 > **Team:** **MedMind**
-> **GitHub Repository:** https://github.com/yaroo393-png/SE-Project
+> **GitHub Repository:** https://github.com/yaroo393-png/MedMind
 
 ### 🔗 ลิงก์เปิดดู (ไม่ต้องดาวน์โหลด)
 

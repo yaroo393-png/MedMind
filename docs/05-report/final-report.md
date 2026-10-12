@@ -12,7 +12,7 @@
 | **โปรเจกต์** | **MedMind** — ระบบเตือนกินยาและแจ้งสถานะการกินยาให้ผู้ดูแลผู้สูงอายุ |
 | **รายวิชา** | Intro to Software Engineering (15031001) · ปีการศึกษา 2569 · School of Applied Digital Technology, Mae Fah Luang University |
 | **ทีม** | MedMind |
-| **Repo** | https://github.com/yaroo393-png/SE-Project |
+| **Repo** | https://github.com/yaroo393-png/MedMind |
 | **Demo** | [เว็บแอป (Clickable Prototype)](https://claude.ai/artifact/Tjx97w6AbSVXBH3APZ86pE) — ต้องได้รับแชร์ลิงก์ก่อนจึงจะเปิดได้ · หรือเปิด `prototype/index.html` ในเครื่อง |
 | **วันที่ส่ง** | 11 ต.ค. 2569 |
 
@@ -137,7 +137,7 @@ T+15   ยังไม่ยืนยัน → แจ้ง Caregiver "ยั�
 
 ## 8. ส่วนร่วมของสมาชิก
 
-งานทุกชิ้นติดตามผ่าน GitHub Issues (1 Issue = ผู้รับผิดชอบ 1 คน) · หลักฐานคือ commit ใน repo
+งานทุกชิ้นติดตามผ่าน GitHub Issues (1 Issue = ผู้รับผิดชอบ 1 คน) · หลักฐานคือ commit ใน repo · Issue / PR / commit ในตารางนี้อยู่ใน repo เดิม [SE-Project](https://github.com/yaroo393-png/SE-Project) (ก่อนย้ายมา MedMind) จึงลิงก์ไปที่นั่น
 
 | สมาชิก | งานที่รับผิดชอบ | Issue | หลักฐาน |
 |---|---|---|---|
@@ -163,7 +163,7 @@ FR-06–08 (Should/Could) อยู่นอก MVP — ดู `spec.md` §7
 
 ## 10. ลิงก์
 
-- Repo: https://github.com/yaroo393-png/SE-Project
+- Repo: https://github.com/yaroo393-png/MedMind
 - Demo (prototype): https://claude.ai/artifact/Tjx97w6AbSVXBH3APZ86pE (ต้องได้รับแชร์ลิงก์ก่อน · โค้ดเดียวกับ [`prototype/`](../../prototype/))
 - วิดีโอ 2–3 นาที (ถ้ามี): **[ใส่ลิงก์เมื่อมี]**
 - เอกสาร: [`charter.md`](../01-charter/charter.md) · [`spec.md`](../02-requirements/spec.md) · [`backlog.md`](../02-requirements/backlog.md) · [`architecture.md`](../03-design/architecture.md) · [`design-system.md`](../03-design/design-system.md)

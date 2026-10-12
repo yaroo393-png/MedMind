@@ -17,6 +17,17 @@
   --color-check-bg: #FEF3C7;
   --color-check-text: #92400E;
   --color-covers-bg: #17324D;
+  --color-on-dark: #FFFFFF;      /* ตัวอักษรบนปุ่ม "กินแล้ว" / "ยังไม่กิน" / ป้าย Covers */
+  --color-check-field: #FFFBEB;  /* พื้นช่องที่อ่านจากฉลากไม่ได้ / ยังกรอกไม่ครบ */
+  --color-check-border: #D97706; /* ขอบช่องเดียวกัน (UI ≥ 3:1) */
+  --color-disabled-bg: #CBD5E1;  /* ปุ่มที่กดไม่ได้ · ที่จับ bottom sheet */
+  --color-disabled-text: #334155;
+  --color-divider: #E6EEEE;      /* เส้นคั่นรายการ */
+  --color-mint-ring: #C9F0F0;    /* วงกลมตกแต่งบนพื้นมิ้นต์อ่อน (หน้าเลือกบทบาท) */
+  --color-glow: rgba(255, 255, 255, 0.22);   /* วงกลมตกแต่งบนการ์ดมิ้นต์ */
+  --color-chip-on-mint: rgba(255, 255, 255, 0.6); /* ป้ายและแถบความคืบหน้าบนการ์ดมิ้นต์ */
+  --color-scrim: rgba(17, 24, 39, 0.55);     /* พื้นหลังกล่องยืนยัน */
+  --color-frame: #111827;        /* กรอบโทรศัพท์จำลอง · สีเข้มของ QR */
 
   --badge-taken-fg: #14532D;     --badge-taken-bg: #DCFCE7;
   --badge-late-fg: #134E4A;      --badge-late-bg: #CCFBF1;
@@ -38,4 +49,9 @@
   --radius-button: 999px;        /* ปุ่มทรงแคปซูล */
   --radius-badge: 999px;
   --shadow-card: 0 8px 24px rgba(23, 50, 77, 0.08);
+  --shadow-soft: 0 6px 18px rgba(23, 50, 77, 0.1);    /* ปุ่มวงกลม */
+  --shadow-nav: 0 10px 30px rgba(23, 50, 77, 0.14);   /* เมนูล่างแบบลอย */
+  --shadow-bar: 0 -6px 18px rgba(23, 50, 77, 0.06);   /* แถบปุ่มล่าง */
+  --shadow-raised: 0 8px 20px rgba(11, 59, 60, 0.18); /* วงกลมกระดิ่งบนแถบเตือน */
+  --shadow-taken: 0 8px 20px rgba(21, 128, 61, 0.25); /* ปุ่ม "กินแล้ว" */
 }
