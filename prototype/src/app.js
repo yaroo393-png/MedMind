@@ -320,7 +320,7 @@
       (t.type === 'before' ? '<div class="field' + flag('minutes') + '"><label>ก่อนอาหารกี่นาที' + tag('minutes') + '</label><input data-f="minutes" type="number" min="1" value="' + esc(t.minutes) + '"></div>' : '') +
       '<div class="field"><label>ข้อควรระวัง (ถ้าฉลากมี)</label><input data-f="warnings" value="' + esc(d.warnings) + '"></div>' +
       '<div class="field"><label>ข้อห้ามใช้ (ถ้าฉลากมี)</label><input data-f="contraindications" value="' + esc(d.contraindications) + '"></div>' +
-      '</div>' + scheduleForm(d.schedule);
+      '</div>';
     if (!S.store.mealTimes) {
       const md = S.mealDraft;
       h += '<div class="card"><h4 class="section-title">ตั้งเวลามื้อ (ครั้งแรก)</h4><div class="grid2">' +
@@ -328,33 +328,24 @@
           return '<div class="field"><label>' + k[1] + '</label><input type="time" data-meal="' + k[0] + '" value="' + fmt(md[k[0]]) + '"></div>';
         }).join('') + '</div></div>';
     }
-    h += '<div class="msg info" id="preview"></div>';
+    h += scheduleForm(d.schedule) + '<div class="msg info" id="preview"></div>';
     return h;
   }
 
   // ความถี่ + วันเริ่ม–สิ้นสุด (กฎอยู่ใน logic.js: validSchedule, takesOn)
   function scheduleLabel(sc) {
     if (!sc) return 'ทุกวัน';
-    const f = sc.type === 'weekdays' ? (sc.days.length === 7 ? 'ทุกวัน' : 'ทุก ' + sc.days.map((d) => DAYS[d]).join(' '))
-      : sc.type === 'interval' ? 'ทุก ' + sc.every + ' วัน' : 'กิน ' + sc.on + ' วัน หยุด ' + sc.off + ' วัน';
+    const f = sc.days.length === 7 ? 'ทุกวัน' : 'ทุก ' + sc.days.map((d) => DAYS[d]).join(' ');
     return f + ' · ' + thDate(sc.start) + (sc.end ? ' – ' + thDate(sc.end) : ' เป็นต้นไป');
   }
   function scheduleForm(sc) {
-    const opt = (type, title, sub, extra) => '<label class="freq-opt' + (sc.type === type ? ' on' : '') + '">' +
-      '<input type="radio" name="freq" data-s="type" value="' + type + '"' + (sc.type === type ? ' checked' : '') + '>' +
-      '<span class="freq-text"><b>' + title + '</b><span class="muted">' + sub + '</span></span></label>' +
-      (sc.type === type ? '<div class="freq-extra">' + extra + '</div>' : '');
-    const num = (key, label) => '<label class="num-field"><span>' + label + '</span><input type="number" min="1" inputmode="numeric" data-s="' + key + '" value="' + esc(sc[key]) + '"><span>วัน</span></label>';
-    const days = '<div class="day-chips" role="group" aria-label="วันที่จะกินยา">' + DAYS.map(function (d, i) {
+    const days = DAYS.map(function (d, i) {
       const on = sc.days.includes(i);
       return '<label class="day-chip' + (on ? ' on' : '') + '"><input type="checkbox" data-day="' + i + '"' + (on ? ' checked' : '') + '><span>' + d + '</span></label>';
-    }).join('') + '</div>';
+    }).join('');
     return '<h4 class="section-title">ความถี่</h4><div class="card freq-card">' +
-      opt('weekdays', 'วันในสัปดาห์', 'เลือกวันที่จะกิน', days) +
-      opt('interval', 'ช่วงเวลา', 'กินเว้นเป็นช่วง ทุก N วัน', num('every', 'ทุก')) +
-      opt('cycle', 'รอบ', 'ช่วงกิน + ช่วงหยุด วนซ้ำ', num('on', 'กิน') + num('off', 'หยุด')) +
-      '<div class="freq-opt disabled"><span class="freq-dot" aria-hidden="true"></span><span class="freq-text"><b>เมื่อจำเป็น</b>' +
-      '<span class="muted">ยังไม่รองรับยาที่กินเมื่อมีอาการ</span></span></div></div>' +
+      '<div class="freq-text"><b>วันในสัปดาห์</b><span class="muted">เลือกวันที่จะกิน</span></div>' +
+      '<div class="day-chips" role="group" aria-label="วันที่จะกินยา">' + days + '</div></div>' +
       '<div class="date-grid"><div class="card date-card"><label for="sc-start">' + I.svg('play', 18) + ' เริ่มต้น</label>' +
       '<input id="sc-start" type="date" data-s="start" value="' + sc.start + '"></div>' +
       '<div class="card date-card"><label for="sc-end">' + I.svg('stop', 18) + ' วันสิ้นสุด</label>' +
@@ -377,7 +368,7 @@
     const mt = S.store.mealTimes || S.mealDraft;
     document.getElementById('preview').textContent = problems.length
       ? (problems.includes('schedule') && problems.length === 1
-          ? 'ตั้งความถี่ให้ถูกต้อง: เลือกอย่างน้อย 1 วัน · ตัวเลขอย่างน้อย 1 · วันสิ้นสุดต้องไม่ก่อนวันเริ่ม'
+          ? 'ตั้งความถี่ให้ถูกต้อง: เลือกอย่างน้อย 1 วัน · วันสิ้นสุดต้องไม่ก่อนวันเริ่ม'
           : 'กรอกช่องที่จำเป็นให้ครบก่อนบันทึก (ชื่อยา, จำนวนเม็ด, มื้อ/เวลา)')
       : 'เวลาเตือน: ' + fmt(M.reminderTime(S.draft.timing, mt)) + ' · ' + scheduleLabel(S.draft.schedule);
   }
@@ -538,7 +529,7 @@
   function startDraft(draft) {
     S.draft = draft || { name: '', tabletsPerDose: '', timing: { type: 'after', meal: 'breakfast', minutes: '' }, warnings: '', contraindications: '' };
     // ความถี่เริ่มต้น: ทุกวัน เริ่มวันนี้ ไม่มีวันสิ้นสุด (ผู้ดูแลเปลี่ยนได้)
-    S.draft.schedule = { type: 'weekdays', days: [0, 1, 2, 3, 4, 5, 6], every: 2, on: 21, off: 7, start: S.store.today, end: null };
+    S.draft.schedule = { days: [0, 1, 2, 3, 4, 5, 6], start: S.store.today, end: null };
     S.unreadable = draft ? ['name', 'tabletsPerDose', 'minutes'].filter(isEmptyField) : [];
     S.draftNote = S.unreadable.length ? { kind: 'info', text: 'บางช่องอ่านจากฉลากไม่ได้ — กรุณาตรวจสอบและกรอกเอง' } : null;
   }
@@ -546,15 +537,14 @@
   document.addEventListener('input', function (ev) {
     const f = ev.target.dataset.f, meal = ev.target.dataset.meal, sk = ev.target.dataset.s;
     if (!S.draft) return;
-    if (['every', 'on', 'off', 'start', 'end'].includes(sk)) { S.draft.schedule[sk] = ev.target.value; refreshDraft(); return; }
+    if (sk === 'start' || sk === 'end') { S.draft.schedule[sk] = ev.target.value; refreshDraft(); return; }
     if (meal) { const v = T(ev.target.value); if (v !== null) S.mealDraft[meal] = v; }
     else if (f === 'type' || f === 'meal' || f === 'minutes') S.draft.timing[f] = ev.target.value;
     else if (f) S.draft[f] = ev.target.value;
     refreshDraft();
   });
-  document.addEventListener('change', function (ev) {   // เปลี่ยนความถี่ / วัน / วันสิ้นสุด = วาดฟอร์มใหม่
+  document.addEventListener('change', function (ev) {   // เลือกวัน / วันสิ้นสุด = วาดฟอร์มใหม่
     const sc = S.draft && S.draft.schedule, el = ev.target;
-    if (sc && el.dataset.s === 'type') { sc.type = el.value; render(); return; }
     if (sc && el.dataset.day !== undefined) {
       const d = Number(el.dataset.day);
       sc.days = el.checked ? sc.days.concat(d).sort() : sc.days.filter((x) => x !== d);

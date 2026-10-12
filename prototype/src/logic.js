@@ -97,31 +97,18 @@
   }
 
   /* ---------- ความถี่ + วันเริ่ม–สิ้นสุดของยา ----------
-   * schedule = { type: 'weekdays', days: [0..6] }   วันในสัปดาห์ (0 = อาทิตย์)
-   *          | { type: 'interval', every: N }       ทุก N วัน นับจากวันเริ่ม
-   *          | { type: 'cycle', on: N, off: M }      กิน N วัน หยุด M วัน วนซ้ำ
-   *   + start: 'YYYY-MM-DD', end: 'YYYY-MM-DD' | null (null = ไม่มีวันสิ้นสุด)
-   * ยาที่ไม่มี schedule = กินทุกวัน */
-  const dayNo = (iso) => Math.round(Date.parse(iso + 'T00:00:00Z') / 86400000);
-  const isDate = (iso) => /^\d{4}-\d{2}-\d{2}$/.test(String(iso || '')) && !isNaN(dayNo(iso));
-  const posInt = (n) => Number.isInteger(Number(n)) && Number(n) >= 1;
+   * schedule = { days: [0..6] (วันในสัปดาห์ที่กิน, 0 = อาทิตย์), start: 'YYYY-MM-DD', end: 'YYYY-MM-DD' | null }
+   * end = null คือไม่มีวันสิ้นสุด · ยาที่ไม่มี schedule = กินทุกวัน */
+  const isDate = (iso) => /^\d{4}-\d{2}-\d{2}$/.test(String(iso || '')) && !isNaN(Date.parse(iso + 'T00:00:00Z'));
   function validSchedule(sc) {
-    if (!isDate(sc.start)) return false;
-    if (sc.end !== null && sc.end !== undefined && (!isDate(sc.end) || sc.end < sc.start)) return false;
-    if (sc.type === 'weekdays') return Array.isArray(sc.days) && sc.days.length > 0;
-    if (sc.type === 'interval') return posInt(sc.every);
-    if (sc.type === 'cycle') return posInt(sc.on) && posInt(sc.off);
-    return false;
+    if (!Array.isArray(sc.days) || !sc.days.length || !isDate(sc.start)) return false;
+    return sc.end === null || sc.end === undefined || (isDate(sc.end) && sc.end >= sc.start);
   }
   // วันนี้ต้องกินยาตัวนี้ไหม
   function takesOn(sc, iso) {
     if (!sc || !iso) return true;
     if (iso < sc.start || (sc.end && iso > sc.end)) return false;
-    const n = dayNo(iso) - dayNo(sc.start);
-    if (sc.type === 'weekdays') return sc.days.includes(new Date(iso + 'T00:00:00Z').getUTCDay());
-    if (sc.type === 'interval') return n % Number(sc.every) === 0;
-    if (sc.type === 'cycle') return n % (Number(sc.on) + Number(sc.off)) < Number(sc.on);
-    return true;
+    return sc.days.includes(new Date(iso + 'T00:00:00Z').getUTCDay());
   }
 
   // BR-06: เวลาเตือนตามคำสั่งบนฉลากเท่านั้น
