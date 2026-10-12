@@ -5,8 +5,8 @@ Intro to Software Engineering · ปีการศึกษา 2569 · Mileston
 
 | | |
 |---|---|
-| **Repo** | https://github.com/yaroo393-png/SE-Project |
-| **Demo** | **[ใส่ลิงก์ prototype เมื่อมี]** |
+| **Repo** | https://github.com/yaroo393-png/MedMind |
+| **Demo** | [เว็บแอป (Clickable Prototype)](https://claude.ai/artifact/Tjx97w6AbSVXBH3APZ86pE) — ต้องได้รับแชร์ลิงก์ก่อนจึงจะเปิดได้ |
 | **เอกสารที่ใช้อ้างอิง** | `docs/02-requirements/spec.md` (SRS) · `docs/02-requirements/backlog.md` (Product Backlog) |
 
 > แหล่งข้อมูลของเอกสารนี้: เอกสารปัญหาฉบับใหม่ของทีม + การตัดสินใจของทีม — ไม่ใช้ข้อมูลจาก M1/M2 ฉบับเดิม

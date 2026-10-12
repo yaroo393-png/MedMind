@@ -290,9 +290,9 @@ erDiagram
         time reminderTime "คำนวณตาม BR-06"
         string warnings "ถ้าฉลากมี"
         string contraindications "ถ้าฉลากมี"
-        string scheduleDays "วันในสัปดาห์ที่กิน อา–ส (ค่าเริ่มต้น ทุกวัน)"
-        date startDate "วันเริ่มต้น (ค่าเริ่มต้น วันที่เพิ่มยา)"
-        date endDate "วันสิ้นสุด (ว่าง = ไม่มีวันสิ้นสุด)"
+        string scheduleDays "วันในสัปดาห์ที่กิน อา–ส (ค่าเริ่มต้น ทุกวัน · BR-18)"
+        date startDate "วันเริ่มต้น (ค่าเริ่มต้น วันที่เพิ่มยา · BR-18)"
+        date endDate "วันสิ้นสุด (ว่าง = ไม่มีวันสิ้นสุด · BR-18)"
         datetime savedAt "Caregiver กดบันทึก (NFR-06)"
     }
     DOSE_SESSION {
@@ -366,13 +366,12 @@ Operation = ฟังก์ชันใน `prototype/src/logic.js` (และ a
 | FR | Operation | Entity (C/R/U/D) | Screen |
 |---|---|---|---|
 | FR-01 จับคู่ | `newInviteCode` · `consent` · `pair` · `unpair` · `canAccess` | INVITE_CODE (C, U `usedAt`) · SENIOR (U `consentAt`) · PAIRING (C, R, D) · `unpair` ลบ MEDICATION, MEAL_TIMES, DOSE_SESSION, NOTIFICATION_LOG ของคู่นี้ด้วย (BR-17) | R0, S1, C1 |
-| FR-02 สแกนฉลาก | `readLabel` (adapter) · `validateDraft` · `setMealTimes` · `reminderTime` · `saveMedication` | MEDICATION (C) · MEAL_TIMES (C, U) | C2 |
-| FR-03 แจ้งเตือน | `startDay` · `tick` (รอบเตือน BR-08) · `dueSessions` | DOSE_SESSION (C, U `round`, `status`) · DOSE_ITEM (C) | S2 |
+| FR-02 สแกนฉลาก | `readLabel` (adapter) · `validateDraft` · `setMealTimes` · `reminderTime` · `validSchedule` (BR-18) · `saveMedication` | MEDICATION (C รวม `scheduleDays`, `startDate`, `endDate`) · MEAL_TIMES (C, U) | C2 |
+| FR-03 แจ้งเตือน | `startDay` · `takesOn` (วันนี้ต้องกินไหม BR-18) · `tick` (รอบเตือน BR-08) · `dueSessions` | DOSE_SESSION (C, U `round`, `status`) · DOSE_ITEM (C) | S2 |
 | FR-04 ยืนยัน | `confirm` · `notYet` · `canConfirmLate` · `lateUntil` · `medsOf` | DOSE_SESSION (U `confirmedAt`, `status`) · DOSE_ITEM (R) · MEDICATION (R) | S2, S3 |
 | FR-05 แจ้ง Caregiver + สถานะ | `escalate` (เรียกจาก `tick` / `notYet`) · `notify` (เรียกจาก `escalate` / `confirm` ยืนยันช้า) · `dailyStatus` · `statusLabel` | NOTIFICATION_LOG (C) · DOSE_SESSION (R, U `caregiverAlertedAt`) | C3 |
-| — (ไม่มี FR รองรับ) | `validSchedule` · `takesOn` — ความถี่ (วันในสัปดาห์) + วันเริ่ม/สิ้นสุด | MEDICATION (C `scheduleDays`, `startDate`, `endDate`) | C2 |
 
-แถวสุดท้ายเป็นฟีเจอร์ที่ทีมเพิ่มใน prototype โดยยังไม่มี FR ใน SRS — ต้องตัดสินว่าจะเพิ่มเป็น FR หรือตัดออก (ไม่งั้นนับเป็น gold-plating ตามคู่มือ M3)
+ทุก operation ใน `logic.js` อยู่ใต้ FR ใด FR หนึ่ง — ความถี่และวันเริ่ม–สิ้นสุดอยู่ใต้ FR-02 / FR-03 ตาม BR-18 (§8 ข้อ 3)
 
 ---
 
@@ -382,3 +381,4 @@ Operation = ฟังก์ชันใน `prototype/src/logic.js` (และ a
 |---|---|---|---|
 | 1 | หน้าสถานะของ Caregiver แสดงคำไหนระหว่าง T ถึง T+15 | แสดง "กำลังเตือน" | `spec.md` BR-14, FR-05 ✓3 · §4 |
 | 2 | Caregiver ระบุตัวตนอย่างไร | ผูกกับเครื่อง ไม่มีบัญชี (ง่ายที่สุด) | ADR-05 · §5 CAREGIVER |
+| 3 | ความถี่และวันเริ่ม–สิ้นสุดที่เพิ่มใน prototype อยู่ใต้ FR ไหน | รวมใน FR-02 เป็น BR-18 + AC ✓11–✗14 ไม่แยกเป็น FR ใหม่ เพราะอาจารย์กำหนด MVP = 5 FR | `spec.md` BR-18, FR-02 · §5 MEDICATION · §7.1 |
