@@ -159,12 +159,13 @@
   }
 
   // ขึ้นวันใหม่: สร้างมื้อของวันนั้นจากยาที่บันทึกไว้ (ตามความถี่ / วันเริ่ม–สิ้นสุด) · สถานะและการแจ้งเตือนเริ่มใหม่ทั้งหมด
-  function startDay(s, iso) {
+  // fromMinute: เริ่มกลางวัน (เช่น เปิดโหมดเวลาจริง) → มื้อที่เวลาเตือนผ่านไปแล้วไม่สร้างย้อนหลัง
+  function startDay(s, iso, fromMinute) {
     s.today = iso;
     s.sessions = [];
     s.notifications = [];
     s.lastTick = null;
-    s.medications.forEach(function (med) { addToTodaySessions(s, med, 0); });
+    s.medications.forEach(function (med) { addToTodaySessions(s, med, fromMinute || 0); });
     return s.sessions;
   }
 

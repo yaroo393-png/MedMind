@@ -24,7 +24,7 @@
       soundOn: false, reminderOpen: false, dismissed: {}, ringing: false,
       cgTab: 'C1', cgMsg: null, srMsg: null, cameraAllowed: true,
       draft: null, draftNote: null, unreadable: [], mealDraft: null, saved: null,
-      dialog: null, log: [], autoTimer: null,
+      dialog: null, log: [], autoTimer: null, realTimer: null,
     };
     S.store.today = isoOf(new Date());   // วันที่จำลอง = วันนี้ของเครื่อง
     M.newInviteCode(S.store, S.now);
@@ -405,12 +405,14 @@
     document.getElementById('demo').innerHTML =
       '<h1>MedMind — Clickable Prototype</h1>' +
       '<div class="row"><span>วันที่จำลอง</span><span class="day">' + thDay(S.store.today) + '</span>' +
-      '<button data-act="next-day">ไปวันถัดไป (06:00)</button></div>' +
+      '<button data-act="next-day"' + (S.realTimer ? ' disabled' : '') + '>ไปวันถัดไป (06:00)</button>' +
+      '<label class="realtime"><input type="checkbox" data-act="realtime"' + (S.realTimer ? ' checked' : '') + '> ใช้เวลาจริงของเครื่อง</label>' +
+      (S.realTimer ? '<span class="hint">นาฬิกาเดินตามเวลาจริง · เปิดหน้าเว็บค้างไว้ถึงจะเตือน</span>' : '') + '</div>' +
       '<div class="row"><span>เวลาจำลอง</span><span class="clock">' + fmt(S.now) + '</span>' +
-      '<button data-act="adv" data-min="1">+1 นาที</button><button data-act="adv" data-min="5">+5 นาที</button>' +
-      '<button data-act="adv" data-min="15">+15 นาที</button>' +
-      '<input type="time" id="goto" value="' + fmt(Math.min(S.now + 30, M.DAY_END)) + '"><button data-act="goto">ไปที่เวลา</button>' +
-      '<button data-act="auto">' + (S.autoTimer ? '⏸ หยุดเดินเวลา' : '▶ เดินเวลา 1 นาที/วินาที') + '</button></div>' +
+      '<button data-act="adv" data-min="1"' + (S.realTimer ? ' disabled' : '') + '>+1 นาที</button><button data-act="adv" data-min="5"' + (S.realTimer ? ' disabled' : '') + '>+5 นาที</button>' +
+      '<button data-act="adv" data-min="15"' + (S.realTimer ? ' disabled' : '') + '>+15 นาที</button>' +
+      '<input type="time" id="goto" value="' + fmt(Math.min(S.now + 30, M.DAY_END)) + '"' + (S.realTimer ? ' disabled' : '') + '><button data-act="goto"' + (S.realTimer ? ' disabled' : '') + '>ไปที่เวลา</button>' +
+      '<button data-act="auto"' + (S.realTimer ? ' disabled' : '') + '>' + (S.autoTimer ? '⏸ หยุดเดินเวลา' : '▶ เดินเวลา 1 นาที/วินาที') + '</button></div>' +
       '<div class="row"><span>สถานการณ์:</span>' +
       '<button data-act="scenario" data-s="basic">มื้อ 08:00 มียา 2 ตัว (FR-03 ✓1)</button>' +
       '<button data-act="scenario" data-s="overlap">มื้อซ้อน 06:45 + 07:00 (FR-03 ✗4)</button>' +
@@ -426,7 +428,7 @@
   /* ---------- สถานการณ์ตัวอย่าง ---------- */
 
   function scenario(name) {
-    stopAuto();
+    stopAuto(); stopReal();
     const basic = name === 'basic';
     reset(basic ? T('07:55') : T('06:40'));
     S.role = { senior: true, caregiver: true };   // สถานการณ์ตัวอย่างข้ามหน้าเลือกบทบาท
@@ -447,6 +449,27 @@
 
   function stopAuto() { if (S && S.autoTimer) { clearInterval(S.autoTimer); S.autoTimer = null; } }
 
+  // โหมดเวลาจริง: นาฬิกาจำลองเดินตามนาฬิกาเครื่อง (เช็กทุก 5 วินาที) · ไม่มี server จึงเตือนได้เฉพาะตอนเปิดหน้าเว็บค้างไว้
+  const realClock = () => { const d = new Date(); return { iso: isoOf(d), min: d.getHours() * 60 + d.getMinutes() }; };
+  function syncReal(first) {
+    const r = realClock();
+    if (r.iso !== S.store.today || r.min < S.now) {
+      // วันจริงไม่ตรงกับวันจำลอง หรือนาฬิกาจำลองเดินเลยเวลาจริงไปแล้ว → เริ่มวันตามเวลาจริง (มื้อที่ผ่านไปแล้วไม่สร้างย้อนหลัง)
+      const newDay = r.iso !== S.store.today;
+      M.startDay(S.store, r.iso, first || !newDay ? r.min : 0);
+      S.now = r.min; S.reminderOpen = false; S.dismissed = {};
+      log('ใช้เวลาจริง: ' + thDay(r.iso) + ' ' + fmt(r.min) + ' · มื้อยาที่เหลือวันนี้ ' + S.store.sessions.length + ' มื้อ');
+      handleEvents(M.tick(S.store, S.now));
+      render();
+    } else if (r.min > S.now) {
+      advanceTo(r.min);
+    } else if (first) {
+      render();
+    }
+  }
+  function startReal() { stopAuto(); stopReal(); S.realTimer = setInterval(function () { syncReal(false); }, 5000); log('เปิดโหมดเวลาจริง'); syncReal(true); }
+  function stopReal() { if (S && S.realTimer) { clearInterval(S.realTimer); S.realTimer = null; } }
+
   /* ---------- การกด ---------- */
 
   document.addEventListener('click', function (ev) {
@@ -462,7 +485,8 @@
         else S.autoTimer = setInterval(function () { if (S.now >= M.DAY_END) stopAuto(); advanceTo(S.now + 1); }, 1000);
         break;
       case 'scenario': scenario(t.dataset.s); return;
-      case 'reset': stopAuto(); reset(); break;
+      case 'reset': stopAuto(); stopReal(); reset(); break;
+      case 'realtime': if (t.checked) { startReal(); return; } stopReal(); log('ปิดโหมดเวลาจริง'); break;
       case 'next-day': {
         stopAuto();
         M.startDay(S.store, addDays(S.store.today, 1));
