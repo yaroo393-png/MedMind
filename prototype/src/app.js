@@ -84,15 +84,17 @@
 
   function drawQR(canvas, code) {
     const n = 21, ctx = canvas.getContext('2d');
+    const css = getComputedStyle(document.documentElement);
+    const dark = css.getPropertyValue('--color-frame').trim(), light = css.getPropertyValue('--color-surface').trim();
     canvas.width = n; canvas.height = n;
-    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, n, n); ctx.fillStyle = '#111827';
+    ctx.fillStyle = light; ctx.fillRect(0, 0, n, n); ctx.fillStyle = dark;
     let h = 0; for (const c of code) h = (h * 31 + c.charCodeAt(0)) >>> 0;
     const rnd = () => { h ^= h << 13; h ^= h >>> 17; h ^= h << 5; return (h >>> 0) / 4294967296; };
     for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (rnd() > 0.5) ctx.fillRect(x, y, 1, 1);
     [[0, 0], [n - 7, 0], [0, n - 7]].forEach(function (p) {
-      ctx.fillStyle = '#111827'; ctx.fillRect(p[0], p[1], 7, 7);
-      ctx.fillStyle = '#fff'; ctx.fillRect(p[0] + 1, p[1] + 1, 5, 5);
-      ctx.fillStyle = '#111827'; ctx.fillRect(p[0] + 2, p[1] + 2, 3, 3);
+      ctx.fillStyle = dark; ctx.fillRect(p[0], p[1], 7, 7);
+      ctx.fillStyle = light; ctx.fillRect(p[0] + 1, p[1] + 1, 5, 5);
+      ctx.fillStyle = dark; ctx.fillRect(p[0] + 2, p[1] + 2, 3, 3);
     });
   }
 
@@ -126,7 +128,7 @@
   // การ์ดหลักสีฟ้ามิ้นต์ (ตัวอักษรเข้ม --color-on-mint)
   const heroCard = (inner, art, cls) => '<div class="hero-card' + (cls ? ' ' + cls : '') + '">' + (art ? '<div class="hero-art">' + art + '</div>' : '') + inner + '</div>';
   const pillArt = () => '<svg width="104" height="104" viewBox="0 0 80 80" aria-hidden="true"><g transform="rotate(-35 40 40)">' +
-    '<rect x="8" y="26" width="64" height="28" rx="14" fill="#FFFFFF"/><path d="M40 26h18a14 14 0 0 1 0 28H40z" fill="#0B7A7D"/></g></svg>';
+    '<rect x="8" y="26" width="64" height="28" rx="14" style="fill: var(--color-surface)"/><path d="M40 26h18a14 14 0 0 1 0 28H40z" style="fill: var(--color-primary)"/></g></svg>';
   function unpairDialog(side) {
     if (S.dialog !== side) return '';
     return '<div class="dialog"><div class="card"><h3>ยกเลิกการจับคู่?</h3>' +

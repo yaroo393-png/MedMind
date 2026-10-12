@@ -359,6 +359,21 @@ Event: `MedicationSaved` → `DoseConfirmed` / `DoseUnconfirmed` → `DoseConfir
 
 ทุก Must FR (FR-01..05) มีที่อยู่ใน design อย่างน้อย 4 ส่วน — ไม่มี FR ที่ไม่มีที่อยู่ · FR-06..08 (Should / Could) อยู่นอก MVP จึงยังไม่ออกแบบ
 
+### 7.1 Traceability: FR → Operation → Entity → Screen
+
+Operation = ฟังก์ชันใน `prototype/src/logic.js` (และ adapter `readLabel.mock.js`) · ในวงเล็บคือสิ่งที่ทำกับ entity: C = สร้าง, R = อ่าน, U = แก้, D = ลบ
+
+| FR | Operation | Entity (C/R/U/D) | Screen |
+|---|---|---|---|
+| FR-01 จับคู่ | `newInviteCode` · `consent` · `pair` · `unpair` · `canAccess` | INVITE_CODE (C, U `usedAt`) · SENIOR (U `consentAt`) · PAIRING (C, R, D) · `unpair` ลบ MEDICATION, MEAL_TIMES, DOSE_SESSION, NOTIFICATION_LOG ของคู่นี้ด้วย (BR-17) | R0, S1, C1 |
+| FR-02 สแกนฉลาก | `readLabel` (adapter) · `validateDraft` · `setMealTimes` · `reminderTime` · `saveMedication` | MEDICATION (C) · MEAL_TIMES (C, U) | C2 |
+| FR-03 แจ้งเตือน | `startDay` · `tick` (รอบเตือน BR-08) · `dueSessions` | DOSE_SESSION (C, U `round`, `status`) · DOSE_ITEM (C) | S2 |
+| FR-04 ยืนยัน | `confirm` · `notYet` · `canConfirmLate` · `lateUntil` · `medsOf` | DOSE_SESSION (U `confirmedAt`, `status`) · DOSE_ITEM (R) · MEDICATION (R) | S2, S3 |
+| FR-05 แจ้ง Caregiver + สถานะ | `escalate` (เรียกจาก `tick` / `notYet`) · `notify` (เรียกจาก `escalate` / `confirm` ยืนยันช้า) · `dailyStatus` · `statusLabel` | NOTIFICATION_LOG (C) · DOSE_SESSION (R, U `caregiverAlertedAt`) | C3 |
+| — (ไม่มี FR รองรับ) | `validSchedule` · `takesOn` — ความถี่ (วันในสัปดาห์) + วันเริ่ม/สิ้นสุด | MEDICATION (C `scheduleDays`, `startDate`, `endDate`) | C2 |
+
+แถวสุดท้ายเป็นฟีเจอร์ที่ทีมเพิ่มใน prototype โดยยังไม่มี FR ใน SRS — ต้องตัดสินว่าจะเพิ่มเป็น FR หรือตัดออก (ไม่งั้นนับเป็น gold-plating ตามคู่มือ M3)
+
 ---
 
 ## 8. การตัดสินใจเพิ่มเติม (SRS เดิมยังไม่ได้ระบุ)
