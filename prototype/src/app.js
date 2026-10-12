@@ -530,7 +530,8 @@
     S.draft = draft || { name: '', tabletsPerDose: '', timing: { type: 'after', meal: 'breakfast', minutes: '' }, warnings: '', contraindications: '' };
     // ความถี่เริ่มต้น: ทุกวัน เริ่มวันนี้ ไม่มีวันสิ้นสุด (ผู้ดูแลเปลี่ยนได้)
     S.draft.schedule = { days: [0, 1, 2, 3, 4, 5, 6], start: S.store.today, end: null };
-    S.unreadable = draft ? ['name', 'tabletsPerDose', 'minutes'].filter(isEmptyField) : [];
+    // ช่อง "ก่อนอาหารกี่นาที" นับเฉพาะยาก่อนอาหาร — ยาหลังอาหาร / ก่อนนอนไม่มีช่องนี้
+    S.unreadable = draft ? ['name', 'tabletsPerDose'].concat(S.draft.timing.type === 'before' ? ['minutes'] : []).filter(isEmptyField) : [];
     S.draftNote = S.unreadable.length ? { kind: 'info', text: 'บางช่องอ่านจากฉลากไม่ได้ — กรุณาตรวจสอบและกรอกเอง' } : null;
   }
 
