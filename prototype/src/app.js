@@ -21,6 +21,7 @@
     S = {
       store: M.createStore(), now: startAt === undefined ? T('07:30') : startAt,
       role: { senior: false, caregiver: false },   // หน้า R0: แต่ละเครื่องเลือกบทบาทของตัวเองก่อน
+      swapped: false,   // เครื่องซ้ายเลือก "ผู้ดูแล" → สลับตำแหน่งโทรศัพท์ ให้เครื่องที่กดเป็นบทบาทที่เลือก
       soundOn: false, reminderOpen: false, dismissed: {}, ringing: false,
       cgTab: 'C1', cgMsg: null, srMsg: null, cameraAllowed: true,
       draft: null, draftNote: null, unreadable: [], mealDraft: null, saved: null,
@@ -140,14 +141,14 @@
   /* ---------- R0 เลือกบทบาท (ขึ้นทั้ง 2 เครื่อง · แต่ละเครื่องเลือกได้เฉพาะบทบาทของตัวเอง) ---------- */
 
   function roleScreen(side) {
-    const owner = side === 'senior' ? 'ผู้สูงอายุ' : 'ผู้ดูแล';
+    // เลือกได้ทั้ง 2 บทบาท · บทบาทที่อีกเครื่องเลือกไปแล้วกดไม่ได้ (Senior 1 คน มี Caregiver 1 คน — BR-02)
     const card = (key, title, desc, art, tone) => {
-      const mine = key === side;
-      return '<button class="role-card" data-act="role" data-side="' + side + '"' + (mine ? '' : ' disabled') + '>' +
+      const taken = S.role[key];
+      return '<button class="role-card" data-act="role" data-side="' + side + '" data-role="' + key + '"' + (taken ? ' disabled' : '') + '>' +
         '<span class="role-art ' + tone + '">' + art + '</span>' +
         '<span class="role-body"><span class="role-text"><span class="role-title">' + title + '</span>' +
-        '<span class="muted">' + (mine ? desc : 'เครื่องนี้จำลองเป็นโทรศัพท์ของ' + owner) + '</span></span>' +
-        (mine ? '<span class="role-go">' + I.svg('arrow', 24) + '</span>' : '') + '</span></button>';
+        '<span class="muted">' + (taken ? 'อีกเครื่องเลือกบทบาทนี้แล้ว' : desc) + '</span></span>' +
+        (taken ? '' : '<span class="role-go">' + I.svg('arrow', 24) + '</span>') + '</span></button>';
     };
     return '<div class="brand">' + I.mascot(40) + '<span>MedMind</span></div>' +
       '<h3 class="page-title">ยินดีต้อนรับ</h3><p class="muted lead">คุณใช้ MedMind ในฐานะใคร</p>' +
@@ -442,7 +443,10 @@
       '<ul class="log">' + S.log.map((l) => '<li>' + esc(l) + '</li>').join('') + '</ul>';
   }
 
-  function render() { renderDemo(); renderSenior(); renderCaregiver(); refreshDraft(); S.ringing = false; }
+  function render() {
+    document.querySelector('.phones').classList.toggle('swapped', !!S.swapped);
+    renderDemo(); renderSenior(); renderCaregiver(); refreshDraft(); S.ringing = false;
+  }
 
   /* ---------- สถานการณ์ตัวอย่าง ---------- */
 
@@ -450,7 +454,7 @@
     stopAuto(); stopReal();
     const basic = name === 'basic';
     reset(basic ? T('07:55') : T('06:40'));
-    S.role = { senior: true, caregiver: true };   // สถานการณ์ตัวอย่างข้ามหน้าเลือกบทบาท
+    S.role = { senior: true, caregiver: true }; S.swapped = false;   // สถานการณ์ตัวอย่างข้ามหน้าเลือกบทบาท
     M.consent(S.store, S.now); tryPair(CAREGIVER, S.store.invite.code);
     M.setMealTimes(S.store, basic ? { breakfast: T('08:00'), lunch: T('12:00'), dinner: T('18:00'), bedtime: T('21:00') }
                                   : { breakfast: T('07:00'), lunch: T('12:00'), dinner: T('18:00'), bedtime: T('21:00') });
@@ -520,7 +524,13 @@
         log('Caregiver คนที่ 2 → ' + (r.ok ? 'จับคู่สำเร็จ' : PAIR_ERRORS[r.error]));
         break;
       }
-      case 'role': S.role[t.dataset.side] = true; log((t.dataset.side === 'senior' ? 'Senior' : 'Caregiver') + ' เลือกบทบาท'); break;
+      case 'role': {
+        const r = t.dataset.role;
+        if (S.role[r]) break;
+        if (r !== t.dataset.side) S.swapped = !S.swapped;   // เครื่องที่กดกลายเป็นบทบาทที่เลือก
+        S.role[r] = true; log((r === 'senior' ? 'Senior' : 'Caregiver') + ' เลือกบทบาท');
+        break;
+      }
       case 'role-back': S.role[t.dataset.side] = false; break;
       case 'sound': enableSound(); break;
       case 'consent': M.consent(S.store, S.now); log('Senior กดยินยอม'); break;
