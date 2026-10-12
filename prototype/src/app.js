@@ -141,15 +141,13 @@
   /* ---------- R0 เลือกบทบาท (ขึ้นทั้ง 2 เครื่อง · แต่ละเครื่องเลือกได้เฉพาะบทบาทของตัวเอง) ---------- */
 
   function roleScreen(side) {
-    // เลือกได้ทั้ง 2 บทบาท · บทบาทที่อีกเครื่องเลือกไปแล้วกดไม่ได้ (Senior 1 คน มี Caregiver 1 คน — BR-02)
-    const card = (key, title, desc, art, tone) => {
-      const taken = S.role[key];
-      return '<button class="role-card" data-act="role" data-side="' + side + '" data-role="' + key + '"' + (taken ? ' disabled' : '') + '>' +
+    // เลือกได้ทั้ง 2 บทบาทเสมอ — โทรศัพท์จริงไม่รู้ว่าอีกเครื่องเลือกอะไรก่อนจับคู่
+    const card = (key, title, desc, art, tone) =>
+      '<button class="role-card" data-act="role" data-side="' + side + '" data-role="' + key + '">' +
         '<span class="role-art ' + tone + '">' + art + '</span>' +
         '<span class="role-body"><span class="role-text"><span class="role-title">' + title + '</span>' +
-        '<span class="muted">' + (taken ? 'อีกเครื่องเลือกบทบาทนี้แล้ว' : desc) + '</span></span>' +
-        (taken ? '' : '<span class="role-go">' + I.svg('arrow', 24) + '</span>') + '</span></button>';
-    };
+        '<span class="muted">' + desc + '</span></span>' +
+        '<span class="role-go">' + I.svg('arrow', 24) + '</span></span></button>';
     return '<div class="brand">' + I.mascot(40) + '<span>MedMind</span></div>' +
       '<h3 class="page-title">ยินดีต้อนรับ</h3><p class="muted lead">คุณใช้ MedMind ในฐานะใคร</p>' +
       card('senior', 'ผู้สูงอายุ', 'รับการเตือนกินยา กดยืนยันได้ในแตะเดียว', I.couple(236, 'คุณตาและคุณยาย'), 'mint') +
@@ -525,10 +523,15 @@
         break;
       }
       case 'role': {
-        const r = t.dataset.role;
-        if (S.role[r]) break;
-        if (r !== t.dataset.side) S.swapped = !S.swapped;   // เครื่องที่กดกลายเป็นบทบาทที่เลือก
-        S.role[r] = true; log((r === 'senior' ? 'Senior' : 'Caregiver') + ' เลือกบทบาท');
+        // prototype จำลอง Senior 1 คน กับ Caregiver 1 คน (BR-02): เครื่องที่กดได้บทบาทที่เลือกเสมอ
+        const r = t.dataset.role, other = r === 'senior' ? 'caregiver' : 'senior', name = (x) => x === 'senior' ? 'ผู้สูงอายุ' : 'ผู้ดูแล';
+        if (r !== t.dataset.side) S.swapped = !S.swapped;   // สลับข้างโทรศัพท์ ให้เครื่องที่กดเป็นบทบาทที่เลือก
+        if (S.role[r]) {                                    // อีกเครื่องเลือกบทบาทนี้ไว้แล้ว → อีกเครื่องเปลี่ยนเป็นอีกบทบาท
+          S.role[other] = true;
+          S.store.senior.consentAt = null;                  // คนที่เป็นผู้สูงอายุเปลี่ยน → ต้องกดยินยอมใหม่
+          log('เครื่องนี้เลือก' + name(r) + ' → อีกเครื่องเปลี่ยนเป็น' + name(other));
+        } else log((r === 'senior' ? 'Senior' : 'Caregiver') + ' เลือกบทบาท');
+        S.role[r] = true;
         break;
       }
       case 'role-back': S.role[t.dataset.side] = false; break;
