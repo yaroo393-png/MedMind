@@ -30,15 +30,15 @@
     return '<svg class="ic' + (cls ? ' ' + cls : '') + '" width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="currentColor"' +
       ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (P[name] || '') + '</svg>';
   }
-  // มาสคอต: เม็ดยาแคปซูลยิ้ม (ครึ่งเขียวอมฟ้า ครึ่งขาว)
+  // มาสคอต: เม็ดยาแคปซูลยิ้ม (ครึ่งฟ้ามิ้นต์ ครึ่งขาว) · สีตาม design-system.md §1.1
   function mascot(size) {
     const s = size || 72;
     return '<svg class="mascot" width="' + s + '" height="' + s + '" viewBox="0 0 80 80" aria-hidden="true">' +
       '<g transform="rotate(-28 40 40)">' +
-      '<rect x="10" y="24" width="60" height="32" rx="16" fill="#FFFFFF" stroke="#1F3A5F" stroke-width="3"/>' +
-      '<path d="M40 24h14a16 16 0 0 1 0 32H40z" fill="#0F766E" stroke="#1F3A5F" stroke-width="3"/>' +
-      '<circle cx="24" cy="38" r="2.6" fill="#1F3A5F"/><circle cx="33" cy="38" r="2.6" fill="#1F3A5F"/>' +
-      '<path d="M24 45q4.5 4 9 0" fill="none" stroke="#1F3A5F" stroke-width="2.6" stroke-linecap="round"/>' +
+      '<rect x="10" y="24" width="60" height="32" rx="16" fill="#FFFFFF" stroke="#17324D" stroke-width="3"/>' +
+      '<path d="M40 24h14a16 16 0 0 1 0 32H40z" fill="#2EC4C4" stroke="#17324D" stroke-width="3"/>' +
+      '<circle cx="24" cy="38" r="2.6" fill="#17324D"/><circle cx="33" cy="38" r="2.6" fill="#17324D"/>' +
+      '<path d="M24 45q4.5 4 9 0" fill="none" stroke="#17324D" stroke-width="2.6" stroke-linecap="round"/>' +
       '<ellipse cx="21" cy="44" rx="2.6" ry="1.6" fill="#FDA4AF"/><ellipse cx="36" cy="44" rx="2.6" ry="1.6" fill="#FDA4AF"/>' +
       '</g></svg>';
   }
