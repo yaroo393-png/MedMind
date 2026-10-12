@@ -9,6 +9,15 @@
 > **Team:** **MedMind**
 > **GitHub Repository:** https://github.com/yaroo393-png/SE-Project
 
+### 🔗 ลิงก์เปิดดู (ไม่ต้องดาวน์โหลด)
+
+| ลิงก์ | คืออะไร |
+|---|---|
+| [เว็บแอป (Clickable Prototype)](https://claude.ai/artifact/Tjx97w6AbSVXBH3APZ86pE) | `prototype/index.html` เวอร์ชันเดียวกับใน repo — โทรศัพท์ 2 เครื่อง + แถบ demo (วิธีใช้: [`prototype/README.md`](prototype/README.md)) |
+| [Design canvas](https://claude.ai/artifact/AfFEoiLnhKbhGq7w4nHsjQ) | หน้าจอออกแบบ R0, S1–S3, C1–C3 ธีมฟ้ามิ้นต์ (ค่าสีและฟอนต์: [`design-system.md`](docs/03-design/design-system.md)) |
+
+> ลิงก์ทั้งสองอยู่บน claude.ai — ต้องแชร์จากเมนู Share ก่อน คนอื่นถึงจะเปิดได้ · ถ้าแก้ `prototype/` แล้ว ต้องอัปเดตเว็บแอปที่ลิงก์นี้ด้วย ไม่อัปเดตเอง
+
 ---
 
 ## สถานะปัจจุบัน (Current Status)

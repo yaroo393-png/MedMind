@@ -4,6 +4,8 @@ Clickable prototype (HTML / CSS / JavaScript) — **เปิดในเบร�
 
 ## วิธีเปิด
 
+**เปิดออนไลน์:** [เว็บแอป](https://claude.ai/artifact/Tjx97w6AbSVXBH3APZ86pE) (ต้องได้รับแชร์ลิงก์ก่อน) · หรือเปิดจากไฟล์ในเครื่อง:
+
 1. ดาวน์โหลด repo (Code → Download ZIP) แล้วแตกไฟล์
 2. ดับเบิลคลิกเปิด `prototype/index.html` ด้วย Chrome / Edge / Safari
 3. หน้าเว็บแสดงโทรศัพท์ 2 เครื่องคู่กัน — ซ้าย = ผู้สูงอายุ (Senior), ขวา = ผู้ดูแล (Caregiver) — ใช้ข้อมูลชุดเดียวกัน
