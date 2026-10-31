@@ -38,6 +38,7 @@
 | หน้าจอ | ป้าย "Covers: FR-xx" บนหน้านั้น + Screen Map ใน `docs/03-design/design-system.md` · ต้องเปิดได้ใน Demo mode |
 | โครงข้อมูล / Security Rules | `docs/03-design/architecture.md` §6 และ `firestore-rules-draft.md` |
 | ทดสอบ | ช่อง Test ใน `docs/TRACEABILITY.md` + ตารางผลใน `docs/05-report/final-report.md` §5 |
+| ไฟล์ที่มี 2 ภาษา (README, Charter, SRS) | แก้ **ภาษาต้นฉบับก่อนเสมอ** — README: ไทยเป็นต้นฉบับ (`README.md` → `README.en.md`) · Charter/SRS: อังกฤษเป็นต้นฉบับที่ส่งอาจารย์ (`charter.md`, `spec.md` → `charter.th.md`, `spec.th.md`) แล้วคัดอีกฉบับให้ตรง · เลข FR/BR/NFR/AC ต้องเหมือนกันทุกจุด · ถ้าขัดกันให้ยึดฉบับที่ส่งอาจารย์ · บันทึกการแปลด้วย AI ใน log |
 | ใช้ AI | `docs/AI_USAGE_LOG.md` |
 | สถานะงาน / sprint | บอร์ด GitHub Projects + `docs/02-requirements/backlog.md` + velocity/retro ใน `docs/PROJECT-PLAN.md` |
 
