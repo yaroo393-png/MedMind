@@ -98,7 +98,8 @@ flowchart TB
 // Dose — บันทึกยืนยัน 1 มื้อ (เก็บใน Firestore, id = id ของมื้อ → ไม่ซ้ำ)
 { confirmedAt: <เวลาที่กดจริงบนเครื่อง>, status: 'taken' | 'taken_late' }
 
-// mealState(now, meal, dose, nextMealStart, notYetLastRoundAt) → ผลลัพธ์ที่คำนวณ
+// mealState({ now, meal, dose, nextMealStart, notYetLastRoundAt }) → ผลลัพธ์ที่คำนวณ
+// เวลาทุกตัวเป็นตัวเลข milliseconds (เช่น new Date(2026, 10, 2, 8, 5).getTime()) · now = เวลาที่ส่งเข้ามา ห้ามเรียก Date.now() ในฟังก์ชัน
 { state: 'not_due' | 'reminding' | 'taken' | 'not_confirmed' | 'taken_late' | 'missed',
   round: 0 | 1 | 2 | null,      // รอบเตือนปัจจุบัน T, T+5, T+10 (เฉพาะ state = 'reminding')
   canConfirm: boolean,           // ยังกด "กินแล้ว" ได้ไหม (BR-15)

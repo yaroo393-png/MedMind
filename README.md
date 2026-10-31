@@ -1,3 +1,5 @@
+🌐 **ภาษา / Language:** ไทย · [English](README.en.md)
+
 # MedMind — ระบบเตือนกินยาและแจ้งสถานะให้ผู้ดูแลผู้สูงอายุ
 
 > **Intro to Software Engineering (15031001) — ปีการศึกษา 2569** · คณะ/สาขา: School of Applied Digital Technology, Mae Fah Luang University
@@ -66,10 +68,10 @@
 docs/
 ├── 01-charter/
 │   ├── M1-Charter_MedMind.pdf   # M1 (ฉบับส่ง): ปัญหา, ผู้ใช้, ขอบเขต in/out, ตัววัดความสำเร็จ, Gate 1–3, SDLC, ทีม
-│   └── charter.md               # สำเนาอ่านบน GitHub
+│   └── charter.md               # สำเนาอ่านบน GitHub (อังกฤษ) · charter.th.md = ฉบับแปลไทย
 ├── 02-requirements/
 │   ├── M2-SRS_MedMind.pdf       # M2 (ฉบับส่ง) SRS v1.2
-│   ├── spec.md                  # สำเนา SRS อ่านบน GitHub (FR, AC, BR, NFR, use case, traceability, AI log §8)
+│   ├── spec.md                  # สำเนา SRS อ่านบน GitHub (อังกฤษ) · spec.th.md = ฉบับแปลไทย (FR, AC, BR, NFR, use case, traceability, AI log §8)
 │   └── backlog.md               # Product Backlog: MoSCoW + pain + ขนาดงาน + สถานะ
 ├── 03-design/
 │   ├── architecture.md          # สถาปัตยกรรม, ADR 1–8 (รวม Demo mode), โมดูล+สัญญา, ERD, sequence/state
@@ -90,7 +92,7 @@ public/                           # เว็บแอป: index.html (เลื
 tests/                            # node --test
 scripts/check-secrets.js          # ตรวจความลับ/ไฟล์ต้องห้าม
 .github/                          # CI, PR template, issue template
-README.md · CLAUDE.md · RULES.md
+README.md (ไทย) · README.en.md (English) · CLAUDE.md · RULES.md
 ```
 
 ## 🚀 วิธีเปิดใช้งาน

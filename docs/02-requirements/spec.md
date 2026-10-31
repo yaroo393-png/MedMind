@@ -1,3 +1,5 @@
+🌐 **Language:** English · [ไทย](spec.th.md)
+
 # Software Requirements Specification
 
 > สำเนา Markdown ของ SRS v1.2 สำหรับอ่านบน GitHub — ฉบับที่ส่งคือ [`M2-SRS_MedMind.pdf`](M2-SRS_MedMind.pdf) · ถ้าแก้ requirement ต้องแก้ทั้ง PDF (ต้นฉบับ Word) และไฟล์นี้ให้ตรงกัน แล้วคัดไป `docs/TRACEABILITY.md`

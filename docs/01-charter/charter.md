@@ -1,3 +1,5 @@
+🌐 **Language:** English · [ไทย](charter.th.md)
+
 # Team Charter (M1)
 
 > สำเนา Markdown ของ Team Charter (M1) สำหรับอ่านบน GitHub — ฉบับที่ส่งคือ [`M1-Charter_MedMind.pdf`](M1-Charter_MedMind.pdf) · แก้ทั้งสองไฟล์ให้ตรงกัน

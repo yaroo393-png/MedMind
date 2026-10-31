@@ -8,8 +8,11 @@ const mustExist = [
   'README.md', 'CLAUDE.md', 'RULES.md', '.gitignore',
   'docs/01-charter/M1-Charter_MedMind.pdf',
   'docs/01-charter/charter.md',
+  'docs/01-charter/charter.th.md',
+  'README.en.md',
   'docs/02-requirements/M2-SRS_MedMind.pdf',
   'docs/02-requirements/spec.md',
+  'docs/02-requirements/spec.th.md',
   'docs/02-requirements/backlog.md',
   'docs/03-design/architecture.md',
   'docs/03-design/design-system.md',
@@ -23,6 +26,27 @@ const mustExist = [
 ];
 for (const f of mustExist) {
   test(`มีไฟล์ ${f}`, () => assert.ok(existsSync(f), `ไม่พบ ${f}`));
+}
+
+// ไฟล์ 2 ภาษาต้องมีปุ่มสลับภาษาลิงก์ไปหากัน
+const pairs = [
+  ['README.md', 'README.en.md'],
+  ['docs/01-charter/charter.md', 'docs/01-charter/charter.th.md'],
+  ['docs/02-requirements/spec.md', 'docs/02-requirements/spec.th.md'],
+];
+for (const [a, b] of pairs) {
+  const base = (p) => p.split('/').pop();
+  test(`สลับภาษา: ${a} ↔ ${b}`, () => {
+    assert.ok(readFileSync(a, 'utf8').slice(0, 300).includes(base(b)), `${a} ไม่มีลิงก์ไป ${base(b)}`);
+    assert.ok(readFileSync(b, 'utf8').slice(0, 300).includes(base(a)), `${b} ไม่มีลิงก์ไป ${base(a)}`);
+  });
+}
+// เลข FR / BR / NFR / UC ต้องตรงกันทั้ง 2 ภาษา (Golden Thread ไม่ขาด)
+const idsOf = (f, re) => [...new Set(readFileSync(f, 'utf8').match(re) ?? [])].sort().join(',');
+for (const re of [/FR-0\d/g, /BR-\d\d/g, /NFR-\d\d/g, /UC-\d/g]) {
+  test(`SRS สองภาษามีเลข ${re.source} ตรงกัน`, () => {
+    assert.equal(idsOf('docs/02-requirements/spec.md', re), idsOf('docs/02-requirements/spec.th.md', re));
+  });
 }
 
 const frs = ['FR-01', 'FR-02', 'FR-03', 'FR-04', 'FR-05'];
