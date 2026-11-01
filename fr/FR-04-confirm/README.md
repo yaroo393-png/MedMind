@@ -37,7 +37,7 @@ Definition: the older adult confirms on the reminder screen (FR-03) or on their 
 
 ## พึ่งพา / เชื่อมกับโมดูลอื่น
 
-เรียก `mealState()` ของ FR-03 เพื่อรู้ว่ายืนยันได้ไหม (BR-15) · เขียน `doses` / `events` ผ่าน `core/repo.js`
+เรียก `mealState()` ของ FR-03 เพื่อรู้ว่ายืนยันได้ไหม (BR-15) · เขียน `doses` (DoseEvent) / `events` ผ่าน service (`services/dataService.js`)
 
 ## ก่อนสอบปากเปล่า — ต้องตอบได้
 

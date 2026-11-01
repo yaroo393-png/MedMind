@@ -39,7 +39,7 @@ Definition: only the caregiver can add or edit medicines. Required fields are me
 
 ## พึ่งพา / เชื่อมกับโมดูลอื่น
 
-ใช้ `core/repo.js` เขียน `medicines`/`mealTimes` · `logic/schedule.js` ให้ FR-03 ใช้จัดกลุ่มมื้อ (`groupMeals`) — **ตกลงรูปข้อมูล Medicine/Meal กับเจ้าของ FR-03 ก่อนเขียน** (architecture §5.1)
+ใช้ service (`services/dataService.js`) เขียน `medicines`/`schedules`/`mealTimes` · `logic/schedule.js` ให้ FR-03 ใช้จัดกลุ่มมื้อ (`groupMeals`) — **ตกลงรูปข้อมูล Medicine/Meal กับเจ้าของ FR-03 ก่อนเขียน** (architecture §5.1)
 
 ## ก่อนสอบปากเปล่า — ต้องตอบได้
 
