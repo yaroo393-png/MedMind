@@ -2,7 +2,7 @@
 
 # Software Requirements Specification
 
-> สำเนา Markdown ของ SRS v1.2 สำหรับอ่านบน GitHub — ฉบับที่ส่งคือ [`M2-SRS_MedMind.pdf`](M2-SRS_MedMind.pdf) · ถ้าแก้ requirement ต้องแก้ทั้ง PDF (ต้นฉบับ Word) และไฟล์นี้ให้ตรงกัน แล้วคัดไป `docs/TRACEABILITY.md`
+> สำเนา Markdown ของ SRS **v1.3 (ฉบับร่าง — ยังไม่ได้ออก PDF ใหม่)** สำหรับอ่านบน GitHub — ฉบับที่ส่งคือ [`M2-SRS_MedMind.pdf`](M2-SRS_MedMind.pdf) (v1.2) · ถ้าแก้ requirement ต้องแก้ทั้ง PDF (ต้นฉบับ Word) และไฟล์นี้ให้ตรงกัน แล้วคัดไป `docs/TRACEABILITY.md`
 
 **MedMind — medication reminders and medication status for the caregivers of older adults**
 
@@ -13,7 +13,7 @@ Introduction to Software Engineering (15031001) · Milestone 2 · Requirements &
 | Team name | MedMind |
 | Project title | MedMind — medication reminders and medication status for the caregivers of older adults |
 | SDLC chosen in M1 + reason | Incremental — Increment 1 builds the core loop (remind → confirm → alert the caregiver, FR-03–05) on real shared data, using a test pair and test medicines set up by the team; Increment 2 adds pairing and label reading (FR-01, FR-02), because Thai label-reading accuracy is the biggest unknown and must not block the core loop. |
-| Date / version | v1.2 · 31 October 2026 |
+| Date / version | v1.3 (draft) · 1 November 2026 — the submitted PDF is v1.2 |
 | GitHub repo | https://github.com/yaroo393-png/MedMind |
 
 **Document history**
@@ -23,6 +23,7 @@ Introduction to Software Engineering (15031001) · Milestone 2 · Requirements &
 | v1.0 | 30 Oct 2026 | Restarted SRS for the new team repository: earlier repo links, demo and test results removed; gaps added (first-tap sound condition, page reopen BR-18, OCR accuracy NFR-11, success measure, two out-of-scope items); layout aligned with the instructor's template. |
 | v1.1 | 30 Oct 2026 | Describes the working system instead of a clickable prototype: shared online data store on a no-cost plan, offline confirmation (FR-04 criterion 7), NFR-12 and NFR-13; review fixes — caregiver alerts only while MedMind is open (NFR-01, BR-18), late-arriving offline confirmations (BR-13), no accounts or passwords. |
 | v1.2 | 31 Oct 2026 | Label reading by an external AI service after the caregiver covers the name, HN and other personal details (FR-02, BR-19, NFR-14) — the course requires an AI feature; FR-09 AI weekly summary added as Could; use-case diagram redrawn with “Cover name and HN”; repository link; this history table; AI usage log updated. |
+| v1.3 (draft) | 1 Nov 2026 | Increment 1 readiness: each medicine schedule keeps its own time zone and reminders never shift silently (§2.2, FR-03 criterion 6); offline confirmations keep the scheduled, tapped and received times apart with no duplicates (FR-04 definition and criterion 8, NFR-07); the caregiver's status page shows when MedMind was last open on the older adult's phone — Active / Inactive / Unknown — without claiming a live connection (FR-05 definition and criteria 8–9, NFR-09); access ends on the data store at once after unpairing (FR-05 criterion 10, BR-17). Not yet in the PDF. |
 
 ## 1. Introduction
 
@@ -69,6 +70,8 @@ MedMind links one older adult with one caregiver, turns caregiver-checked medici
 - Constraint: scanning a QR code or photographing a label needs camera permission; without it, the 6-digit invite code or manual entry (FR-02, criterion 5) is used instead.
 - Constraint: in the MVP one older adult has one caregiver (several caregivers is a Should).
 - Constraint: reminder times come from the label instructions only; the system never guesses a time.
+- Constraint: each medicine schedule stores the time zone it was set in (an IANA name such as Asia/Bangkok). Reminder times are always worked out in that time zone; if a phone is set to a different time zone, MedMind shows a warning and never moves the reminders by itself (FR-03, criterion 6).
+- Constraint: the last-active time on the caregiver's status page only shows when MedMind was last open on the older adult's phone; it does not prove that the phone is connected now or that any medicine was taken (FR-05).
 - Assumption: the older adult and the caregiver have smartphones that can open the web app and keep it open during medication times — not yet verified with users.
 - Assumption: both phones set their clocks automatically from the network, so meal times match on both sides.
 - Assumption: the caregiver does all of the main setup (interviewee 3).
@@ -142,13 +145,14 @@ Definition — reminder timeline, shared with FR-04 and FR-05 (T = the meal's re
 | T+15 | Caregiver alerted “Medicine not yet confirmed” (unless already alerted at T+10) |
 | After T+15 | Late confirmation allowed until the reminder time of the next meal that starts after T+15 (none = 23:59); the caregiver is then told “Medicine confirmed” |
 
-Repeat reminders are at fixed times from T and only while the meal is not confirmed. The reminder screen shows every medicine in the meal (name, tablets, warnings, contraindications), a green “Taken” and a red “Not yet” button, and plays a sound at every round while MedMind is open and has been tapped once since opening; it shows no medicine photos. The caregiver alert is sent once per meal and never says “not taken”. Meals that overlap (e.g. 06:45 before breakfast and 07:00 after breakfast) each keep their own reminders, caregiver alert and late-confirmation window; the screen lists every unconfirmed meal in time order under separate headings, each with its own buttons, and reminders due at the same moment sound once. When the page is reopened, BR-18 applies.
+Repeat reminders are at fixed times from T and only while the meal is not confirmed. The reminder screen shows every medicine in the meal (name, tablets, warnings, contraindications), a green “Taken” and a red “Not yet” button, and plays a sound at every round while MedMind is open and has been tapped once since opening; it shows no medicine photos. The caregiver alert is sent once per meal and never says “not taken”. Meals that overlap (e.g. 06:45 before breakfast and 07:00 after breakfast) each keep their own reminders, caregiver alert and late-confirmation window; the screen lists every unconfirmed meal in time order under separate headings, each with its own buttons, and reminders due at the same moment sound once. When the page is reopened, BR-18 applies. Reminder times are always worked out in the schedule's own time zone (§2.2); a phone set to another time zone gets a warning, never a silent shift.
 
 1. Given an 08:00 meal with two medicines, MedMind open on the older adult's phone and the page tapped at least once since it was opened, when it is 08:00, then a reminder sound plays and both medicines (name, tablets, warnings, contraindications) are shown on one screen with “Taken” / “Not yet” buttons and no medicine photos.
 2. Wrong path. Given the meal is not confirmed, when it is 08:05 and then 08:10, then repeat reminders 1 and 2 are given, each with sound.
 3. Given the meal is confirmed, when the next repeat-reminder time arrives, then no reminder is given.
 4. Wrong path. Given meal A at 06:45 (15 minutes before breakfast) is not confirmed and meal B is at 07:00, when it is 07:00, then the reminder screen shows both meals in time order under separate headings with separate buttons and one sound, and the caregiver is alerted about meal A at 07:00, on meal A's own timeline.
 5. Wrong path. Given the page was closed at 08:00 and the meal is not confirmed, when the older adult opens MedMind at 08:07, then the reminder screen shows the meal at once, the 08:00 and 08:05 rounds are not replayed, and the 08:10 round still happens.
+6. Wrong path. Given an 08:00 schedule saved in the Asia/Bangkok time zone and the older adult's phone set to another time zone (e.g. Asia/Tokyo), when MedMind is open on that phone, then the reminder still happens at 08:00 Asia/Bangkok time and is shown with its time zone, the warning “Your phone's time zone is different from the medicine schedule” is shown, and no schedule is changed until the caregiver edits it.
 
 **FR-04 — Confirm the whole meal [Must]**
 
@@ -156,7 +160,7 @@ Repeat reminders are at fixed times from T and only while the meal is not confir
 
 Pain this traces to: not remembering whether the medicine was taken (problem statement); wanting an easy way to tell their child (interviewee 1); large buttons and few taps (interviewee 3).
 
-Definition: the older adult confirms on the reminder screen (FR-03) or on their home screen, which shows today's meals with their status and a “Taken” button for any meal still in the late-confirmation window.
+Definition: the older adult confirms on the reminder screen (FR-03) or on their home screen, which shows today's meals with their status and a “Taken” button for any meal still in the late-confirmation window. One tap on “Taken” saves one confirmation for each medicine schedule in the meal, all in a single write. Each confirmation is identified by its date and schedule, so a repeated tap or a repeated send cannot create a second one, and it keeps three times apart: the scheduled time (T), the time “Taken” was tapped on the phone, and the time the data store received it. Status and late confirmation are worked out from the tapped time, never from the received time (BR-13, BR-15).
 
 1. Given the 08:00 meal reminder is showing, when the older adult taps “Taken” at 08:03, then the status becomes “Taken”, 08:03 is recorded, and reminders for that meal stop.
 2. Wrong path. Given the meal is already confirmed, when “Taken” is tapped again, then no duplicate record is created.
@@ -165,12 +169,15 @@ Definition: the older adult confirms on the reminder screen (FR-03) or on their 
 5. Given the meal was not confirmed by 08:15, when the older adult taps “Taken” on the home screen at 08:40, then the status becomes “Taken (late confirmation)” with 08:40.
 6. Wrong path. Given the next meal's reminder time (12:00) has passed, when the older adult tries to confirm the 08:00 meal, then it cannot be confirmed and the status stays “Not yet confirmed”.
 7. Wrong path. Given the older adult's phone is offline, when they tap “Taken” at 08:03, then their screen shows “Taken” at once, and the confirmation reaches the caregiver with 08:03 as its time within 10 seconds of the connection returning.
+8. Wrong path. Given the older adult's phone is offline and “Taken” is tapped for the 08:00 meal at 08:03 and again at 08:04, when the connection returns at 09:30, then the data store holds exactly one confirmation for each medicine schedule of that meal, each with scheduled time 08:00, tapped time 08:03 and received time 09:30, and the status is “Taken” (worked out from 08:03, not 09:30).
 
 **FR-05 — Caregiver alert and daily status [Must]**
 
 *User story: As a caregiver, I want to be notified only when a meal is still not confirmed after the reminders, and to see today's status of every meal in one place, so that I don't have to call or message for every meal.*
 
 Pain this traces to: having to call or send a LINE message for every meal; no single place showing the status (problem statement); wanting an alert only when a meal is not yet confirmed (interviewee 2).
+
+Definition: the status page also shows the older adult's app activity, from the last time MedMind was open and visible on their phone (the last-active time, stamped by the data store's clock when the page opens or becomes visible, then at most every 5 minutes while it stays visible): “Active” = within the last 10 minutes; “Inactive” = more than 10 minutes ago; “Unknown” = never recorded, or the caregiver's own phone is offline so the value may be out of date. It is always shown with “Last open HH:MM”. It shows only that MedMind was open — it does not prove that the phone is connected now or that any medicine was taken — and only the paired caregiver and the older adult can read it.
 
 1. Given the older adult confirmed at 08:12, when it is 08:15, then the caregiver is not alerted.
 2. Wrong path. Given there is no confirmation, when it is 08:15, then the caregiver is alerted “Medicine not yet confirmed” (never “not taken”).
@@ -179,6 +186,9 @@ Pain this traces to: having to call or send a LINE message for every meal; no si
 5. Given the older adult tapped “Not yet” in the 08:10 round (the caregiver has already been alerted), when it is 08:15, then the caregiver is not alerted again.
 6. Given the caregiver has been alerted “Medicine not yet confirmed”, when the older adult confirms late at 08:40, then the caregiver receives “Medicine confirmed at 08:40”.
 7. Wrong path. Given the caregiver's page was closed at 08:15 when a meal was not confirmed, when the caregiver opens MedMind at 09:00, then the unseen alert is shown and the meal's status is “Not yet confirmed” (or “Taken (late confirmation)” + time if confirmed since).
+8. Given the last-active time is 08:00 and the caregiver's phone is online, when the caregiver opens the status page at 08:08, then it shows “Active” with “Last open 08:00”.
+9. Wrong path. Given the last-active time is 08:00, when the caregiver opens the status page at 08:11, then it shows “Inactive” with “Last open 08:00”; and given no last-active time was ever recorded, or the caregiver's phone is offline, then it shows “Unknown” and never “Active”.
+10. Wrong path. Given the pair has just been unpaired, when the former caregiver's phone (even one still holding copies of the data) asks for the older adult's medicines, confirmations or last-active time, then the data store refuses every request at once, and the caregiver's screen removes the copies it holds.
 
 **Should and Could requirements**
 
@@ -203,9 +213,9 @@ Forbidden words unless quantified: fast, easy, user-friendly, smart, secure. NFR
 | NFR-04 | security / privacy (required) | A caregiver sees only the older adult they are paired with; a request for another older adult's data is refused. | Automated test of the access rules: a caregiver asks for another older adult's data and is refused |
 | NFR-05 | privacy | No connection happens before the older adult taps consent (0 times). | Automated test (FR-01, criterion 2) |
 | NFR-06 | safety | No medicine record is saved without the caregiver's check (0 records). | Automated test (FR-02) |
-| NFR-07 | reliability | However many times “Taken” is tapped, there is only one confirmation record for that meal. | Automated test (FR-04, criterion 2) |
+| NFR-07 | reliability | However many times “Taken” is tapped, online or offline, there is only one confirmation record for each medicine schedule of that meal. | Automated test (FR-04, criterion 2) |
 | NFR-08 | performance | With the phone online, the AI draft appears within 10 seconds of tapping “Send to AI” for at least 18 of 20 real labels (90%). | Time from tapping “Send to AI” to seeing the draft, with 20 real labels on a phone on mobile data |
-| NFR-09 | privacy / PDPA | The system stores only what FR-01–05 use (medicine details, meal times, confirmation status, pairing and its consent record) and none of the older adult's national ID number, address, date of birth, phone number or hospital number (0 fields). MedMind never stores a label photo (0 photos); only a copy with the name, HN and barcodes covered is sent to the AI service. Medicine data and medication status are health data (sensitive under PDPA), kept only as far as the FRs need and shared only after consent (BR-02). | Review every field in the data model in the Design document, and check the data store holds no images |
+| NFR-09 | privacy / PDPA | The system stores only what FR-01–05 use (medicine details, meal times and schedules with their time zone, confirmation status and times, pairing and its consent record, and the last-active time of the older adult's phone) and none of the older adult's national ID number, address, date of birth, phone number or hospital number (0 fields). MedMind never stores a label photo (0 photos); only a copy with the name, HN and barcodes covered is sent to the AI service. Medicine data and medication status are health data (sensitive under PDPA), kept only as far as the FRs need and shared only after consent (BR-02). | Review every field in the data model in the Design document, and check the data store holds no images |
 | NFR-10 | privacy / PDPA | After unpairing, the former caregiver's requests for that data succeed 0 times, and that pair's medicines and history are 0 records. | Automated test: after unpairing, the request is refused and remaining records are counted |
 | NFR-11 | accuracy | All required fields (medicine name, tablets per dose, meal / time) are read correctly, with no edit needed, on at least 16 of 20 real labels (80%). | Compare each draft with its label by hand, using the same 20 labels as NFR-08 |
 | NFR-12 | performance | With both phones online, a confirmation, or a “Not yet” in the last round, appears on the caregiver's phone within 10 seconds in at least 19 of 20 trials. | Timed trials on two real phones on mobile data |
@@ -261,9 +271,9 @@ Only FR-03 (the heart of the MVP) is filled all the way across, following the in
 |---|---|---|---|---|
 | Older adults find sign-up hard; the caregiver is not there | FR-01 (UC-1, UC-7) | (Design) | (Increment 2) | FR-01 criteria 1–6 · NFR-04, NFR-05, NFR-10 |
 | The caregiver wants help filling in medicine details from the label | FR-02 (UC-2) | (Design) | (Increment 2) | FR-02 criteria 1–9 · NFR-06, NFR-08, NFR-09, NFR-11, NFR-14 |
-| Forgetting a dose / taking it late | FR-03 (UC-3) | State machine of a meal: waiting → reminding (T, T+5, T+10) → taken / not yet confirmed / late confirmation (planned) | Reminder screen: every medicine in the meal + sound + “Taken” / “Not yet” buttons (Increment 1, planned) | FR-03 criteria 1–5 · NFR-01 (planned) |
-| Not remembering whether the medicine was taken | FR-04 (UC-4) | (Design) | (Increment 1) | FR-04 criteria 1–7 · NFR-02, NFR-03, NFR-07, NFR-12 |
-| Calling or messaging for every meal; no single status | FR-05 (UC-5, UC-6) | (Design) | (Increment 1) | FR-05 criteria 1–7 · NFR-01, NFR-12, NFR-13 |
+| Forgetting a dose / taking it late | FR-03 (UC-3) | State machine of a meal: waiting → reminding (T, T+5, T+10) → taken / not yet confirmed / late confirmation (planned) | Reminder screen: every medicine in the meal + sound + “Taken” / “Not yet” buttons (Increment 1, planned) | FR-03 criteria 1–6 · NFR-01 (planned) |
+| Not remembering whether the medicine was taken | FR-04 (UC-4) | (Design) | (Increment 1) | FR-04 criteria 1–8 · NFR-02, NFR-03, NFR-07, NFR-12 |
+| Calling or messaging for every meal; no single status | FR-05 (UC-5, UC-6) | (Design) | (Increment 1) | FR-05 criteria 1–10 · NFR-01, NFR-12, NFR-13 |
 | The caregiver is not always around | FR-06 (Should) | (after the MVP) | (after the MVP) | (criteria written when moved into an increment) |
 | Not knowing which medicines to take today | FR-07 (Could) | (after the MVP) | (after the MVP) | (criteria written when moved into an increment) |
 | Wanting to see medicine photos (interviewee 1) | FR-08 (Could) | (after the MVP) | (after the MVP) | (criteria written when moved into an increment) |
@@ -290,7 +300,7 @@ If this table is empty but the prose looks generated, the milestone is capped at
 
 ☑  Every FR is a user story with a benefit — all 9 FRs in §3 end in a “so that” clause, and each Must FR names the pain it traces to.
 
-☑  Every FR has acceptance criteria you could actually test — 34 criteria across the 5 Must FRs, each a number, a state, or a yes/no; 19 of them are wrong paths.
+☑  Every FR has acceptance criteria you could actually test — 39 criteria across the 5 Must FRs, each a number, a state, or a yes/no; 23 of them are wrong paths.
 
 ☑  No FR is vague — no bare “fast”, “easy”, or “user-friendly” anywhere in §3, and no product or vendor is named in an FR.
 
@@ -324,6 +334,6 @@ If this table is empty but the prose looks generated, the milestone is capped at
 | BR-14 | The daily status shows every meal of the day: “Taken” + time / “Taken (late confirmation)” + time / “Not yet confirmed” / “Not due yet”. | FR-05 |
 | BR-15 | Late confirmation: after T+15 the older adult can still tap “Taken” on the home screen until the reminder time of the next meal that starts after this meal's T+15 (none = 23:59) → “Taken (late confirmation)” + time, and the caregiver is told “Medicine confirmed at …”; after that window it cannot be confirmed and stays “Not yet confirmed”. | FR-04,<br>FR-05 |
 | BR-16 | Overlapping meals (e.g. 06:45 and 07:00): each keeps its own rounds (BR-08), caregiver alert (BR-13) and late window (BR-15); the reminder screen lists every unconfirmed meal in time order under separate headings, each with its own buttons; reminders due at the same moment sound once. | FR-03,<br>FR-04,<br>FR-05 |
-| BR-17 | Unpairing: either side can unpair (with a second confirmation) → the caregiver loses access immediately, and that pair's medicines and confirmation history are deleted (PDPA right to erasure). | FR-01 |
+| BR-17 | Unpairing: either side can unpair (with a second confirmation) → the caregiver loses access immediately, and that pair's medicines, schedules, confirmation history and last-active time are deleted (PDPA right to erasure). | FR-01 |
 | BR-18 | Reopening the page: each meal's status is worked out from the clock. Rounds whose time passed while the page was closed are not replayed. A meal still within T to T+15 shows the reminder screen at once and keeps its remaining rounds; a meal in its late window shows “Not yet confirmed” with a “Taken” button. On the caregiver's side, an alert due while the page was closed is shown as unseen on the next open. | FR-03,<br>FR-05 |
 | BR-19 | Before a label photo is sent to the AI service, the caregiver covers the patient's name, HN, any barcode or QR code and any other personal detail, sees the exact image that will be sent, and ticks “Name and HN are covered”; until then nothing is sent. The consent screen states that, on its no-cost tier, the AI provider may use and review what is sent. Only the covered copy is sent, without its file details (metadata), and no photo is stored. The AI returns only the medicine fields of BR-05; reminder times are still worked out by BR-06 and every draft is checked under BR-04. | FR-02 |
