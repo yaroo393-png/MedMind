@@ -31,7 +31,7 @@ for l in FR-01 FR-02 FR-03 FR-04 FR-05 FR-09 docs test bug design ai-log; do gh 
 |---|---|---|---|---|
 | 1 | ตรวจ architecture.md และตัดสินใจรายการ §11 | Takkan | 0 | design |
 | 2 | ตั้ง Firebase project (Spark), เปิด Anonymous Auth + Firestore + Hosting | Takkan | 0 | design |
-| 3 | `core/firebase.js`, `core/repo.js`, `core/clock.js` | Takkan | 1 | FR-01 |
+| 3 | `core/firebase.js`, `services/dataService.js` (+ Firebase/Mock service), `core/clock.js` | Takkan | 1 | FR-01 |
 | 4 | เขียนและทดสอบ Security Rules ใน Emulator (R-1…R-8) | Takkan | 2 | FR-01 |
 | 5 | Design tokens + หน้าเปล่า S-00…S-03 ตาม design-system.md | Rossatorn | 1 | design |
 | 6 | `logic/mealTimeline.js` — `mealState()` + เทสต์ TC-03.1–5 | Rossatorn | 1 | FR-03 |
@@ -46,7 +46,7 @@ for l in FR-01 FR-02 FR-03 FR-04 FR-05 FR-09 docs test bug design ai-log; do gh 
 | 15 | `services/aiLabel.js` + หน้า C-03…C-05 | Yar | 2 | FR-02 |
 | 16 | `logic/pairing.js` + หน้า S-01, C-01, ยกเลิกจับคู่ | Takkan | 2 | FR-01 |
 | 17 | Final Report, Demo Slides, AI-Use Statement | Yar | Final | docs |
-| 18 | Demo mode `demo.html` + `localRepo` + ข้อมูลตัวอย่าง (ADR-8) | Nichanan (+ ทุกคน) | 1 → 2 | design |
+| 18 | Demo mode `demo.html` + `MockFirestoreService` + ข้อมูลตัวอย่าง (ADR-8) | Nichanan (+ ทุกคน) | 1 → 2 | design |
 | 19 | Heuristic evaluation โดยทีมอื่น + think-aloud (MT-14, MT-07) | Suchitra | Final | test |
 
 > ลำดับสำคัญ: **#2 และ #3 ก่อน** เพราะทุก FR พึ่ง `core/` · FR-03 (`mealState`) ต้องตกลงสัญญากับ FR-04/FR-05 ก่อนเขียน (architecture §5.1)

@@ -46,9 +46,9 @@
 |---|---|---|---|---|
 | ผู้สูงอายุสมัครบัญชียาก; ผู้ดูแลไม่อยู่ด้วย | **FR-01** | [architecture §6, §7.1](docs/03-design/architecture.md) | S-01, C-01 · [`fr/FR-01-pairing`](fr/FR-01-pairing/README.md) | AC 1–6 · NFR-04, 05, 10 |
 | ผู้ดูแลอยากให้ช่วยกรอกข้อมูลยาจากฉลาก | **FR-02** | [architecture §5, §7.2, ADR-3](docs/03-design/architecture.md) | C-02…C-05 · [`fr/FR-02-label-scan`](fr/FR-02-label-scan/README.md) | AC 1–9 · NFR-06, 08, 09, 11, 14 |
-| ลืมกินยา / กินไม่ตรงเวลา | **FR-03** | [architecture §5.1, §7.3](docs/03-design/architecture.md) | S-03 · [`fr/FR-03-reminder`](fr/FR-03-reminder/README.md) | AC 1–5 · NFR-01 |
-| จำไม่ได้ว่ากินแล้วหรือยัง | **FR-04** | [architecture §6 (`doses`)](docs/03-design/architecture.md) | S-02, S-03 · [`fr/FR-04-confirm`](fr/FR-04-confirm/README.md) | AC 1–7 · NFR-02, 03, 07, 12 |
-| โทร/ส่ง LINE ถามทุกมื้อ ไม่มีสถานะรวม | **FR-05** | [architecture §6 (`alertSeen`)](docs/03-design/architecture.md) | C-07, C-08 · [`fr/FR-05-caregiver-status`](fr/FR-05-caregiver-status/README.md) | AC 1–7 · NFR-01, 12, 13 |
+| ลืมกินยา / กินไม่ตรงเวลา | **FR-03** | [architecture §5.1, §7.3](docs/03-design/architecture.md) | S-03 · [`fr/FR-03-reminder`](fr/FR-03-reminder/README.md) | AC 1–6 · NFR-01 |
+| จำไม่ได้ว่ากินแล้วหรือยัง | **FR-04** | [architecture §6 (`doses`)](docs/03-design/architecture.md) | S-02, S-03 · [`fr/FR-04-confirm`](fr/FR-04-confirm/README.md) | AC 1–8 · NFR-02, 03, 07, 12 |
+| โทร/ส่ง LINE ถามทุกมื้อ ไม่มีสถานะรวม | **FR-05** | [architecture §6 (`alertSeen`)](docs/03-design/architecture.md) | C-07, C-08 · [`fr/FR-05-caregiver-status`](fr/FR-05-caregiver-status/README.md) | AC 1–10 · NFR-01, 12, 13 |
 
 รายละเอียดทีละ AC → โค้ด → เทสต์ อยู่ใน [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) · **SRS เป็นแหล่งความจริง** แก้ SRS ก่อนแล้วคัดมาที่นี่
 

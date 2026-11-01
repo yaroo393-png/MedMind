@@ -20,7 +20,7 @@
 | ID | งาน | อ้างอิง | ขนาด (เสนอ) | Increment | เจ้าของ | สถานะ |
 |---|---|---|---|---|---|---|
 | E-1 | ตั้ง Firebase project (Spark), Anonymous Auth, Firestore, Hosting | architecture ADR-2 | 2 | 1 | Takkan | ⬜ |
-| E-2 | `core/firebase.js`, `core/clock.js`, `core/repo.js` (`firestoreRepo` + `localRepo`) | architecture §5, ADR-8 | 3 | 1 | Takkan | ⬜ |
+| E-2 | `core/firebase.js`, `core/clock.js`, `services/dataService.js` (`FirebaseFirestoreService` + `MockFirestoreService`) | architecture §5.2, ADR-8 | 3 | 1 | Takkan | ⬜ |
 | E-3 | ข้อมูลตัวอย่าง + สคริปต์ seed คู่ทดสอบ (`core/demoData.js`) | architecture §11 | 2 | 1 | Nichanan | ⬜ |
 | E-4 | Design tokens + โครงหน้า S-00…S-03, C-07 | design-system §2–4 | 3 | 1 | Rossatorn | ⬜ |
 | E-5 | Demo mode `demo.html` (2 บทบาท + ปุ่มเลื่อนนาฬิกา + จำลอง AI ล่ม/ออฟไลน์) | ADR-8, M4 | 5 | 1 → 2 | Nichanan (+ ทุกคนเพิ่มส่วน FR ตัวเอง) | ⬜ |

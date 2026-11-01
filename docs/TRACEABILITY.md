@@ -1,7 +1,7 @@
 # Traceability: Problem → FR → Design → Code → Test (Golden Thread)
 
 เอกสารนี้ผูกทุก FR กลับไปที่ปัญหา, SRS, การออกแบบ, โค้ด และเทสต์ — **คะแนน M4 วัดที่ความต่อเนื่องของเส้นนี้** (ไม่ใช่ความสวยของแอป)
-อ้างอิง: SRS v1.2 ([`docs/02-requirements/M2-SRS_MedMind.pdf`](02-requirements/M2-SRS_MedMind.pdf)) · Design: [`docs/03-design/architecture.md`](03-design/architecture.md) · Backlog: [`backlog.md`](02-requirements/backlog.md) · สำเนา SRS: [`spec.md`](02-requirements/spec.md)
+อ้างอิง: SRS v1.2 ([`docs/02-requirements/M2-SRS_MedMind.pdf`](02-requirements/M2-SRS_MedMind.pdf)) + v1.3 ฉบับร่างใน `spec.md` (FR-03 ข้อ 6, FR-04 ข้อ 8, FR-05 ข้อ 8–10 — ยังไม่อยู่ใน PDF) · Design: [`docs/03-design/architecture.md`](03-design/architecture.md) · Backlog: [`backlog.md`](02-requirements/backlog.md) · สำเนา SRS: [`spec.md`](02-requirements/spec.md)
 
 > **วิธีใช้:** SRS เป็นแหล่งความจริง ถ้าแก้ AC/BR/NFR ให้แก้ SRS ก่อนแล้วคัดมาที่นี่ · คอลัมน์ *Code* เป็นไฟล์ที่ **วางแผนไว้** (ใน `public/js/…`) และ *Test* เป็นรหัสเทสต์ที่ **วางแผนไว้** — เจ้าของงานเติมชื่อฟังก์ชัน/ลิงก์จริงและเปลี่ยน ⬜ เป็น ✅ เมื่อเทสต์ผ่าน
 > ตัวย่อ: `TC-xx.n` = เทสต์อัตโนมัติ (`node --test`) · `R-n` = เทสต์ Security Rules (Emulator) · `MT-nn` = ทดสอบด้วยมือ (ตารางท้ายเอกสาร)
@@ -18,9 +18,9 @@
 |---|---|---|---|---|
 | ผู้สูงอายุสมัครบัญชียาก ผู้ดูแลไม่อยู่ด้วย | FR-01 | architecture §6, §7.1 | S-01, C-01, S-04, C-09 | AC 1–6 · NFR-04, 05, 10 |
 | ผู้ดูแลอยากให้ช่วยกรอกข้อมูลยาจากฉลาก | FR-02 | architecture §5, §7.2 · ADR-3 | C-02…C-05 | AC 1–9 · NFR-06, 08, 09, 11, 14 |
-| ลืมกินยา / กินไม่ตรงเวลา | FR-03 | architecture §5.1, §7.3 (state machine) | S-03 | AC 1–5 · NFR-01 |
-| จำไม่ได้ว่ากินแล้วหรือยัง | FR-04 | architecture §5.1, §6 (`doses`) | S-03, S-02 | AC 1–7 · NFR-02, 03, 07, 12 |
-| โทร/ส่ง LINE ถามทุกมื้อ ไม่มีสถานะรวม | FR-05 | architecture §5.1, §6 (`alertSeen`) | C-07, C-08 | AC 1–7 · NFR-01, 12, 13 |
+| ลืมกินยา / กินไม่ตรงเวลา | FR-03 | architecture §5.1, §7.3 (state machine) | S-03 | AC 1–6 · NFR-01 |
+| จำไม่ได้ว่ากินแล้วหรือยัง | FR-04 | architecture §5.1, §6 (`doses`) | S-03, S-02 | AC 1–8 · NFR-02, 03, 07, 12 |
+| โทร/ส่ง LINE ถามทุกมื้อ ไม่มีสถานะรวม | FR-05 | architecture §5.1, §6 (`alertSeen`) | C-07, C-08 | AC 1–10 · NFR-01, 12, 13 |
 | ผู้ดูแลอยากเห็นภาพรวมทั้งสัปดาห์ (Could) | FR-09 | (หลัง MVP) | C-10 | (เขียน AC เมื่อย้ายเข้า increment) |
 
 
@@ -41,7 +41,7 @@ Pain this traces to: the caregiver is not there and has to call; older adults fi
 | 5 | Wrong path. Given the older adult is already paired with a caregiver, when a second caregiver scans or enters the code, then it is rejected with “This older adult already has a caregiver” and no connection is made. | `logic/pairing.js` | **TC-01.5** — R-4 | ⬜ |
 | 6 | Wrong path. Given a paired older adult and caregiver, when either of them unpairs and confirms, then the caregiver immediately can no longer see the older adult's data, the pair's medicines and confirmation history are deleted, and the older adult sees a new QR code. | `logic/pairing.js` | **TC-01.6** — R-8 · pairing.test | ⬜ |
 
-ไฟล์ที่ต้องเขียนทั้งหมดของ FR-01: logic/pairing.js, features/pairing.js, core/repo.js · เทสต์: tests/pairing.test.js, Emulator R-1…R-8
+ไฟล์ที่ต้องเขียนทั้งหมดของ FR-01: logic/pairing.js, features/pairing.js, services/firebaseFirestoreService.js + services/mockFirestoreService.js (ส่วนจับคู่) · เทสต์: tests/pairing.test.js, tests/dataService.contract.test.js, Emulator R-1…R-5, R-8…R-11, R-18
 
 ## FR-02 — Scan a medication label and create the medicine record
 
@@ -80,8 +80,9 @@ Pain this traces to: forgetting a dose or taking it late (problem statement); sw
 | 3 | Given the meal is confirmed, when the next repeat-reminder time arrives, then no reminder is given. | `logic/mealTimeline.js` | **TC-03.3** — mealTimeline.test (ยืนยันแล้วไม่เตือน) | ⬜ |
 | 4 | Wrong path. Given meal A at 06:45 (15 minutes before breakfast) is not confirmed and meal B is at 07:00, when it is 07:00, then the reminder screen shows both meals in time order under separate headings with separate buttons and one sound, and the caregiver is alerted about meal A at 07:00, on meal A's own timeline. | `logic/mealTimeline.js` | **TC-03.4** — mealTimeline.test (มื้อซ้อนกัน BR-16) | ⬜ |
 | 5 | Wrong path. Given the page was closed at 08:00 and the meal is not confirmed, when the older adult opens MedMind at 08:07, then the reminder screen shows the meal at once, the 08:00 and 08:05 rounds are not replayed, and the 08:10 round still happens. | `logic/mealTimeline.js` | **TC-03.5** — mealTimeline.test (เปิดหน้ากลับ BR-18) | ⬜ |
+| 6 | Wrong path. Given an 08:00 schedule saved in the Asia/Bangkok time zone and the older adult's phone set to another time zone (e.g. Asia/Tokyo), when MedMind is open on that phone, then the reminder still happens at 08:00 Asia/Bangkok time and is shown with its time zone, the warning “Your phone's time zone is different from the medicine schedule” is shown, and no schedule is changed until the caregiver edits it. | `logic/zonedTime.js` | **TC-03.6** — zonedTime.test (คำนวณตาม timezone ของ Schedule, เตือนเมื่อไม่ตรง) · MT-17 | ⬜ |
 
-ไฟล์ที่ต้องเขียนทั้งหมดของ FR-03: logic/mealTimeline.js, features/reminder.js · เทสต์: tests/mealTimeline.test.js
+ไฟล์ที่ต้องเขียนทั้งหมดของ FR-03: logic/mealTimeline.js, logic/zonedTime.js, services/alertSound.js, features/reminder.js · เทสต์: tests/mealTimeline.test.js, tests/zonedTime.test.js · Emulator R-17
 
 ## FR-04 — Confirm the whole meal
 
@@ -100,8 +101,9 @@ Pain this traces to: not remembering whether the medicine was taken (problem sta
 | 5 | Given the meal was not confirmed by 08:15, when the older adult taps “Taken” on the home screen at 08:40, then the status becomes “Taken (late confirmation)” with 08:40. | `logic/confirm.js` | **TC-04.5** — confirm.test (late confirmation) | ⬜ |
 | 6 | Wrong path. Given the next meal's reminder time (12:00) has passed, when the older adult tries to confirm the 08:00 meal, then it cannot be confirmed and the status stays “Not yet confirmed”. | `logic/confirm.js` | **TC-04.6** — confirm.test (พ้นหน้าต่าง) | ⬜ |
 | 7 | Wrong path. Given the older adult's phone is offline, when they tap “Taken” at 08:03, then their screen shows “Taken” at once, and the confirmation reaches the caregiver with 08:03 as its time within 10 seconds of the connection returning. | `logic/confirm.js` | **TC-04.7** — MT-05 (ออฟไลน์ → ส่งเมื่อกลับมา) | ⬜ |
+| 8 | Wrong path. Given the older adult's phone is offline and “Taken” is tapped for the 08:00 meal at 08:03 and again at 08:04, when the connection returns at 09:30, then the data store holds exactly one confirmation for each medicine schedule of that meal, each with scheduled time 08:00, tapped time 08:03 and received time 09:30, and the status is “Taken” (worked out from 08:03, not 09:30). | `logic/confirm.js` | **TC-04.8** — confirm.test (`buildDoseEvents` ไม่ซ้ำ, สถานะจาก confirmedAt) · dataService.contract.test · R-7, R-12 · MT-05 | ⬜ |
 
-ไฟล์ที่ต้องเขียนทั้งหมดของ FR-04: logic/confirm.js, features/home.js, features/reminder.js · เทสต์: tests/confirm.test.js
+ไฟล์ที่ต้องเขียนทั้งหมดของ FR-04: logic/confirm.js, features/home.js, features/reminder.js · เทสต์: tests/confirm.test.js · Emulator R-7, R-12, R-13
 
 ## FR-05 — Caregiver alert and daily status
 
@@ -120,8 +122,11 @@ Pain this traces to: having to call or send a LINE message for every meal; no si
 | 5 | Given the older adult tapped “Not yet” in the 08:10 round (the caregiver has already been alerted), when it is 08:15, then the caregiver is not alerted again. | `logic/status.js` | **TC-05.5** — status.test (แจ้งครั้งเดียว) | ⬜ |
 | 6 | Given the caregiver has been alerted “Medicine not yet confirmed”, when the older adult confirms late at 08:40, then the caregiver receives “Medicine confirmed at 08:40”. | `logic/status.js` | **TC-05.6** — status.test (confirmed at HH:MM) | ⬜ |
 | 7 | Wrong path. Given the caregiver's page was closed at 08:15 when a meal was not confirmed, when the caregiver opens MedMind at 09:00, then the unseen alert is shown and the meal's status is “Not yet confirmed” (or “Taken (late confirmation)” + time if confirmed since). | `logic/status.js` | **TC-05.7** — status.test (แจ้งที่ค้างเมื่อเปิดหน้า BR-18) · MT-06 | ⬜ |
+| 8 | Given the last-active time is 08:00 and the caregiver's phone is online, when the caregiver opens the status page at 08:08, then it shows “Active” with “Last open 08:00”. | `logic/activity.js` | **TC-05.8** — activity.test (≤ 10 นาที = active) · R-15 | ⬜ |
+| 9 | Wrong path. Given the last-active time is 08:00, when the caregiver opens the status page at 08:11, then it shows “Inactive” with “Last open 08:00”; and given no last-active time was ever recorded, or the caregiver's phone is offline, then it shows “Unknown” and never “Active”. | `logic/activity.js` | **TC-05.9** — activity.test (inactive, null, fromCache, นาฬิกาคลาด) | ⬜ |
+| 10 | Wrong path. Given the pair has just been unpaired, when the former caregiver's phone (even one still holding copies of the data) asks for the older adult's medicines, confirmations or last-active time, then the data store refuses every request at once, and the caregiver's screen removes the copies it holds. | Firestore Rules + `services/*FirestoreService.js` | **TC-05.10** — R-14 · dataService.contract.test (unpairing) · MT-19 | ⬜ |
 
-ไฟล์ที่ต้องเขียนทั้งหมดของ FR-05: logic/status.js, features/caregiverStatus.js · เทสต์: tests/status.test.js
+ไฟล์ที่ต้องเขียนทั้งหมดของ FR-05: logic/status.js, logic/activity.js, features/caregiverStatus.js · เทสต์: tests/status.test.js, tests/activity.test.js · Emulator R-14…R-16
 
 ## NFR → วิธีตรวจ
 
@@ -133,9 +138,9 @@ Pain this traces to: having to call or send a LINE message for every meal; no si
 | NFR-04 | security / privacy (required) | A caregiver sees only the older adult they are paired with; a request for another older adult's data is refused. | Automated test of the access rules: a caregiver asks for another older adult's data and is refused | Emulator R-1 | ⬜ |
 | NFR-05 | privacy | No connection happens before the older adult taps consent (0 times). | Automated test (FR-01, criterion 2) | Emulator R-2 | ⬜ |
 | NFR-06 | safety | No medicine record is saved without the caregiver's check (0 records). | Automated test (FR-02) | tests/labelDraft.test.js + Emulator R-6 | ⬜ |
-| NFR-07 | reliability | However many times “Taken” is tapped, there is only one confirmation record for that meal. | Automated test (FR-04, criterion 2) | tests/confirm.test.js + Emulator R-7 | ⬜ |
+| NFR-07 | reliability | However many times “Taken” is tapped, online or offline, there is only one confirmation record for each medicine schedule of that meal. | Automated test (FR-04, criterion 2) | tests/confirm.test.js + Emulator R-7 | ⬜ |
 | NFR-08 | performance | With the phone online, the AI draft appears within 10 seconds of tapping “Send to AI” for at least 18 of 20 real labels (90%). | Time from tapping “Send to AI” to seeing the draft, with 20 real labels on a phone on mobile data | MT-09 (20 ฉลากจริงที่ปิดชื่อแล้ว บนมือถือ) | ⬜ |
-| NFR-09 | privacy / PDPA | The system stores only what FR-01–05 use (medicine details, meal times, confirmation status, pairing and its consent record) and none of the older adult's national ID number, address, date of birth, phone number or hospital number (0 fields). MedMind never stores a label photo (0 photos); only a copy with the name, HN and barcodes covered is sent to the AI service. Medicine data and medication status are health data (sensitive under PDPA), kept only as far as the FRs need and shared only after consent (BR-02). | Review every field in the data model in the Design document, and check the data store holds no images | ตรวจทุกฟิลด์ใน architecture.md §6 + ตรวจว่า Firestore ไม่มีรูป (MT-10) | ⬜ |
+| NFR-09 | privacy / PDPA | The system stores only what FR-01–05 use (medicine details, meal times and schedules with their time zone, confirmation status and times, pairing and its consent record, and the last-active time of the older adult's phone) and none of the older adult's national ID number, address, date of birth, phone number or hospital number (0 fields). MedMind never stores a label photo (0 photos); only a copy with the name, HN and barcodes covered is sent to the AI service. Medicine data and medication status are health data (sensitive under PDPA), kept only as far as the FRs need and shared only after consent (BR-02). | Review every field in the data model in the Design document, and check the data store holds no images | ตรวจทุกฟิลด์ใน architecture.md §6 + ตรวจว่า Firestore ไม่มีรูป (MT-10) | ⬜ |
 | NFR-10 | privacy / PDPA | After unpairing, the former caregiver's requests for that data succeed 0 times, and that pair's medicines and history are 0 records. | Automated test: after unpairing, the request is refused and remaining records are counted | Emulator R-8 | ⬜ |
 | NFR-11 | accuracy | All required fields (medicine name, tablets per dose, meal / time) are read correctly, with no edit needed, on at least 16 of 20 real labels (80%). | Compare each draft with its label by hand, using the same 20 labels as NFR-08 | MT-09 (ชุดเดียวกับ NFR-08, เทียบกับฉลากด้วยตา) | ⬜ |
 | NFR-12 | performance | With both phones online, a confirmation, or a “Not yet” in the last round, appears on the caregiver's phone within 10 seconds in at least 19 of 20 trials. | Timed trials on two real phones on mobile data | MT-11 (จับเวลา 20 ครั้ง บน 2 มือถือ ใช้ข้อมูลมือถือ) | ⬜ |
@@ -147,7 +152,7 @@ Pain this traces to: having to call or send a LINE message for every meal; no si
 | BR | กฎ | FR | ไฟล์หลัก (วางแผน) |
 |---|---|---|---|
 | BR-01 | The invite code (QR + 6 digits) works once and expires after 10 minutes; the older adult can tap “Create new code”. | FR-01 | logic/pairing.js |
-| BR-02 | The older adult must tap consent before pairing; neither side has an account or password; one older adult has one caregiver. The consent screen states (1) wh… | FR-01 | features/pairing.js, core/repo.js |
+| BR-02 | The older adult must tap consent before pairing; neither side has an account or password; one older adult has one caregiver. The consent screen states (1) wh… | FR-01 | features/pairing.js, services/*FirestoreService.js |
 | BR-03 | Only the caregiver can add or edit medicines. | FR-02 | Rules (medicines), features/labelScan.js |
 | BR-04 | A scanned draft is never saved until the caregiver checks and confirms it; a field that cannot be read is left empty and marked “Please check” (never guessed… | FR-02 | logic/labelDraft.js |
 | BR-05 | Required fields: medicine name, tablets per dose, meal / time. Warnings and contraindications are saved only when the label has them. | FR-02 | logic/labelDraft.js, logic/schedule.js |
@@ -162,7 +167,7 @@ Pain this traces to: having to call or send a LINE message for every meal; no si
 | BR-14 | The daily status shows every meal of the day: “Taken” + time / “Taken (late confirmation)” + time / “Not yet confirmed” / “Not due yet”. | FR-05 | logic/status.js |
 | BR-15 | Late confirmation: after T+15 the older adult can still tap “Taken” on the home screen until the reminder time of the next meal that starts after this meal's… | FR-04, FR-05 | logic/mealTimeline.js, logic/confirm.js |
 | BR-16 | Overlapping meals (e.g. 06:45 and 07:00): each keeps its own rounds (BR-08), caregiver alert (BR-13) and late window (BR-15); the reminder screen lists every… | FR-03, FR-04, FR-05 | logic/mealTimeline.js |
-| BR-17 | Unpairing: either side can unpair (with a second confirmation) → the caregiver loses access immediately, and that pair's medicines and confirmation history a… | FR-01 | features/pairing.js, core/repo.js |
+| BR-17 | Unpairing: either side can unpair (with a second confirmation) → the caregiver loses access immediately, and that pair's medicines, schedules, confirmation hi… | FR-01, FR-05 | features/pairing.js, services/*FirestoreService.js (ตัดสิทธิ์ก่อน ลบทีหลัง — ADR-12) |
 | BR-18 | Reopening the page: each meal's status is worked out from the clock. Rounds whose time passed while the page was closed are not replayed. A meal still within… | FR-03, FR-05 | logic/mealTimeline.js, logic/status.js |
 | BR-19 | Before a label photo is sent to the AI service, the caregiver covers the patient's name, HN, any barcode or QR code and any other personal detail, sees the e… | FR-02 | services/redact.js, features/labelScan.js |
 
@@ -185,4 +190,8 @@ Pain this traces to: having to call or send a LINE message for every meal; no si
 | MT-13 | บันทึกภาพที่ถูกส่งให้ AI ทุกใบในชุดทดสอบ (test build เท่านั้น) แล้วดูด้วยตา | 0/20 ภาพอ่านชื่อ HN บาร์โค้ด หรือข้อมูลส่วนตัวได้ | NFR-14 | ⬜ | |
 | MT-14 | ให้ทีมอื่นทำ heuristic evaluation บน Demo mode ตาม 10 ข้อของ Nielsen | รายการปัญหา + ระดับความรุนแรง (0–4) และสิ่งที่แก้แล้ว | UX primer §5.2, NFR-02/03 | ⬜ | |
 | MT-15 | ผู้ตรวจเปิด `demo.html` ในเบราว์เซอร์เดียว แล้วเดินทุก Must FR + ทางผิด | ครบ FR-01–05 โดยไม่ต้องมีมือถือ 2 เครื่อง/บัญชี | M4 (prototype), ADR-8 | ⬜ | |
+| MT-16 | เปิด `senior.html` / `caregiver.html` บนมือถือจริงของทีม (Android Chrome + iPhone Safari) ผ่าน HTTPS | โหลด Firebase 12.19.0 จาก gstatic ผ่าน import map ได้ ไม่มี error ใน console · บันทึกรุ่นเบราว์เซอร์ที่ใช้ไม่ได้ | ADR-10 | ⬜ | |
+| MT-17 | ตั้งเขตเวลามือถือผู้สูงอายุเป็น Asia/Tokyo ขณะตารางยาเป็น Asia/Bangkok | เตือนตามเวลา Asia/Bangkok พร้อมชื่อเขตเวลา + แถบเตือน · ตารางยาใน Firestore ไม่เปลี่ยน | FR-03 AC 6 | ⬜ | |
+| MT-18 | ถึงเวลาเตือนโดย (ก) ยังไม่แตะหน้าจอ (ข) แตะแล้ว | (ก) modal เต็มจอ + แถบ "แตะหน้าจอเพื่อเปิดเสียง" (ข) เสียงดังทุกรอบ · Android สั่นด้วย | FR-03 AC 1, ADR-13 | ⬜ | |
+| MT-19 | ผู้สูงอายุยกเลิกจับคู่ขณะหน้าสถานะผู้ดูแลเปิดอยู่ | หน้าผู้ดูแลล้างข้อมูลและกลับหน้าเริ่มต้น · รีเฟรชแล้วไม่เห็นข้อมูลเดิม · Console: เอกสารของคู่เหลือ 0 | FR-05 AC 10, BR-17 | ⬜ | |
 

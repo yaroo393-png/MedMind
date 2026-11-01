@@ -30,13 +30,13 @@ Definition: the invite code (QR + 6 digits) works once and expires after 10 minu
 
 ## ไฟล์ที่ต้องเขียน
 
-- โค้ด: logic/pairing.js, features/pairing.js, core/repo.js
+- โค้ด: logic/pairing.js, features/pairing.js, services/*FirestoreService.js (ส่วนจับคู่/ยกเลิกจับคู่)
 - เทสต์: tests/pairing.test.js, Emulator R-1…R-8
 - หน้าจอ: ดู Screen Map ใน [`design-system.md`](../../docs/03-design/design-system.md) §4 · ทุกหน้าต้องมี "Covers: FR-01"
 
 ## พึ่งพา / เชื่อมกับโมดูลอื่น
 
-ใช้ `core/firebase.js`, `core/repo.js` (System Designer) · ผลจับคู่เป็นฐานของ FR-02–05
+ใช้ `core/firebase.js`, `services/dataService.js` (System Designer) · ผลจับคู่เป็นฐานของ FR-02–05
 
 ## ก่อนสอบปากเปล่า — ต้องตอบได้
 
