@@ -2,7 +2,18 @@
 
 > **ฉบับร่าง** — วันที่ตั้งจากวันส่งงาน **9 พ.ย. 2569** ตามแผนเดิมของทีม (**ยืนยันวันส่งจริงกับอาจารย์** ถ้าไม่ใช่ให้เลื่อนตาราง) · SDLC: **Incremental** (ตาม Charter) ส่งมอบทีละ increment ผ่าน sprint สั้นบนบอร์ด GitHub Projects (To do / Doing / Done)
 
-## 1. Sprint
+## 1. ทีมและการแบ่งงาน
+| ชื่อ–นามสกุล | รหัสนักศึกษา | GitHub | บทบาท | ฟีเจอร์ที่เขียน + งานส่วนกลาง | งานใน Repo |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| Yar Oo | 6931503064 | [yaroo393-png](https://github.com/yaroo393-png) | Project Manager | **FR-02** อ่านฉลากด้วย AI • ตั้งค่า CI/CD (`.github/workflows/ci.yml`) • สรุปเล่ม Final Report & AI Statement (`docs/05-report/`) | `fr/FR-02-label-scan` |
+| Takkan Khanlui | 6931503035 | [V31311](https://github.com/V31311) | System Designer | **FR-01** จับคู่ Caregiver-Patient • เขียน Firestore Security Rules • จัดทำ `docs/03-design/architecture.md` | `fr/FR-01-pairing` |
+| Rossatorn Sangkaew | 6931503066 | [IDK-SleepyBro](https://github.com/IDK-SleepyBro) | UX/UI Designer | **FR-03** ระบบแจ้งเตือนกินยา • จัดทำ `docs/03-design/design-system.md` • ออกแบบ UI Components สำหรับผู้สูงอายุ | `fr/FR-03-reminder` |
+| Nichanan Lalua | 6931503049 | [KaidangSuk](https://github.com/KaidangSuk) | Prototype Dev | **FR-04** ยืนยันการกินยา • จัดทำ Clickable Prototypes HTML (`docs/03-design/prototypes/`) ทั้ง Happy/Error States • เขียน Automated Unit Tests ใน `tests/` | `fr/FR-04-confirm` |
+| Suchitra Khomdee | 6931503079 | [Khaiwann](https://github.com/Khaiwann) | QA / Tester | **FR-05** แจ้งผู้ดูแล + สถานะรายวัน • จัดทำและ Commit ตาราง `docs/TRACEABILITY.md` • รวบรวมสไลด์พรีเซนต์ `docs/06-presentation/demo-slides.md` | `fr/FR-05-caregiver-status` |
+
+ทุกคนเขียนฟีเจอร์ของตัวเองครบสาย (logic + เทสต์ + หน้าจอ) ในโฟลเดอร์ `fr/<FR>` · กติกาการทำงาน: [`RULES.md`](../RULES.md)
+
+## 2. Sprint
 | Sprint | ช่วง | เป้าหมาย (Increment) | งานหลัก (backlog) | Demo ท้าย sprint |
 |---|---|---|---|---|
 | 0 | 31 ต.ค.–1 พ.ย. | เอกสารและโครง repo | อัพ repo, ตั้ง GitHub (labels/milestones/ruleset), E-1, ตรวจ architecture §11, ตกลงสัญญา `mealState` | repo ครบ + CI ผ่าน |
@@ -14,14 +25,14 @@
 **ทุก sprint:** เริ่มด้วย sprint planning (เลือกงานจาก backlog + ประมาณขนาด) · ประชุมสั้น 10 นาที/วัน (ทำอะไรไปแล้ว / จะทำอะไร / ติดอะไร) · จบด้วย demo + retrospective
 **Definition of Done (งานหนึ่งชิ้น):** logic + เทสต์ผ่าน · หน้าจอมีป้าย Covers · PR ผ่านการรีวิว 1 คน + CI ผ่าน · อัปเดต TRACEABILITY · บันทึก AI log (ถ้าใช้) — "เกือบเสร็จ" นับเป็น 0
 
-## 2. Velocity (กรอกหลังจบแต่ละ sprint)
+## 3. Velocity (กรอกหลังจบแต่ละ sprint)
 | Sprint | points ที่วางแผน | points ที่ Done จริง | หมายเหตุ |
 |---|---|---|---|
 | 1 | [ ] | [ ] | |
 | 2 | [ ] | [ ] | |
 พยากรณ์: sprint ที่ต้องใช้ = points ที่เหลือ ÷ ค่าเฉลี่ย points ที่ Done ต่อ sprint (ใช้ค่าเฉลี่ย ไม่ใช่ sprint ที่ดีที่สุด)
 
-## 3. ความเสี่ยง (เรียงจากสูงสุด)
+## 4. ความเสี่ยง (เรียงจากสูงสุด)
 | # | ความเสี่ยง | โอกาส / ผลกระทบ | วิธีลด | เจ้าของ | สถานะ |
 |---|---|---|---|---|---|
 | R1 | **เวลาน้อย** (~9 วันสำหรับ 5 FR + Firebase + AI) | สูง / สูง | ทำวงจรหลัก (FR-03–05) + Demo mode ก่อน · ตัด FR-09 และของ Could ก่อน · แตกงานเล็ก ติดตามบนบอร์ดทุกวัน | Yar Oo | เปิด |
@@ -32,7 +43,7 @@
 | R6 | งานของ FR-03/04/05 ชนกันที่ `mealState` | กลาง / กลาง | ตกลงสัญญา architecture §5.1 ใน Sprint 0 · Rossatorn เป็นเจ้าของ `mealTimeline.js` คนเดียว | Rossatorn | เปิด |
 | R7 | ส่วนร่วมรายคนไม่ปรากฏใน GitHub | กลาง / สูง | ทุกคน commit เองจากบัญชีตัวเอง (RULES §2) · `fr/<FR>/README.md` ของแต่ละคน | Yar Oo | เปิด |
 
-## 4. บทบาทหมุนเวียน (นอกเหนือจากบทบาทใน Charter) — ข้อเสนอ ให้ทีมตกลงใน Sprint 0
+## 5. บทบาทหมุนเวียน (นอกเหนือจากบทบาทใน Charter) — ข้อเสนอ ให้ทีมตกลงใน Sprint 0
 | Sprint | ผู้นำประชุมประจำวัน | ผู้จดบันทึก + อัปเดตบอร์ด | ผู้ตรวจ PR หลัก |
 |---|---|---|---|
 | 0 | Yar Oo | Suchitra | Takkan |
@@ -40,7 +51,7 @@
 | 2 | Rossatorn | Nichanan | Yar Oo |
 | 3 | Suchitra | Takkan | Nichanan |
 
-## 5. Retrospective (กรอกท้ายแต่ละ sprint)
+## 6. Retrospective (กรอกท้ายแต่ละ sprint)
 | Sprint | อะไรดี | อะไรไม่ดี | จะเปลี่ยนอะไร |
 |---|---|---|---|
 | 0 | [ ] | [ ] | [ ] |

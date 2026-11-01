@@ -15,7 +15,7 @@
 | Traceability (Golden Thread) | 🟡 Structure ready — [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) · Code/Test columns are filled in as code is written |
 | System (web app) | ⬜ Not started — Increment 1: FR-03–05 · Increment 2: FR-01–02 |
 | Automated tests | ⬜ Only the repository-structure tests exist (`tests/repo-structure.test.js`) · FR tests are added together with the code |
-| Project plan (Week 10) | 🟡 Sprints 0–3, risks, rotating roles, retrospective — [`docs/PROJECT-PLAN.md`](docs/PROJECT-PLAN.md) |
+| Project plan (Week 10) | 🟡 Team split, sprints 0–3, risks, rotating roles, retrospective — [`docs/PROJECT-PLAN.md`](docs/PROJECT-PLAN.md) |
 | Final Report / AI-Use Statement / Demo | 🟡 Skeletons — [`docs/05-report/`](docs/05-report/), [`docs/06-presentation/`](docs/06-presentation/) |
 
 > **[ ]** = no real data yet, nothing is guessed · this README is updated when there are real results
@@ -54,13 +54,13 @@
 AC → code → test, one by one, is in [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) · **the SRS is the source of truth** — change the SRS first, then copy the change here.
 
 ## 👥 Team and work split
-| Name | Student ID | GitHub | Role | Feature written (whole chain: logic + tests + screens) | My work |
-|---|---|---|---|---|---|
-| Yar Oo | 6931503064 | [yaroo393-png](https://github.com/yaroo393-png) | Project Manager | **FR-02** AI label reading · all project documents · repo/CI | [`fr/FR-02-label-scan`](fr/FR-02-label-scan/README.md) |
-| Takkan Khanlui | 6931503035 | [V31311](https://github.com/V31311) | System Designer | **FR-01** pairing · `core/firebase.js`, `core/repo.js`, Security Rules · design document | [`fr/FR-01-pairing`](fr/FR-01-pairing/README.md) |
-| Rossatorn Sangkaew | 6931503066 | [IDK-SleepyBro](https://github.com/IDK-SleepyBro) | UX/UI Designer | **FR-03** meal reminders (`mealState`) · design system · screens | [`fr/FR-03-reminder`](fr/FR-03-reminder/README.md) |
-| Nichanan Lalua | 6931503049 | [KaidangSuk](https://github.com/KaidangSuk) | Prototype Developer | **FR-04** confirming a meal · the older adult's home screen | [`fr/FR-04-confirm`](fr/FR-04-confirm/README.md) |
-| Suchitra Khomdee | 6931503079 | [Khaiwann](https://github.com/Khaiwann) | QA / Tester | **FR-05** caregiver alert + daily status · test plan and results (MT) | [`fr/FR-05-caregiver-status`](fr/FR-05-caregiver-status/README.md) |
+| Name | Student ID | GitHub | Role | Feature written + shared work | Repo folder |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| Yar Oo | 6931503064 | [yaroo393-png](https://github.com/yaroo393-png) | Project Manager | **FR-02** AI label reading • CI/CD setup (`.github/workflows/ci.yml`) • compiling the Final Report & AI Statement (`docs/05-report/`) | [`fr/FR-02-label-scan`](fr/FR-02-label-scan/README.md) |
+| Takkan Khanlui | 6931503035 | [V31311](https://github.com/V31311) | System Designer | **FR-01** Caregiver-Patient pairing • writing the Firestore Security Rules • preparing `docs/03-design/architecture.md` | [`fr/FR-01-pairing`](fr/FR-01-pairing/README.md) |
+| Rossatorn Sangkaew | 6931503066 | [IDK-SleepyBro](https://github.com/IDK-SleepyBro) | UX/UI Designer | **FR-03** medication reminders • preparing `docs/03-design/design-system.md` • designing UI components for older adults | [`fr/FR-03-reminder`](fr/FR-03-reminder/README.md) |
+| Nichanan Lalua | 6931503049 | [KaidangSuk](https://github.com/KaidangSuk) | Prototype Dev | **FR-04** confirming medicine taken • clickable HTML prototypes (`docs/03-design/prototypes/`) covering happy and error states • writing automated unit tests in `tests/` | [`fr/FR-04-confirm`](fr/FR-04-confirm/README.md) |
+| Suchitra Khomdee | 6931503079 | [Khaiwann](https://github.com/Khaiwann) | QA / Tester | **FR-05** caregiver alert + daily status • building and committing the `docs/TRACEABILITY.md` table • compiling the presentation slides `docs/06-presentation/demo-slides.md` | [`fr/FR-05-caregiver-status`](fr/FR-05-caregiver-status/README.md) |
 
 Team rules (branches, PRs, AI use, PDPA): [`RULES.md`](RULES.md) · individual contribution is measured from GitHub — **everyone commits with their own account**.
 
@@ -74,12 +74,12 @@ docs/
 │   ├── M2-SRS_MedMind.pdf       # M2 (submitted) SRS v1.2
 │   ├── spec.md                  # readable SRS copy (English) · spec.th.md = Thai translation
 │   └── backlog.md               # Product backlog: MoSCoW + pain + size + status
-├── 03-design/                   # architecture.md, design-system.md, firestore-rules-draft.md, diagrams/ (Thai)
+├── 03-design/                   # architecture.md, design-system.md, firestore-rules-draft.md, prototypes/, diagrams/ (Thai)
 ├── 05-report/                   # final-report.md, ai-use-statement.md (skeletons)
 ├── 06-presentation/             # demo-slides.md
 ├── TRACEABILITY.md              # Golden Thread: AC → code → test, NFR, BR, manual tests MT-01…15
 ├── AI_USAGE_LOG.md              # the full, honest AI usage log
-├── PROJECT-PLAN.md              # sprints, velocity, risks, rotating roles, retrospective
+├── PROJECT-PLAN.md              # team split, sprints, velocity, risks, rotating roles, retrospective
 └── GITHUB-SETUP.md              # labels, milestones, ruleset, first issues
 fr/FR-01…FR-05/README.md          # each member's work (evidence of individual contribution)
 public/                           # web app: index.html (role choice) · senior.html · caregiver.html · demo.html (reviewers) · css/ · js/{core,logic,services,features}/

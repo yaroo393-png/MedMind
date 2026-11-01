@@ -14,7 +14,7 @@
 | Traceability (Golden Thread) | 🟡 โครงพร้อม — [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) · ช่อง Code/Test เติมเมื่อมีโค้ด |
 | ระบบ (เว็บแอป) | ⬜ ยังไม่เริ่มเขียน — Increment 1: FR-03–05 · Increment 2: FR-01–02 |
 | เทสต์อัตโนมัติ | ⬜ มีเฉพาะเทสต์โครง repo (`tests/repo-structure.test.js`) · เทสต์ของ FR เพิ่มพร้อมโค้ด |
-| แผนงาน (Week 10) | 🟡 sprint 0–3, ความเสี่ยง, บทบาทหมุนเวียน, retro — [`docs/PROJECT-PLAN.md`](docs/PROJECT-PLAN.md) |
+| แผนงาน (Week 10) | 🟡 การแบ่งงาน, sprint 0–3, ความเสี่ยง, บทบาทหมุนเวียน, retro — [`docs/PROJECT-PLAN.md`](docs/PROJECT-PLAN.md) |
 | Final Report / AI-Use Statement / Demo | 🟡 โครงร่าง — [`docs/05-report/`](docs/05-report/), [`docs/06-presentation/`](docs/06-presentation/) |
 
 > ช่อง **[ ]** = ยังไม่มีข้อมูลจริง ไม่เดา · README นี้อัปเดตเมื่อมีผลจริง
@@ -53,13 +53,13 @@
 รายละเอียดทีละ AC → โค้ด → เทสต์ อยู่ใน [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) · **SRS เป็นแหล่งความจริง** แก้ SRS ก่อนแล้วคัดมาที่นี่
 
 ## 👥 ทีมและการแบ่งงาน
-| ชื่อ–นามสกุล | รหัสนักศึกษา | GitHub | บทบาท | ฟีเจอร์ที่เขียน (ครบสาย: logic + เทสต์ + หน้าจอ) | งานของฉัน |
-|---|---|---|---|---|---|
-| Yar Oo | 6931503064 | [yaroo393-png](https://github.com/yaroo393-png) | Project Manager | **FR-02** อ่านฉลากด้วย AI · รวมเอกสารทั้งหมด · repo/CI | [`fr/FR-02-label-scan`](fr/FR-02-label-scan/README.md) |
-| Takkan Khanlui | 6931503035 | [V31311](https://github.com/V31311) | System Designer | **FR-01** จับคู่ · `core/firebase.js`, `core/repo.js`, Security Rules · Design doc | [`fr/FR-01-pairing`](fr/FR-01-pairing/README.md) |
-| Rossatorn Sangkaew | 6931503066 | [IDK-SleepyBro](https://github.com/IDK-SleepyBro) | UX/UI Designer | **FR-03** เตือนทุกมื้อ (`mealState`) · Design system · หน้าจอ | [`fr/FR-03-reminder`](fr/FR-03-reminder/README.md) |
-| Nichanan Lalua | 6931503049 | [KaidangSuk](https://github.com/KaidangSuk) | Prototype Developer | **FR-04** ยืนยันมื้อยา · หน้าหลักผู้สูงอายุ | [`fr/FR-04-confirm`](fr/FR-04-confirm/README.md) |
-| Suchitra Khomdee | 6931503079 | [Khaiwann](https://github.com/Khaiwann) | QA / Tester | **FR-05** แจ้งผู้ดูแล + สถานะรายวัน · แผนและผลทดสอบ (MT) | [`fr/FR-05-caregiver-status`](fr/FR-05-caregiver-status/README.md) |
+| ชื่อ–นามสกุล | รหัสนักศึกษา | GitHub | บทบาท | ฟีเจอร์ที่เขียน + งานส่วนกลาง | งานใน Repo |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| Yar Oo | 6931503064 | [yaroo393-png](https://github.com/yaroo393-png) | Project Manager | **FR-02** อ่านฉลากด้วย AI • ตั้งค่า CI/CD (`.github/workflows/ci.yml`) • สรุปเล่ม Final Report & AI Statement (`docs/05-report/`) | [`fr/FR-02-label-scan`](fr/FR-02-label-scan/README.md) |
+| Takkan Khanlui | 6931503035 | [V31311](https://github.com/V31311) | System Designer | **FR-01** จับคู่ Caregiver-Patient • เขียน Firestore Security Rules • จัดทำ `docs/03-design/architecture.md` | [`fr/FR-01-pairing`](fr/FR-01-pairing/README.md) |
+| Rossatorn Sangkaew | 6931503066 | [IDK-SleepyBro](https://github.com/IDK-SleepyBro) | UX/UI Designer | **FR-03** ระบบแจ้งเตือนกินยา • จัดทำ `docs/03-design/design-system.md` • ออกแบบ UI Components สำหรับผู้สูงอายุ | [`fr/FR-03-reminder`](fr/FR-03-reminder/README.md) |
+| Nichanan Lalua | 6931503049 | [KaidangSuk](https://github.com/KaidangSuk) | Prototype Dev | **FR-04** ยืนยันการกินยา • จัดทำ Clickable Prototypes HTML (`docs/03-design/prototypes/`) ทั้ง Happy/Error States • เขียน Automated Unit Tests ใน `tests/` | [`fr/FR-04-confirm`](fr/FR-04-confirm/README.md) |
+| Suchitra Khomdee | 6931503079 | [Khaiwann](https://github.com/Khaiwann) | QA / Tester | **FR-05** แจ้งผู้ดูแล + สถานะรายวัน • จัดทำและ Commit ตาราง `docs/TRACEABILITY.md` • รวบรวมสไลด์พรีเซนต์ `docs/06-presentation/demo-slides.md` | [`fr/FR-05-caregiver-status`](fr/FR-05-caregiver-status/README.md) |
 
 กติกาการทำงาน (branch, PR, การใช้ AI, PDPA): [`RULES.md`](RULES.md) · ส่วนร่วมรายคนวัดจาก GitHub — **ทุกคน commit ด้วยบัญชีของตัวเอง**
 
@@ -77,6 +77,7 @@ docs/
 │   ├── architecture.md          # สถาปัตยกรรม, ADR 1–8 (รวม Demo mode), โมดูล+สัญญา, ERD, sequence/state
 │   ├── design-system.md         # tokens (ตรวจ contrast แล้ว), คอมโพเนนต์, Screen Map (หน้าจอ ↔ FR)
 │   ├── firestore-rules-draft.md # ร่าง Security Rules + เทสต์ R-1…R-8 (ยังไม่ทดสอบ)
+│   ├── prototypes/              # Clickable Prototypes HTML (Happy/Error States)
 │   └── diagrams/                # use-case-diagram.png
 ├── 05-report/
 │   ├── final-report.md          # Final Report + ตาราง Golden Thread (โครงร่าง)
@@ -85,7 +86,7 @@ docs/
 │   └── demo-slides.md           # โครงสไลด์ Problem → Solution
 ├── TRACEABILITY.md              # Golden Thread: AC → โค้ด → เทสต์, NFR, BR, แผนทดสอบมือ MT-01…15
 ├── AI_USAGE_LOG.md              # บันทึกการใช้ AI ตามจริง (log เต็ม)
-├── PROJECT-PLAN.md              # sprint, velocity, ความเสี่ยง, บทบาทหมุนเวียน, retrospective
+├── PROJECT-PLAN.md              # ทีมและการแบ่งงาน, sprint, velocity, ความเสี่ยง, บทบาทหมุนเวียน, retrospective
 └── GITHUB-SETUP.md              # labels, milestones, ruleset, issue ชุดแรก
 fr/FR-01…FR-05/README.md          # งานของแต่ละคน (หลักฐานส่วนร่วมรายคน)
 public/                           # เว็บแอป: index.html (เลือกบทบาท) · senior.html · caregiver.html · demo.html (ผู้ตรวจ) · css/ · js/{core,logic,services,features}/
