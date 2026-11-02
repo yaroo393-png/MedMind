@@ -81,4 +81,4 @@ Each member types **their own** name and date by opening a small pull request fr
 | Takkan Khanlui | 6931503035 | | |
 | Rossatorn Sangkaew | 6931503066 | Rossatorn Sangkaew | 2/11/69 |
 | Nichanan Lalua | 6931503049 | Nichanan Lalua | 2/11/69 |
-| Suchitra Khomdee | 6931503079 | | |
+| Suchitra Khomdee | 6931503079 |Suchitra Khomdee | 2/11/69 |
