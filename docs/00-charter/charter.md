@@ -80,5 +80,5 @@ Each member types **their own** name and date by opening a small pull request fr
 | Yar Oo | 6931503064 | Yar Oo | 2/11/ุุ69 |
 | Takkan Khanlui | 6931503035 | | |
 | Rossatorn Sangkaew | 6931503066 | | |
-| Nichanan Lalua | 6931503049 | | |
+| Nichanan Lalua | 6931503049 | Nichanan Lalua | 2/11/69 |
 | Suchitra Khomdee | 6931503079 | | |
