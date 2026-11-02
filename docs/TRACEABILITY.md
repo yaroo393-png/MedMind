@@ -1,7 +1,7 @@
 # Traceability: Problem → FR → Design → Code → Test (Golden Thread)
 
 เอกสารนี้ผูกทุก FR กลับไปที่ปัญหา, SRS, การออกแบบ, โค้ด และเทสต์ — **คะแนน M4 วัดที่ความต่อเนื่องของเส้นนี้** (ไม่ใช่ความสวยของแอป)
-อ้างอิง: SRS v1.4 ([`docs/01-requirements/M2-SRS_MedMind.pdf`](01-requirements/M2-SRS_MedMind.pdf)) · Design: [`docs/02-design/architecture.md`](02-design/architecture.md) · Backlog: [`backlog.md`](01-requirements/backlog.md) · สำเนา SRS: [`spec.md`](01-requirements/spec.md)
+อ้างอิง: SRS v1.5 ([`docs/01-requirements/M2-SRS_MedMind.pdf`](01-requirements/M2-SRS_MedMind.pdf)) · Design: [`docs/02-design/architecture.md`](02-design/architecture.md) · Backlog: [`backlog.md`](01-requirements/backlog.md) · สำเนา SRS: [`spec.md`](01-requirements/spec.md)
 
 > **วิธีใช้:** SRS เป็นแหล่งความจริง ถ้าแก้ AC/BR/NFR ให้แก้ SRS ก่อนแล้วคัดมาที่นี่ · คอลัมน์ *Code* เป็นไฟล์ที่ **วางแผนไว้** (ใน `public/js/…`) และ *Test* เป็นรหัสเทสต์ที่ **วางแผนไว้** — เจ้าของงานเติมชื่อฟังก์ชัน/ลิงก์จริงและเปลี่ยน ⬜ เป็น ✅ เมื่อเทสต์ผ่าน
 > คำถามที่ยังรอทีมตัดสิน (ห้ามถือเป็น requirement): [`decision-log.md`](01-requirements/decision-log.md)
@@ -20,8 +20,8 @@
 | ผู้สูงอายุสมัครบัญชียาก ผู้ดูแลไม่อยู่ด้วย | FR-01 | architecture §6, §7.1 | S-01, C-01, S-04, C-09 | AC 1–6 · NFR-04, 05, 10 |
 | ผู้ดูแลอยากให้ช่วยกรอกข้อมูลยาจากฉลาก | FR-02 | architecture §5, §7.2 · ADR-3 | C-02…C-05 | AC 1–11 · NFR-06, 08, 09, 11, 14 |
 | ลืมกินยา / กินไม่ตรงเวลา | FR-03 | architecture §5.1, §7.3 (state machine) | S-03 | AC 1–6 · NFR-01 |
-| จำไม่ได้ว่ากินแล้วหรือยัง | FR-04 | architecture §5.1, §6 (`doses`) | S-03, S-02 | AC 1–9 · NFR-02, 03, 07, 12 |
-| โทร/ส่ง LINE ถามทุกมื้อ ไม่มีสถานะรวม | FR-05 | architecture §5.1, §6 (`alertSeen`) | C-07, C-08 | AC 1–9 · NFR-01, 12, 13 |
+| จำไม่ได้ว่ากินแล้วหรือยัง | FR-04 | architecture §5.1, §6 (`doses`) | S-03, S-02 | AC 1–10 · NFR-02, 03, 07, 12 |
+| โทร/ส่ง LINE ถามทุกมื้อ ไม่มีสถานะรวม | FR-05 | architecture §5.1, §6 (`alertSeen`) | C-07, C-08 | AC 1–10 · NFR-01, 12, 13 |
 | ผู้ดูแลอยากเห็นภาพรวมทั้งสัปดาห์ (Could) | FR-09 | (หลัง MVP) | C-10 | (เขียน AC เมื่อย้ายเข้า increment) |
 
 
@@ -106,6 +106,7 @@ Pain this traces to: not remembering whether the medicine was taken (problem sta
 | 7 | Wrong path. Given the older adult's phone is offline, when they tap “Taken” at 08:03, then their screen shows “Taken” at once, and the confirmation reaches the caregiver with 08:03 as its time within 10 seconds of the connection returning. | `logic/confirm.js` | **TC-04.7** — MT-05 (ออฟไลน์ → ส่งเมื่อกลับมา) | ⬜ |
 | 8 | Wrong path. Given the first reminder at 08:00, when the older adult taps “Taken” at exactly 08:15 (T+15), then the status becomes “Taken” (not late) with 08:15. | `logic/confirm.js · logic/mealTimeline.js` | **TC-04.8** — confirm.test + mealTimeline.test — A5-T02 (กดที่ T+15 พอดี → taken) | ⬜ |
 | 9 | Wrong path. Given the older adult's phone is offline, when they tap “Taken” at 08:14 and the confirmation only reaches the shared data at 08:20, then the status is “Taken” with 08:14 (not “Taken (late confirmation)”), because it is decided by the time of the tap and not by the time the data arrived, and only one record is kept even if the confirmation is sent more than once. | `logic/confirm.js` | **TC-04.9** — confirm.test — A5-T05, A5-T06 (ออฟไลน์ 08:14 ซิงก์ 08:20 → taken เวลา 08:14; ส่งซ้ำ → 1 รายการ) · R-7, R-9 | ⬜ |
+| 10 | Wrong path. Given the 08:00 meal is not confirmed and the next meal's reminder time is 12:00, when the older adult taps “Taken” at exactly 12:00:00, then the status becomes “Taken (late confirmation)” with 12:00; a tap one millisecond later (12:00:00.001) cannot confirm it (criterion 6). | `logic/mealTimeline.js (nextMealStartFor) · logic/confirm.js` | **TC-04.10** — confirm.test + mealTimeline.test — C-T01, C-T02 (กดที่ 12:00:00 พอดีได้ · 12:00:00.001 ไม่ได้) | ⬜ |
 
 ไฟล์ที่ต้องเขียนทั้งหมดของ FR-04: logic/confirm.js, features/home.js, features/reminder.js · เทสต์: tests/confirm.test.js
 
@@ -128,6 +129,7 @@ Pain this traces to: having to call or send a LINE message for every meal; no si
 | 7 | Wrong path. Given the caregiver's page was closed at 08:15 when a meal was not confirmed, when the caregiver opens MedMind at 09:00, then the unseen alert is shown and the meal's status is “Not yet confirmed” (or “Taken (late confirmation)” + time if confirmed since). | `logic/status.js` | **TC-05.7** — status.test (แจ้งที่ค้างเมื่อเปิดหน้า BR-18) · MT-06 | ⬜ |
 | 8 | Wrong path. Given the older adult taps “Taken” at exactly 08:15 and that confirmation has reached the caregiver's phone before it evaluates the alert for 08:15, when the caregiver's phone evaluates the meal, then the caregiver is not alerted. | `logic/status.js` | **TC-05.8** — status.test — A5-T04 (กดที่ T+15 พอดีก่อนประเมิน → ไม่แจ้ง) | ⬜ |
 | 9 | Wrong path. Given the caregiver was alerted “Medicine not yet confirmed” at 08:16 because no confirmation had arrived, when a confirmation tapped at 08:14 reaches the caregiver's phone at 08:20, then the alert is replaced by “Medicine confirmed at 08:14”, the meal shows “Taken”, and the caregiver is not alerted a second time. | `logic/status.js` | **TC-05.9** — status.test — A5-T05 (แจ้งแล้ว แล้วการยืนยัน T−1 มาทีหลัง → แทนที่ด้วย "ยืนยันการกินยาแล้ว" ไม่แจ้งซ้ำ) · MT-06 | ⬜ |
+| 10 | Wrong path. Given the 08:00 meal has no confirmation, when the caregiver opens the status page at 08:07, then the meal shows “Not yet confirmed” and the caregiver is not alerted (the alert comes only after 08:15 has passed). | `logic/status.js (dailyStatus, alertFor)` | **TC-05.10** — status.test — C-T03 (08:07 → "ยังไม่ยืนยัน" และไม่แจ้ง) | ⬜ |
 
 ไฟล์ที่ต้องเขียนทั้งหมดของ FR-05: logic/status.js, features/caregiverStatus.js · เทสต์: tests/status.test.js
 
@@ -159,6 +161,17 @@ Pain this traces to: having to call or send a LINE message for every meal; no si
 | A5-T05 | ซิงก์ช้าหลัง T+15 | confirmedAt = 08:14:00, serverReceivedAt = 08:20:00, ผู้ดูแลถูกแจ้ง `not_confirmed` ไปแล้วที่ 08:16 | `mealState = taken` (ไม่ใช่ `taken_late`) · การแจ้งถูกแทนที่ด้วยข้อความ "ยืนยันการกินยาแล้ว เวลา 08:14" · ไม่แจ้งครั้งที่สอง · ส่งการยืนยันเดิมซ้ำ → ยังมี 1 รายการ และ `confirmedAt` ไม่เปลี่ยน | FR-04 ข้อ 9, FR-05 ข้อ 9 |
 | A5-T06 | ห้ามใช้เวลาที่ข้อมูลมาถึง | confirmedAt = 08:14:00, serverReceivedAt = 08:30:00 | `taken` | FR-04 ข้อ 9 |
 | A5-T07 | ไม่ยืนยันเลย หลัง T+15 | ไม่มี dose, now = 08:15:00.001 | `not_confirmed` + `caregiverAlert = 'not_confirmed'` (ครั้งเดียวต่อมื้อ) | FR-05 ข้อ 2 |
+
+### SRS v1.5 — BR-21 (ขอบเวลา), BR-13 (ข้อความยืนยัน), BR-14 (ความหมายของสถานะ)
+ค่าตั้งต้น: มื้อ 08:00 (T) · มื้อถัดไป 12:00 · เทียบเป็นมิลลิวินาที
+
+| ID | เคส | ใส่อะไร | ผลที่ต้องได้ | AC |
+|---|---|---|---|---|
+| C-T01 | กดตรงขอบหน้าต่างพอดี | ไม่มี dose, กด/now = 12:00:00.000 | `canConfirm = true` · บันทึกได้ `taken_late` เวลา 12:00 | FR-04 ข้อ 10 |
+| C-T02 | เลยขอบ 1 มิลลิวินาที | ไม่มี dose, now = 12:00:00.001 | `missed` · `canConfirm = false` · สถานะยัง "ยังไม่ยืนยัน" | FR-04 ข้อ 6, 10 |
+| C-T03 | ผู้ดูแลเปิดดูระหว่าง T ถึง T+15 | ไม่มี dose, now = 08:07 | `dailyStatus` label = `not_confirmed` ("ยังไม่ยืนยัน") · `alertFor` = `null` | FR-05 ข้อ 10, BR-14 |
+| C-T04 | มื้อสุดท้ายของวัน | ไม่มีมื้อถัดไป, now = 23:59:59.999 | `canConfirm = true` | BR-21 |
+| C-T05 | เมื่อไรแสดงข้อความยืนยัน | (ก) dose `confirmedAt` 08:10, ไม่เคยแจ้ง · (ข) dose `confirmedAt` 08:40 | (ก) ไม่มีข้อความ · (ข) "ยืนยันการกินยาแล้ว เวลา 08:40" ครั้งเดียว | BR-13 |
 
 > การจำลองเครือข่าย (ข้อมูลมาถึงทีหลัง ส่งซ้ำ) ในเทสต์ logic ให้ทำด้วยการส่ง `doses` เข้าฟังก์ชันตามลำดับเวลาที่กำหนด — ไม่ต้องเรียก Firebase · ส่วนที่ต้องดู Firestore จริง (offline queue, `serverReceivedAt`) ทดสอบด้วย MT-05 และ Emulator R-7, R-9, R-10
 
@@ -199,13 +212,14 @@ Pain this traces to: having to call or send a LINE message for every meal; no si
 | BR-11 | “Not yet” in round 1 or 2 → wait for the next round; in round 3 → alert the caregiver immediately. | FR-04, FR-05 | logic/status.js, logic/mealTimeline.js |
 | BR-12 | Tapping “Taken” again creates no duplicate record and does not change the time of the first tap. | FR-04 | logic/confirm.js, Rules (doses) |
 | BR-13 | Not confirmed by T+15 → status “Not yet confirmed” + caregiver alert “Medicine not yet confirmed”, sent once per meal (not again at T+15 if already sent unde… | FR-05 | logic/status.js |
-| BR-14 | The daily status shows every meal of the day: “Taken” + time / “Taken (late confirmation)” + time / “Not yet confirmed” / “Not due yet”. | FR-05 | logic/status.js |
+| BR-14 | The daily status shows every meal of the day: “Taken” + time / “Taken (late confirmation)” + time / “Not yet confirmed” / “Not due yet”. “Not due yet” means … | FR-05 | logic/status.js |
 | BR-15 | Late confirmation: after T+15 the older adult can still tap “Taken” on the home screen until the reminder time of the next meal that starts after this meal's… | FR-04, FR-05 | logic/mealTimeline.js, logic/confirm.js |
 | BR-16 | Overlapping meals (e.g. 06:45 and 07:00): each keeps its own rounds (BR-08), caregiver alert (BR-13) and late window (BR-15); the reminder screen lists every… | FR-03, FR-04, FR-05 | logic/mealTimeline.js |
 | BR-17 | Unpairing: either side can unpair (with a second confirmation) → the caregiver loses access immediately, and that pair's medicines and confirmation history a… | FR-01 | features/pairing.js, core/repo.js |
 | BR-18 | Reopening the page: each meal's status is worked out from the clock. Rounds whose time passed while the page was closed are not replayed. A meal still within… | FR-03, FR-05 | logic/mealTimeline.js, logic/status.js |
 | BR-19 | Before a label photo is sent to the AI service, the caregiver covers the patient's name, HN, any barcode or QR code and any other personal detail, sees the e… | FR-02 | services/redact.js, features/labelScan.js |
 | BR-20 | Confirmation time. Every confirmation keeps three times: the scheduled time of the meal (T), the time the older adult tapped, and the time the shared data re… | FR-04, FR-05 | logic/confirm.js, logic/mealTimeline.js, logic/status.js, Rules (doses) |
+| BR-21 | Time limits. Times are compared to the millisecond using each phone's own clock. A tap by the user exactly at a limit counts as on time: a tap at exactly T+1… | FR-03, FR-04, FR-05 | logic/time.js, logic/mealTimeline.js, logic/status.js |
 
 ## แผนทดสอบด้วยมือ (Manual Test) — กรอกผลหลังทดสอบบนมือถือจริง 2 เครื่อง
 

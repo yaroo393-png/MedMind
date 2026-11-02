@@ -9,10 +9,10 @@
 | ส่วน | สถานะ |
 |---|---|
 | M1 Team Charter | ✅ ฉบับสมบูรณ์ (มีขอบเขต in/out + ตัววัดความสำเร็จ) — [`M1-Charter_MedMind.pdf`](docs/00-charter/M1-Charter_MedMind.pdf) · อ่านบน GitHub: [`charter.md`](docs/00-charter/charter.md) |
-| M2 SRS | ✅ v1.4 (FR-01–05 Must, FR-06 Should, FR-07–09 Could · BR-01–20 · NFR-01–14 · use case + diagram · Document history) — [`M2-SRS_MedMind.pdf`](docs/01-requirements/M2-SRS_MedMind.pdf) · [`spec.md`](docs/01-requirements/spec.md) · [`backlog.md`](docs/01-requirements/backlog.md) |
+| M2 SRS | ✅ v1.5 (FR-01–05 Must, FR-06 Should, FR-07–09 Could · BR-01–21 · NFR-01–14 · use case + diagram · Document history) — [`M2-SRS_MedMind.pdf`](docs/01-requirements/M2-SRS_MedMind.pdf) · [`spec.md`](docs/01-requirements/spec.md) · [`backlog.md`](docs/01-requirements/backlog.md) |
 | M2 Design | 🟡 ฉบับร่าง (รวม Demo mode, ADR-8) — [`architecture.md`](docs/02-design/architecture.md), [`design-system.md`](docs/02-design/design-system.md), [`firestore-rules-draft.md`](docs/02-design/firestore-rules-draft.md) · รอทีมตรวจและตัดสินใจ §11 |
 | Traceability (Golden Thread) | 🟡 โครงพร้อม — [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) · ช่อง Code/Test เติมเมื่อมีโค้ด |
-| ต้นแบบ M3 (`docs/02-design/prototypes/`) | ⬜ รอเจ้าของต้นแบบนำเข้า baseline เก่า (26 หน้า) ผ่าน PR ของตนเอง แล้วปรับตาม SRS v1.4 — แผนและเกณฑ์: [README ของโฟลเดอร์](docs/02-design/prototypes/README.md) |
+| ต้นแบบ M3 (`docs/02-design/prototypes/`) | ⬜ รอเจ้าของต้นแบบนำเข้า baseline เก่า (26 หน้า) ผ่าน PR ของตนเอง แล้วปรับตาม SRS v1.5 — แผนและเกณฑ์: [README ของโฟลเดอร์](docs/02-design/prototypes/README.md) |
 | ระบบ (เว็บแอป) | ⬜ ยังไม่เริ่มเขียน — Increment 1: FR-03–05 · Increment 2: FR-01–02 |
 | เทสต์อัตโนมัติ | ⬜ มีเฉพาะเทสต์โครง repo (`tests/repo-structure.test.js`) · เทสต์ของ FR เพิ่มพร้อมโค้ด |
 | แผนงาน (Week 10) | 🟡 sprint 0–3, ความเสี่ยง, บทบาทหมุนเวียน, retro — [`docs/PROJECT-PLAN.md`](docs/PROJECT-PLAN.md) |
@@ -48,8 +48,8 @@
 | ผู้สูงอายุสมัครบัญชียาก; ผู้ดูแลไม่อยู่ด้วย | **FR-01** | [architecture §6, §7.1](docs/02-design/architecture.md) | S-01, C-01 · [`fr/FR-01-pairing`](fr/FR-01-pairing/README.md) | AC 1–6 · NFR-04, 05, 10 |
 | ผู้ดูแลอยากให้ช่วยกรอกข้อมูลยาจากฉลาก | **FR-02** | [architecture §5, §7.2, ADR-3](docs/02-design/architecture.md) | C-02…C-05 · [`fr/FR-02-label-scan`](fr/FR-02-label-scan/README.md) | AC 1–11 · NFR-06, 08, 09, 11, 14 |
 | ลืมกินยา / กินไม่ตรงเวลา | **FR-03** | [architecture §5.1, §7.3](docs/02-design/architecture.md) | S-03 · [`fr/FR-03-reminder`](fr/FR-03-reminder/README.md) | AC 1–6 · NFR-01 |
-| จำไม่ได้ว่ากินแล้วหรือยัง | **FR-04** | [architecture §6 (`doses`)](docs/02-design/architecture.md) | S-02, S-03 · [`fr/FR-04-confirm`](fr/FR-04-confirm/README.md) | AC 1–9 · NFR-02, 03, 07, 12 |
-| โทร/ส่ง LINE ถามทุกมื้อ ไม่มีสถานะรวม | **FR-05** | [architecture §6 (`alertSeen`)](docs/02-design/architecture.md) | C-07, C-08 · [`fr/FR-05-caregiver-status`](fr/FR-05-caregiver-status/README.md) | AC 1–9 · NFR-01, 12, 13 |
+| จำไม่ได้ว่ากินแล้วหรือยัง | **FR-04** | [architecture §6 (`doses`)](docs/02-design/architecture.md) | S-02, S-03 · [`fr/FR-04-confirm`](fr/FR-04-confirm/README.md) | AC 1–10 · NFR-02, 03, 07, 12 |
+| โทร/ส่ง LINE ถามทุกมื้อ ไม่มีสถานะรวม | **FR-05** | [architecture §6 (`alertSeen`)](docs/02-design/architecture.md) | C-07, C-08 · [`fr/FR-05-caregiver-status`](fr/FR-05-caregiver-status/README.md) | AC 1–10 · NFR-01, 12, 13 |
 
 รายละเอียดทีละ AC → โค้ด → เทสต์ อยู่ใน [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) · **SRS เป็นแหล่งความจริง** แก้ SRS ก่อนแล้วคัดมาที่นี่
 
@@ -71,7 +71,7 @@ docs/
 │   ├── M1-Charter_MedMind.pdf   # M1 (ฉบับส่ง): ปัญหา, ผู้ใช้, ขอบเขต in/out, ตัววัดความสำเร็จ, Gate 1–3, SDLC, ทีม
 │   └── charter.md               # สำเนาอ่านบน GitHub (อังกฤษ) · charter.th.md = ฉบับแปลไทย
 ├── 01-requirements/
-│   ├── M2-SRS_MedMind.pdf       # M2 (ฉบับส่ง) SRS v1.4
+│   ├── M2-SRS_MedMind.pdf       # M2 (ฉบับส่ง) SRS v1.5
 │   ├── spec.md                  # สำเนา SRS อ่านบน GitHub (อังกฤษ) · spec.th.md = ฉบับแปลไทย (FR, AC, BR, NFR, use case, traceability, AI log §8)
 │   ├── backlog.md               # Product Backlog: MoSCoW + pain + ขนาดงาน + สถานะ
 │   └── decision-log.md          # มติที่ทีมอนุมัติ (A1, A5) + Pending Decisions
