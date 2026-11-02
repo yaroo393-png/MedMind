@@ -1,6 +1,6 @@
 # Architecture & Design — MedMind
 
-> เอกสารออกแบบ (M2 Design) · **ฉบับร่างเริ่มต้น 31 ต.ค. 2569** — ร่างด้วย AI จาก SRS v1.4 (รวมมติ A1 และ A5 จากผลรีวิวของทีม และคำตอบที่ PM แจ้งเมื่อ 1–2 พ.ย. 2569 — ดู decision-log) แล้ว **System Designer ต้องตรวจ แก้ และตัดสินใจข้อใน §11** ก่อนถือเป็นฉบับสมบูรณ์ (บันทึกใน `docs/AI_USAGE_LOG.md`)
+> เอกสารออกแบบ (M2 Design) · **ฉบับร่างเริ่มต้น 31 ต.ค. 2569** — ร่างด้วย AI จาก SRS v1.5 (รวมมติ A1 และ A5 จากผลรีวิวของทีม และคำตอบที่ PM แจ้งเมื่อ 1–2 พ.ย. 2569 — ดู decision-log) แล้ว **System Designer ต้องตรวจ แก้ และตัดสินใจข้อใน §11** ก่อนถือเป็นฉบับสมบูรณ์ (บันทึกใน `docs/AI_USAGE_LOG.md`)
 > Requirement อยู่ที่ [`docs/01-requirements/M2-SRS_MedMind.pdf`](../01-requirements/M2-SRS_MedMind.pdf) (สำเนาอ่านง่าย: [`spec.md`](../01-requirements/spec.md)) — เอกสารนี้ไม่เปลี่ยน requirement ถ้าต้องเปลี่ยนให้แก้ SRS ก่อน
 
 ## 1. ขอบเขตของเอกสาร
@@ -131,11 +131,17 @@ flowchart TB
 | มี Dose และ `confirmedAt ≤ T+15` (**รวมตรง T+15 พอดี**) | `taken` (ไม่มี alert) |
 | มี Dose และ `confirmedAt > T+15` | `taken_late` (+ `caregiverAlert = 'confirmed_late'`) |
 | ไม่มี Dose และ `T ≤ now ≤ T+15` (**รวมตรง T+15 พอดี**) | `reminding` — `round = min(2, floor((now−T)/5))` (0, 1, 2) · ยังไม่แจ้งผู้ดูแล เพราะการกดที่ T+15 พอดียังทันเวลา (A5) |
-| ไม่มี Dose และ `now > T+15` (หลัง T+15 ผ่านไปแล้ว) และอยู่ในหน้าต่างยืนยันย้อนหลัง (ถึงเวลาเตือนของมื้อถัดไปที่เริ่มหลัง T+15; ไม่มี = 23:59) | `not_confirmed` (+ `caregiverAlert = 'not_confirmed'`, `canConfirm = true`) |
-| นอกหน้าต่างนั้น | `missed` (`canConfirm = false`) |
+| ไม่มี Dose และ `now > T+15` (หลัง T+15 ผ่านไปแล้ว) และ `now ≤ nextMealStart` (**รวมขอบ** — BR-21; ไม่มีมื้อถัดไป = 23:59:59.999 ของวันนั้น) | `not_confirmed` (+ `caregiverAlert = 'not_confirmed'`, `canConfirm = true`) |
+| `now > nextMealStart` (เลยขอบแม้ 1 ms) | `missed` (`canConfirm = false`) — สถานะที่ผู้ใช้เห็นยังเป็น "ยังไม่ยืนยัน" (BR-15) |
 | ไม่มี Dose แต่มี `notYetLastRoundAt` (กด "ยังไม่กิน" รอบ T+10) | `caregiverAlert = 'not_confirmed'` ทันที ไม่รอ T+15 (BR-11) |
 
 เปิดหน้ากลับ (BR-18): ฟังก์ชันคืนเฉพาะ `round` *ปัจจุบัน* — UI จึงไม่เล่นรอบที่ผ่านไปแล้ว
+
+**ขอบเวลา (BR-21, SRS v1.5):** เทียบเป็นมิลลิวินาที · การกดของผู้ใช้ตรงขอบพอดีถือว่าทัน (`confirmedAt ≤ T+15` → `taken`; กดได้ถึง `nextMealStart` พอดี) · การแจ้งผู้ดูแลเกิดเมื่อ `now > T+15` เท่านั้น · ไม่มีมื้อถัดไป หน้าต่างสิ้นสุด 23:59:59.999
+
+**สถานะที่ผู้ดูแลเห็น (BR-14, SRS v1.5):** `not_due` → "ยังไม่ถึงเวลา" · `reminding`, `not_confirmed`, `missed` → "ยังไม่ยืนยัน" (ช่วง T ถึง T+15 แสดง "ยังไม่ยืนยัน" แต่ **ยังไม่แจ้ง**) · `taken` → "กินแล้ว" + เวลา · `taken_late` → "กินแล้ว (ยืนยันย้อนหลัง)" + เวลา
+
+**ข้อความ "ยืนยันการกินยาแล้ว เวลา …" (BR-13, SRS v1.5):** แสดงเมื่อ (ก) `taken_late` หรือ (ข) `taken` และเคยแสดงการแจ้ง `not_confirmed` ของมื้อนั้นแล้ว · แสดงครั้งเดียว
 
 **สิ่งที่เพิ่ม/ย้ายและเหตุผล** (กฎ: ห้ามเปลี่ยนชื่อหรือสร้างโครงสร้างซ้ำซ้อนโดยไม่มีเหตุผล)
 | การเปลี่ยน | เหตุผล | ชื่อ field เดิม |
@@ -156,6 +162,20 @@ flowchart TB
 | **`validateSlot(slot)`** | ผิดเมื่อ: `meal` ไม่อยู่ใน 4 ค่า · `timing` ไม่อยู่ใน 3 ค่า · `before_meal` แต่ `minutesBefore` ไม่ใช่จำนวนเต็มบวก · `tabletsPerDose` ไม่ใช่จำนวนเต็มบวก · `at_bedtime` แต่ `meal` ไม่ใช่ `bedtime` (หรือกลับกัน) · ยาไม่มี slot เลย — เหตุผลที่คืน (ชื่อเป็นข้อเสนอ): `invalid_meal`, `invalid_timing`, `minutesBefore_required`, `invalid_tablets`, `meal_timing_mismatch`, `no_slot`, `duplicate_slot`, `conflicting_tablets` |
 | **ที่ตัดสินแล้ว (PM แจ้ง 2 พ.ย.)** | PD-6: slot ซ้ำ หรือ slot ที่ได้เวลาเตือนเดียวกันแต่จำนวนเม็ดต่างกัน → ขึ้น "Please check" ในหน้าร่าง **ไม่ merge ไม่บวกเม็ด** และ `groupMeals` ใส่ slot เหมือนกันในมื้อเดียวเพียงครั้งเดียว (รายงานใน `skipped` ด้วยเหตุผล `duplicate_slot` / `conflicting_tablets`) · PD-1/A3: "วันละ N ครั้ง" ที่ไม่ระบุมื้อ และเวลาที่ไม่ผูกกับมื้อ ("ทุก 6 ชั่วโมง", "วันเว้นวัน") → ไม่เดา ช่องว่าง + "Please check" |
 | **เทสต์** | A1-T01…T06 ใน `docs/TRACEABILITY.md` (ไฟล์ `tests/schedule.test.js`, `tests/labelDraft.test.js`) |
+
+### 5.3 ข้อเสนอสัญญาระหว่างโมดูล FR-03/04/05 (**ข้อเสนอ — รอ Rossatorn, Nichanan, Suchitra ยืนยันใน Issue #6**)
+พฤติกรรมด้านบนเป็น requirement แล้ว (SRS v1.5) · ชื่อฟังก์ชันและรูปรับ/คืนด้านล่างเป็น **ข้อเสนอ** ที่สามคนต้องตกลงกันก่อนเขียนโค้ด (เปลี่ยนชื่อได้ แต่ต้องบันทึกใน Issue #6 และแก้หัวข้อนี้)
+
+| ฟังก์ชัน | ไฟล์ | เจ้าของ | รับ → คืน | ผูกกับ |
+|---|---|---|---|---|
+| `scheduledTimeOf(meal)` + ค่าคงที่ `MINUTE_MS`, `REMINDER_OFFSETS_MIN = [0, 5, 10]`, `ALERT_DEADLINE_MIN = 15`, `ALERT_TOLERANCE_S = 5` | `logic/time.js` (ไม่พึ่งไฟล์อื่น) | Rossatorn | Meal → T (ms) | BR-06, BR-08, BR-21, NFR-01 |
+| `nextMealStartFor(meals, meal)` | `logic/mealTimeline.js` | Rossatorn | รายการมื้อ + มื้อนี้ → เวลาเตือนแรกของมื้ออื่นที่เริ่มหลัง T+15 (ms) หรือ `null` | BR-15, BR-16, BR-21 |
+| `mealState(...)` | `logic/mealTimeline.js` | Rossatorn | ตาม §5.1 | FR-03, BR-08, BR-18, BR-20, BR-21 |
+| `doseId`, `confirmStatus`, `buildDose({ meal, confirmedAt })` | `logic/confirm.js` | Nichanan | `buildDose` → `{ scheduledTime, confirmedAt, status }` (ไม่มี `serverReceivedAt` — ชั้นข้อมูลเติม) | FR-04, BR-10, BR-12, BR-20 |
+| `alertFor({ now, meal, dose, notYet, seen })` | `logic/status.js` | Suchitra | → `null` / `{ kind: 'not_confirmed' }` / `{ kind: 'confirmed_late', confirmedAt }` · ต่อยอดจาก `mealState` ไม่คำนวณเวลาซ้ำ · `seen` = ชนิดที่แสดงแล้วของมื้อนี้ | FR-05, BR-11, BR-13, BR-20 |
+| `dailyStatus({ now, meals, doses })` | `logic/status.js` | Suchitra | → `[{ mealId, reminderTime, label, confirmedAt? }]` · `label` ∈ `taken`, `taken_late`, `not_confirmed`, `not_due` (หน้าจอแปลงเป็นข้อความ) | FR-05, BR-14 |
+
+หลักที่ใช้: อินเทอร์เฟซเล็กและคนเรียกพึ่งแค่ลายเซ็น (M3) · ตรรกะไม่วาดหน้าจอ จึงคืน "ชนิด/label" ไม่คืนข้อความ (M3) · หนึ่งฟังก์ชันทำเรื่องเดียวและตั้งชื่อค่าคงที่ (สัปดาห์ 6) · เทสต์ที่ขอบ (สัปดาห์ 7) — เคส C-T01…C-T05 และ A5-T01…T07 ใน `docs/TRACEABILITY.md`
 
 ## 6. โมเดลข้อมูล
 

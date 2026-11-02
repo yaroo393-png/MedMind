@@ -10,10 +10,10 @@
 | Part | Status |
 |---|---|
 | M1 Team Charter | ✅ Complete (scope in/out + success measure) — [`M1-Charter_MedMind.pdf`](docs/00-charter/M1-Charter_MedMind.pdf) · readable on GitHub: [`charter.md`](docs/00-charter/charter.md) ([Thai](docs/00-charter/charter.th.md)) |
-| M2 SRS | ✅ v1.4 (FR-01–05 Must, FR-06 Should, FR-07–09 Could · BR-01–20 · NFR-01–14 · use cases + diagram · document history) — [`M2-SRS_MedMind.pdf`](docs/01-requirements/M2-SRS_MedMind.pdf) · [`spec.md`](docs/01-requirements/spec.md) ([Thai](docs/01-requirements/spec.th.md)) · [`backlog.md`](docs/01-requirements/backlog.md) |
+| M2 SRS | ✅ v1.5 (FR-01–05 Must, FR-06 Should, FR-07–09 Could · BR-01–21 · NFR-01–14 · use cases + diagram · document history) — [`M2-SRS_MedMind.pdf`](docs/01-requirements/M2-SRS_MedMind.pdf) · [`spec.md`](docs/01-requirements/spec.md) ([Thai](docs/01-requirements/spec.th.md)) · [`backlog.md`](docs/01-requirements/backlog.md) |
 | M2 Design | 🟡 Draft (includes Demo mode, ADR-8, ADR-9) — [`architecture.md`](docs/02-design/architecture.md), [`design-system.md`](docs/02-design/design-system.md), [`firestore-rules-draft.md`](docs/02-design/firestore-rules-draft.md) · waiting for the team to review and decide §11 (documents in Thai) |
 | Traceability (Golden Thread) | 🟡 Structure ready — [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) · Code/Test columns are filled in as code is written |
-| M3 prototype (`docs/02-design/prototypes/`) | ⬜ Waiting for the prototype's owner to import the earlier 26-screen baseline through their own PR, then adapt it to SRS v1.4 — plan and criteria: [folder README](docs/02-design/prototypes/README.md) |
+| M3 prototype (`docs/02-design/prototypes/`) | ⬜ Waiting for the prototype's owner to import the earlier 26-screen baseline through their own PR, then adapt it to SRS v1.5 — plan and criteria: [folder README](docs/02-design/prototypes/README.md) |
 | System (web app) | ⬜ Not started — Increment 1: FR-03–05 · Increment 2: FR-01–02 |
 | Automated tests | ⬜ Only the repository-structure tests exist (`tests/repo-structure.test.js`) · FR tests are added together with the code |
 | Project plan (Week 10) | 🟡 Sprints 0–3, risks, rotating roles, retrospective — [`docs/PROJECT-PLAN.md`](docs/PROJECT-PLAN.md) |
@@ -49,8 +49,8 @@
 | Older adults find sign-up hard; the caregiver is not there | **FR-01** | [architecture §6, §7.1](docs/02-design/architecture.md) | S-01, C-01 · [`fr/FR-01-pairing`](fr/FR-01-pairing/README.md) | AC 1–6 · NFR-04, 05, 10 |
 | The caregiver wants help filling in medicine details from the label | **FR-02** | [architecture §5, §7.2, ADR-3](docs/02-design/architecture.md) | C-02…C-05 · [`fr/FR-02-label-scan`](fr/FR-02-label-scan/README.md) | AC 1–11 · NFR-06, 08, 09, 11, 14 |
 | Forgetting a dose / taking it late | **FR-03** | [architecture §5.1, §7.3](docs/02-design/architecture.md) | S-03 · [`fr/FR-03-reminder`](fr/FR-03-reminder/README.md) | AC 1–6 · NFR-01 |
-| Not remembering whether the medicine was taken | **FR-04** | [architecture §6 (`doses`)](docs/02-design/architecture.md) | S-02, S-03 · [`fr/FR-04-confirm`](fr/FR-04-confirm/README.md) | AC 1–9 · NFR-02, 03, 07, 12 |
-| Calling or messaging for every meal; no single status | **FR-05** | [architecture §6 (`alertSeen`)](docs/02-design/architecture.md) | C-07, C-08 · [`fr/FR-05-caregiver-status`](fr/FR-05-caregiver-status/README.md) | AC 1–9 · NFR-01, 12, 13 |
+| Not remembering whether the medicine was taken | **FR-04** | [architecture §6 (`doses`)](docs/02-design/architecture.md) | S-02, S-03 · [`fr/FR-04-confirm`](fr/FR-04-confirm/README.md) | AC 1–10 · NFR-02, 03, 07, 12 |
+| Calling or messaging for every meal; no single status | **FR-05** | [architecture §6 (`alertSeen`)](docs/02-design/architecture.md) | C-07, C-08 · [`fr/FR-05-caregiver-status`](fr/FR-05-caregiver-status/README.md) | AC 1–10 · NFR-01, 12, 13 |
 
 AC → code → test, one by one, is in [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) · **the SRS is the source of truth** — change the SRS first, then copy the change here.
 
@@ -72,7 +72,7 @@ docs/
 │   ├── M1-Charter_MedMind.pdf   # M1 (submitted): problem, users, scope in/out, success measure, Gates 1–3, SDLC, team
 │   ├── charter.md               # readable copy (English) · charter.th.md = Thai translation
 ├── 01-requirements/
-│   ├── M2-SRS_MedMind.pdf       # M2 (submitted) SRS v1.4
+│   ├── M2-SRS_MedMind.pdf       # M2 (submitted) SRS v1.5
 │   ├── spec.md                  # readable SRS copy (English) · spec.th.md = Thai translation
 │   ├── backlog.md               # Product backlog: MoSCoW + pain + size + status
 │   └── decision-log.md          # decisions the team approved (A1, A5) + pending decisions
