@@ -17,7 +17,7 @@ for l in FR-01 FR-02 FR-03 FR-04 FR-05 FR-09 docs test bug design ai-log; do gh 
 ```
 
 ## 3. Milestones
-วันที่ของแต่ละ sprint และขนาดงานอยู่ใน [`PROJECT-PLAN.md`](PROJECT-PLAN.md) และ [`02-requirements/backlog.md`](02-requirements/backlog.md) · บอร์ด: **Projects → New project → Board** (To do / Doing / Done) แล้วผูก issue ทุกใบ
+วันที่ของแต่ละ sprint และขนาดงานอยู่ใน [`PROJECT-PLAN.md`](PROJECT-PLAN.md) และ [`01-requirements/backlog.md`](01-requirements/backlog.md) · บอร์ด: **Projects → New project → Board** (To do / Doing / Done) แล้วผูก issue ทุกใบ
 
 | Milestone | ขอบเขต |
 |---|---|
@@ -31,14 +31,14 @@ for l in FR-01 FR-02 FR-03 FR-04 FR-05 FR-09 docs test bug design ai-log; do gh 
 |---|---|---|---|---|
 | 1 | ตรวจ architecture.md และตัดสินใจรายการ §11 | Takkan | 0 | design |
 | 2 | ตั้ง Firebase project (Spark), เปิด Anonymous Auth + Firestore + Hosting | Takkan | 0 | design |
-| 3 | `core/firebase.js`, `services/dataService.js` (+ Firebase/Mock service), `core/clock.js` | Takkan | 1 | FR-01 |
-| 4 | เขียนและทดสอบ Security Rules ใน Emulator (R-1…R-8) | Takkan | 2 | FR-01 |
+| 3 | `core/firebase.js`, `core/repo.js`, `core/clock.js` | Takkan | 1 | FR-01 |
+| 4 | เขียนและทดสอบ Security Rules ใน Emulator (R-1…R-11) | **Suchitra** (ย้ายจาก Takkan — DL-12; Takkan ช่วยตรวจ) | 2 | test |
 | 5 | Design tokens + หน้าเปล่า S-00…S-03 ตาม design-system.md | Rossatorn | 1 | design |
-| 6 | `logic/mealTimeline.js` — `mealState()` + เทสต์ TC-03.1–5 | Rossatorn | 1 | FR-03 |
+| 6 | `logic/mealTimeline.js` — `mealState()` + เทสต์ TC-03.1–6 + A1-T02/T03 | Rossatorn | 1 | FR-03 |
 | 7 | หน้าเตือน S-03 (เสียง, ปุ่ม Taken / Not yet) | Rossatorn | 1 | FR-03 |
-| 8 | `logic/confirm.js` + เทสต์ TC-04.1–7 | Nichanan | 1 | FR-04 |
+| 8 | `logic/confirm.js` + เทสต์ TC-04.1–9 + A5-T01…T03, T05, T06 | Nichanan | 1 | FR-04 |
 | 9 | หน้าหลักผู้สูงอายุ S-02 + ยืนยันออฟไลน์ | Nichanan | 1 | FR-04 |
-| 10 | `logic/status.js` + เทสต์ TC-05.1–7 | Suchitra | 1 | FR-05 |
+| 10 | `logic/status.js` + เทสต์ TC-05.1–9 + A5-T04, T05, T07 | Suchitra | 1 | FR-05 |
 | 11 | หน้าสถานะรายวัน C-07 + แจ้งเตือน C-08 | Suchitra | 1 | FR-05 |
 | 12 | แผนทดสอบมือ MT-01…MT-13 (เติมผล) | Suchitra | Final | test |
 | 13 | `logic/schedule.js` + `logic/labelDraft.js` + เทสต์ TC-02.x | Yar | 1 | FR-02 |
@@ -46,8 +46,11 @@ for l in FR-01 FR-02 FR-03 FR-04 FR-05 FR-09 docs test bug design ai-log; do gh 
 | 15 | `services/aiLabel.js` + หน้า C-03…C-05 | Yar | 2 | FR-02 |
 | 16 | `logic/pairing.js` + หน้า S-01, C-01, ยกเลิกจับคู่ | Takkan | 2 | FR-01 |
 | 17 | Final Report, Demo Slides, AI-Use Statement | Yar | Final | docs |
-| 18 | Demo mode `demo.html` + `MockFirestoreService` + ข้อมูลตัวอย่าง (ADR-8) | Nichanan (+ ทุกคน) | 1 → 2 | design |
+| 18 | Demo mode `demo.html` + `localRepo` + ข้อมูลตัวอย่าง (ADR-8) | Nichanan (+ ทุกคน) | 1 → 2 | design |
 | 19 | Heuristic evaluation โดยทีมอื่น + think-aloud (MT-14, MT-07) | Suchitra | Final | test |
+| 20 | เก็บฉลากตัวอย่าง 5–10 ใบ **ภายใน 3 พ.ย.** (ปิดชื่อ/HN, เก็บใน `test-labels/` ห้ามขึ้น repo — กฎใน decision-log DL-04) | Yar | 0 | docs |
+| 22 | **ทุกคน:** พิมพ์ชื่อ+วันที่ของตนเองในตารางท้ายไฟล์ `docs/00-charter/charter.md` ผ่าน PR จากบัญชีตัวเอง (แถวของตัวเองเท่านั้น) | ทุกคน (คนละ 1 PR) | 0 | docs |
+| 21 | ทดสอบ iOS Safari + Android: กล้อง `capture`, เปิดลิงก์จาก QR, เสียงหลังแตะ, ออฟไลน์, ล็อกจอ (MT-16) | Suchitra | 2 | test |
 
 > ลำดับสำคัญ: **#2 และ #3 ก่อน** เพราะทุก FR พึ่ง `core/` · FR-03 (`mealState`) ต้องตกลงสัญญากับ FR-04/FR-05 ก่อนเขียน (architecture §5.1)
 

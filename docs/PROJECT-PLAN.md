@@ -1,49 +1,40 @@
 # Project Plan — MedMind (Week 10: sprints, ความเสี่ยง, retrospective)
 
-> **ฉบับร่าง** — วันที่ตั้งจากวันส่งงาน **9 พ.ย. 2569** ตามแผนเดิมของทีม (**ยืนยันวันส่งจริงกับอาจารย์** ถ้าไม่ใช่ให้เลื่อนตาราง) · SDLC: **Incremental** (ตาม Charter) ส่งมอบทีละ increment ผ่าน sprint สั้นบนบอร์ด GitHub Projects (To do / Doing / Done)
+> **ฉบับร่าง** — **วันส่งงาน 9 พ.ย. 2569 (PM แจ้งว่าอาจารย์ให้ส่งวันที่ 9 — decision-log DL-03, DL-14; ไม่มีเอกสารจากอาจารย์ในมือ)** · ทำให้เสร็จและซ้อมภายใน 8 พ.ย. เหลือ 1 วันกันพลาด · SDLC: **Incremental** (ตาม Charter) ส่งมอบทีละ increment ผ่าน sprint สั้นบนบอร์ด GitHub Projects (To do / Doing / Done) · ทดสอบบน **Android และ iOS** (DL-06)
 
-## 1. ทีมและการแบ่งงาน
-| ชื่อ–นามสกุล | รหัสนักศึกษา | GitHub | บทบาท | ฟีเจอร์ที่เขียน + งานส่วนกลาง | งานใน Repo |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| Yar Oo | 6931503064 | [yaroo393-png](https://github.com/yaroo393-png) | Project Manager | **FR-02** อ่านฉลากด้วย AI • ตั้งค่า CI/CD (`.github/workflows/ci.yml`) • สรุปเล่ม Final Report & AI Statement (`docs/05-report/`) | `fr/FR-02-label-scan` |
-| Takkan Khanlui | 6931503035 | [V31311](https://github.com/V31311) | System Designer | **FR-01** จับคู่ Caregiver-Patient • เขียน Firestore Security Rules • จัดทำ `docs/03-design/architecture.md` | `fr/FR-01-pairing` |
-| Rossatorn Sangkaew | 6931503066 | [IDK-SleepyBro](https://github.com/IDK-SleepyBro) | UX/UI Designer | **FR-03** ระบบแจ้งเตือนกินยา • จัดทำ `docs/03-design/design-system.md` • ออกแบบ UI Components สำหรับผู้สูงอายุ | `fr/FR-03-reminder` |
-| Nichanan Lalua | 6931503049 | [KaidangSuk](https://github.com/KaidangSuk) | Prototype Dev | **FR-04** ยืนยันการกินยา • จัดทำ Clickable Prototypes HTML (`docs/03-design/prototypes/`) ทั้ง Happy/Error States • เขียน Automated Unit Tests ใน `tests/` | `fr/FR-04-confirm` |
-| Suchitra Khomdee | 6931503079 | [Khaiwann](https://github.com/Khaiwann) | QA / Tester | **FR-05** แจ้งผู้ดูแล + สถานะรายวัน • จัดทำและ Commit ตาราง `docs/TRACEABILITY.md` • รวบรวมสไลด์พรีเซนต์ `docs/06-presentation/demo-slides.md` | `fr/FR-05-caregiver-status` |
-
-ทุกคนเขียนฟีเจอร์ของตัวเองครบสาย (logic + เทสต์ + หน้าจอ) ในโฟลเดอร์ `fr/<FR>` · กติกาการทำงาน: [`RULES.md`](../RULES.md)
-
-## 2. Sprint
+## 1. Sprint
 | Sprint | ช่วง | เป้าหมาย (Increment) | งานหลัก (backlog) | Demo ท้าย sprint |
 |---|---|---|---|---|
-| 0 | 31 ต.ค.–1 พ.ย. | เอกสารและโครง repo | อัพ repo, ตั้ง GitHub (labels/milestones/ruleset), E-1, ตรวจ architecture §11, ตกลงสัญญา `mealState` | repo ครบ + CI ผ่าน |
+| 0 | 31 ต.ค.–1 พ.ย. | เอกสารและโครง repo | อัพ repo, ตั้ง GitHub (labels/milestones/ruleset), E-1, ตรวจ architecture §11, ตกลงสัญญา `mealState`, **ฉลากตัวอย่าง: ได้ 10 ใบแล้ว (2 พ.ย.) — ส่งข้อความตาม `01-requirements/label-sample-intake.md` ภายใน 2–3 พ.ย. (DL-04, DL-13)** | repo ครบ + CI ผ่าน |
 | 1 | 2–4 พ.ย. | **Increment 1: วงจรหลัก** FR-03 → FR-04 → FR-05 บนข้อมูลจริงด้วยคู่ทดสอบ | E-2, E-3, E-4, FR-03, FR-04, FR-05, logic ของ FR-02 (`schedule.js`, `labelDraft.js`), เริ่ม E-5 | เตือน → กดกินแล้ว/ยังไม่กิน → ผู้ดูแลเห็นสถานะ/แจ้งเตือน (2 เบราว์เซอร์) |
-| 2 | 5–7 พ.ย. | **Increment 2: จับคู่และ AI** FR-01, FR-02 | FR-01 + E-6, FR-02 (redact, AI, หน้าจอ), E-5 ครบทุก FR | จับคู่ด้วย QR → ถ่ายฉลาก → ปิดชื่อ/HN → AI ร่าง → บันทึก → เตือนตามเวลาที่ได้ |
+| 2 | 5–7 พ.ย. | **Increment 2: จับคู่และ AI** FR-01, FR-02 | FR-01 (Takkan) + E-6 Rules (Suchitra), FR-02 (redact, AI, หน้าจอ), E-5 ครบทุก FR | จับคู่ด้วย QR → ถ่ายฉลาก → ปิดชื่อ/HN → AI ร่าง → บันทึก → เตือนตามเวลาที่ได้ |
 | 3 | 8 พ.ย. | ทดสอบและส่ง | E-7 (MT + heuristic evaluation), แก้บั๊กรุนแรง, E-8, ซ้อมพูดคนละ 3–5 นาที | ซ้อมเดโมเต็มรูปแบบด้วย Demo mode |
 | — | 9 พ.ย. | ส่งงาน + นำเสนอ | push สุดท้าย, `npm run check` ผ่าน, PDF รายงาน/สไลด์ | — |
+
+> **สถานะ 2 พ.ย. (ตรวจจากหน้า GitHub):** Sprint 0 ยังไม่ปิด — เอกสารรุ่นหลังจาก PR #1 (สองภาษา, SRS v1.4, เปลี่ยนชื่อโฟลเดอร์, decision-log) **ยังไม่ merge เข้า `main`** · Sprint 1 เริ่มได้เมื่อ merge เสร็จ; ถ้าเริ่มช้ากว่า 3 พ.ย. ให้ตัดตามลำดับใน `docs/PROJECT-PLAN.md` และบอกทีม
 
 **ทุก sprint:** เริ่มด้วย sprint planning (เลือกงานจาก backlog + ประมาณขนาด) · ประชุมสั้น 10 นาที/วัน (ทำอะไรไปแล้ว / จะทำอะไร / ติดอะไร) · จบด้วย demo + retrospective
 **Definition of Done (งานหนึ่งชิ้น):** logic + เทสต์ผ่าน · หน้าจอมีป้าย Covers · PR ผ่านการรีวิว 1 คน + CI ผ่าน · อัปเดต TRACEABILITY · บันทึก AI log (ถ้าใช้) — "เกือบเสร็จ" นับเป็น 0
 
-## 3. Velocity (กรอกหลังจบแต่ละ sprint)
+## 2. Velocity (กรอกหลังจบแต่ละ sprint)
 | Sprint | points ที่วางแผน | points ที่ Done จริง | หมายเหตุ |
 |---|---|---|---|
 | 1 | [ ] | [ ] | |
 | 2 | [ ] | [ ] | |
 พยากรณ์: sprint ที่ต้องใช้ = points ที่เหลือ ÷ ค่าเฉลี่ย points ที่ Done ต่อ sprint (ใช้ค่าเฉลี่ย ไม่ใช่ sprint ที่ดีที่สุด)
 
-## 4. ความเสี่ยง (เรียงจากสูงสุด)
+## 3. ความเสี่ยง (เรียงจากสูงสุด)
 | # | ความเสี่ยง | โอกาส / ผลกระทบ | วิธีลด | เจ้าของ | สถานะ |
 |---|---|---|---|---|---|
 | R1 | **เวลาน้อย** (~9 วันสำหรับ 5 FR + Firebase + AI) | สูง / สูง | ทำวงจรหลัก (FR-03–05) + Demo mode ก่อน · ตัด FR-09 และของ Could ก่อน · แตกงานเล็ก ติดตามบนบอร์ดทุกวัน | Yar Oo | เปิด |
-| R2 | ทีมไม่เคยใช้ Firebase / Security Rules | สูง / สูง | ใช้ logic ล้วน + `MockFirestoreService` ทำงานได้ก่อนต่อ Firebase (ADR-4, ADR-8) · ทดสอบ Rules ใน Emulator ก่อน deploy | Takkan | เปิด |
+| R2 | ทีมไม่เคยใช้ Firebase / Security Rules | สูง / สูง | ใช้ logic ล้วน + `localRepo` ทำงานได้ก่อนต่อ Firebase (ADR-4, ADR-8) · ทดสอบ Rules ใน Emulator ก่อน deploy | Takkan | เปิด |
 | R3 | AI อ่านฉลากไทยไม่แม่นพอ / โควตา free tier หมด | กลาง / กลาง | ทางสำรองกรอกเอง (AC 5) · ทดสอบ 20 ฉลากเร็ว (MT-09) · ร่างฉลากตัวอย่างใน Demo mode | Yar Oo | เปิด |
 | R4 | ข้อมูลส่วนตัวหลุดไปกับรูป (ชื่อ/HN) | ต่ำ / สูง | BR-19 + ติ๊กยืนยัน + MT-13 · ห้ามใช้ฉลากจริงที่ยังเห็นชื่อ | Yar Oo | เปิด |
 | R5 | ผู้ตรวจเปิดระบบจริงเองไม่ได้ (ต้องใช้ 2 มือถือ) | สูง / สูง | Demo mode (ADR-8) + README บอกวิธีเปิด + MT-15 | Nichanan | เปิด |
 | R6 | งานของ FR-03/04/05 ชนกันที่ `mealState` | กลาง / กลาง | ตกลงสัญญา architecture §5.1 ใน Sprint 0 · Rossatorn เป็นเจ้าของ `mealTimeline.js` คนเดียว | Rossatorn | เปิด |
 | R7 | ส่วนร่วมรายคนไม่ปรากฏใน GitHub | กลาง / สูง | ทุกคน commit เองจากบัญชีตัวเอง (RULES §2) · `fr/<FR>/README.md` ของแต่ละคน | Yar Oo | เปิด |
 
-## 5. บทบาทหมุนเวียน (นอกเหนือจากบทบาทใน Charter) — ข้อเสนอ ให้ทีมตกลงใน Sprint 0
+## 4. บทบาทหมุนเวียน (นอกเหนือจากบทบาทใน Charter) — ข้อเสนอ ให้ทีมตกลงใน Sprint 0
 | Sprint | ผู้นำประชุมประจำวัน | ผู้จดบันทึก + อัปเดตบอร์ด | ผู้ตรวจ PR หลัก |
 |---|---|---|---|
 | 0 | Yar Oo | Suchitra | Takkan |
@@ -51,7 +42,7 @@
 | 2 | Rossatorn | Nichanan | Yar Oo |
 | 3 | Suchitra | Takkan | Nichanan |
 
-## 6. Retrospective (กรอกท้ายแต่ละ sprint)
+## 5. Retrospective (กรอกท้ายแต่ละ sprint)
 | Sprint | อะไรดี | อะไรไม่ดี | จะเปลี่ยนอะไร |
 |---|---|---|---|
 | 0 | [ ] | [ ] | [ ] |

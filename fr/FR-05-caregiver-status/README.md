@@ -4,7 +4,7 @@
 |---|---|
 | **ผู้รับผิดชอบ** | Suchitra Khomdee ([@Khaiwann](https://github.com/Khaiwann)) — QA / Tester |
 | **Priority** | Must |
-| **SRS** | [`M2-SRS_MedMind.pdf`](../../docs/02-requirements/M2-SRS_MedMind.pdf) §3 · [`spec.md`](../../docs/02-requirements/spec.md) |
+| **SRS** | [`M2-SRS_MedMind.pdf`](../../docs/01-requirements/M2-SRS_MedMind.pdf) §3 · [`spec.md`](../../docs/01-requirements/spec.md) |
 | **Traceability** | [`docs/TRACEABILITY.md`](../../docs/TRACEABILITY.md) หัวข้อ FR-05 |
 
 > ไฟล์นี้คือหลักฐานงานของคุณใน GitHub: เติมความคืบหน้า ลิงก์ PR/Issue และสิ่งที่เรียนรู้ ทุกครั้งที่ merge งาน
@@ -28,12 +28,14 @@ Pain this traces to: having to call or send a LINE message for every meal; no si
 | 5 | Given the older adult tapped “Not yet” in the 08:10 round (the caregiver has already been alerted), when it is 08:15, then the caregiver is not alerted again. | **TC-05.5** — status.test (แจ้งครั้งเดียว) | ⬜ | |
 | 6 | Given the caregiver has been alerted “Medicine not yet confirmed”, when the older adult confirms late at 08:40, then the caregiver receives “Medicine confirmed at 08:40”. | **TC-05.6** — status.test (confirmed at HH:MM) | ⬜ | |
 | 7 | Wrong path. Given the caregiver's page was closed at 08:15 when a meal was not confirmed, when the caregiver opens MedMind at 09:00, then the unseen alert is shown and the meal's status is “Not yet confirmed” (or “Taken (late confirmation)” + time if confirmed since). | **TC-05.7** — status.test (แจ้งที่ค้างเมื่อเปิดหน้า BR-18) · MT-06 | ⬜ | |
+| 8 | Wrong path. Given the older adult taps “Taken” at exactly 08:15 and that confirmation has reached the caregiver's phone before it evaluates the alert for 08:15, when the caregiver's phone evaluates the meal, then the caregiver is not alerted. | **TC-05.8** — status.test — A5-T04 (กดที่ T+15 พอดีก่อนประเมิน → ไม่แจ้ง) | ⬜ | |
+| 9 | Wrong path. Given the caregiver was alerted “Medicine not yet confirmed” at 08:16 because no confirmation had arrived, when a confirmation tapped at 08:14 reaches the caregiver's phone at 08:20, then the alert is replaced by “Medicine confirmed at 08:14”, the meal shows “Taken”, and the caregiver is not alerted a second time. | **TC-05.9** — status.test — A5-T05 (แจ้งแล้ว แล้วการยืนยัน T−1 มาทีหลัง → แทนที่ด้วย "ยืนยันการกินยาแล้ว" ไม่แจ้งซ้ำ) · MT-06 | ⬜ | |
 
 ## ไฟล์ที่ต้องเขียน
 
 - โค้ด: logic/status.js, features/caregiverStatus.js
 - เทสต์: tests/status.test.js
-- หน้าจอ: ดู Screen Map ใน [`design-system.md`](../../docs/03-design/design-system.md) §4 · ทุกหน้าต้องมี "Covers: FR-05"
+- หน้าจอ: ดู Screen Map ใน [`design-system.md`](../../docs/02-design/design-system.md) §4 · ทุกหน้าต้องมี "Covers: FR-05"
 
 ## พึ่งพา / เชื่อมกับโมดูลอื่น
 

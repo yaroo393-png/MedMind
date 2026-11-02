@@ -6,9 +6,9 @@
 - ตอบผู้ใช้เป็นภาษาไทย · คอมเมนต์ในโค้ดและเอกสาร `.md` เขียนภาษาไทยตามไฟล์เดิม · ชื่อตัวแปร/ฟังก์ชันเป็นภาษาอังกฤษ
 
 ## แหล่งความจริง (อ่านก่อนทำงานทุกครั้ง)
-- Requirement ทั้งหมดอยู่ใน `docs/02-requirements/spec.md` (สำเนาของ `M2-SRS_MedMind.pdf`: FR, AC, BR-01–19, NFR-01–14) — **ห้ามเดา requirement** ถ้าหาไม่เจอให้ถามก่อน · ปัญหา/ผู้ใช้/ขอบเขตอยู่ใน `docs/01-charter/charter.md`
-- การออกแบบ: `docs/03-design/architecture.md` (สถาปัตยกรรม, โมดูล, data model, state machine, Demo mode) และ `design-system.md` (หน้าจอ, ขนาด/สี)
-- AC → โค้ด → เทสต์: `docs/TRACEABILITY.md` · งานและขนาด: `docs/02-requirements/backlog.md`, `docs/PROJECT-PLAN.md`
+- Requirement ทั้งหมดอยู่ใน `docs/01-requirements/spec.md` (สำเนาของ `M2-SRS_MedMind.pdf`: FR, AC, BR-01–20, NFR-01–14) — **ห้ามเดา requirement** ถ้าหาไม่เจอให้ถามก่อน · ปัญหา/ผู้ใช้/ขอบเขตอยู่ใน `docs/00-charter/charter.md`
+- การออกแบบ: `docs/02-design/architecture.md` (สถาปัตยกรรม, โมดูล, data model, state machine, Demo mode) และ `design-system.md` (หน้าจอ, ขนาด/สี)
+- AC → โค้ด → เทสต์: `docs/TRACEABILITY.md` · งานและขนาด: `docs/01-requirements/backlog.md`, `docs/PROJECT-PLAN.md`
 
 ## ก่อนเริ่มงานทุกครั้ง
 1. ถามว่าผู้ใช้คือสมาชิกคนไหน แล้วดูตาราง "ทีมและการแบ่งงาน" ใน `README.md` — แก้เฉพาะไฟล์ของคนนั้น (ดู `fr/<FR>/README.md`)
@@ -25,7 +25,7 @@
 - 3 ชั้น: `public/js/features/` (หน้าจอ) → `public/js/logic/` (ตรรกะล้วน) · `public/js/core/` + `services/` (Firestore, Auth, AI)
 - `logic/` = ฟังก์ชันล้วน **ห้ามแตะ DOM, Firebase หรือ `Date.now()`** (รับเวลาเป็นพารามิเตอร์) ทุกฟังก์ชันมีเทสต์ใน `tests/<ชื่อ>.test.js` ที่อ้าง AC
 - ไม่มี server code (ไม่ใช้ Cloud Functions) — เตือน/แจ้งผู้ดูแลคำนวณบนเครื่องจากข้อมูลที่แชร์ใน Firestore
-- ทุกฟีเจอร์ต้องทำงานได้ใน **Demo mode** (`demo.html`, `MockFirestoreService` + นาฬิกาจำลอง) เพื่อให้ผู้ตรวจเปิดในเบราว์เซอร์เดียวได้ (ADR-8)
+- ทุกฟีเจอร์ต้องทำงานได้ใน **Demo mode** (`demo.html`, `localRepo` + นาฬิกาจำลอง) เพื่อให้ผู้ตรวจเปิดในเบราว์เซอร์เดียวได้ (ADR-8)
 - อ่านฉลากด้วย **Firebase AI Logic (Gemini)** เท่านั้น ส่งเฉพาะภาพที่ผู้ดูแลปิดชื่อ/HN/บาร์โค้ดแล้ว · AI แค่ร่าง ไม่ตัดสินเวลาเตือน ไม่ให้คำแนะนำยา (BR-04, BR-06, BR-19)
 - ทุกหน้าจอมีป้าย "Covers: FR-xx" · ข้อความจากผู้ใช้ต้อง escape ก่อนใส่ HTML · ขนาด/สีตาม NFR-03
 
