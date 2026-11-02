@@ -8,13 +8,14 @@
 ## สถานะปัจจุบัน
 | ส่วน | สถานะ |
 |---|---|
-| M1 Team Charter | ✅ ฉบับสมบูรณ์ (มีขอบเขต in/out + ตัววัดความสำเร็จ) — [`M1-Charter_MedMind.pdf`](docs/01-charter/M1-Charter_MedMind.pdf) · อ่านบน GitHub: [`charter.md`](docs/01-charter/charter.md) |
-| M2 SRS | ✅ v1.2 (FR-01–05 Must, FR-06 Should, FR-07–09 Could · BR-01–19 · NFR-01–14 · use case + diagram · Document history) — [`M2-SRS_MedMind.pdf`](docs/02-requirements/M2-SRS_MedMind.pdf) · [`spec.md`](docs/02-requirements/spec.md) · [`backlog.md`](docs/02-requirements/backlog.md) |
-| M2 Design | 🟡 ฉบับร่าง (รวม Demo mode, ADR-8) — [`architecture.md`](docs/03-design/architecture.md), [`design-system.md`](docs/03-design/design-system.md), [`firestore-rules-draft.md`](docs/03-design/firestore-rules-draft.md) · รอทีมตรวจและตัดสินใจ §11 |
+| M1 Team Charter | ✅ ฉบับสมบูรณ์ (มีขอบเขต in/out + ตัววัดความสำเร็จ) — [`M1-Charter_MedMind.pdf`](docs/00-charter/M1-Charter_MedMind.pdf) · อ่านบน GitHub: [`charter.md`](docs/00-charter/charter.md) |
+| M2 SRS | ✅ v1.4 (FR-01–05 Must, FR-06 Should, FR-07–09 Could · BR-01–20 · NFR-01–14 · use case + diagram · Document history) — [`M2-SRS_MedMind.pdf`](docs/01-requirements/M2-SRS_MedMind.pdf) · [`spec.md`](docs/01-requirements/spec.md) · [`backlog.md`](docs/01-requirements/backlog.md) |
+| M2 Design | 🟡 ฉบับร่าง (รวม Demo mode, ADR-8) — [`architecture.md`](docs/02-design/architecture.md), [`design-system.md`](docs/02-design/design-system.md), [`firestore-rules-draft.md`](docs/02-design/firestore-rules-draft.md) · รอทีมตรวจและตัดสินใจ §11 |
 | Traceability (Golden Thread) | 🟡 โครงพร้อม — [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) · ช่อง Code/Test เติมเมื่อมีโค้ด |
+| ต้นแบบ M3 (`docs/02-design/prototypes/`) | ⬜ รอเจ้าของต้นแบบนำเข้า baseline เก่า (26 หน้า) ผ่าน PR ของตนเอง แล้วปรับตาม SRS v1.4 — แผนและเกณฑ์: [README ของโฟลเดอร์](docs/02-design/prototypes/README.md) |
 | ระบบ (เว็บแอป) | ⬜ ยังไม่เริ่มเขียน — Increment 1: FR-03–05 · Increment 2: FR-01–02 |
 | เทสต์อัตโนมัติ | ⬜ มีเฉพาะเทสต์โครง repo (`tests/repo-structure.test.js`) · เทสต์ของ FR เพิ่มพร้อมโค้ด |
-| แผนงาน (Week 10) | 🟡 การแบ่งงาน, sprint 0–3, ความเสี่ยง, บทบาทหมุนเวียน, retro — [`docs/PROJECT-PLAN.md`](docs/PROJECT-PLAN.md) |
+| แผนงาน (Week 10) | 🟡 sprint 0–3, ความเสี่ยง, บทบาทหมุนเวียน, retro — [`docs/PROJECT-PLAN.md`](docs/PROJECT-PLAN.md) |
 | Final Report / AI-Use Statement / Demo | 🟡 โครงร่าง — [`docs/05-report/`](docs/05-report/), [`docs/06-presentation/`](docs/06-presentation/) |
 
 > ช่อง **[ ]** = ยังไม่มีข้อมูลจริง ไม่เดา · README นี้อัปเดตเมื่อมีผลจริง
@@ -44,49 +45,50 @@
 
 | ปัญหา | → FR | → Design | → Feature | → Test |
 |---|---|---|---|---|
-| ผู้สูงอายุสมัครบัญชียาก; ผู้ดูแลไม่อยู่ด้วย | **FR-01** | [architecture §6, §7.1](docs/03-design/architecture.md) | S-01, C-01 · [`fr/FR-01-pairing`](fr/FR-01-pairing/README.md) | AC 1–6 · NFR-04, 05, 10 |
-| ผู้ดูแลอยากให้ช่วยกรอกข้อมูลยาจากฉลาก | **FR-02** | [architecture §5, §7.2, ADR-3](docs/03-design/architecture.md) | C-02…C-05 · [`fr/FR-02-label-scan`](fr/FR-02-label-scan/README.md) | AC 1–9 · NFR-06, 08, 09, 11, 14 |
-| ลืมกินยา / กินไม่ตรงเวลา | **FR-03** | [architecture §5.1, §7.3](docs/03-design/architecture.md) | S-03 · [`fr/FR-03-reminder`](fr/FR-03-reminder/README.md) | AC 1–6 · NFR-01 |
-| จำไม่ได้ว่ากินแล้วหรือยัง | **FR-04** | [architecture §6 (`doses`)](docs/03-design/architecture.md) | S-02, S-03 · [`fr/FR-04-confirm`](fr/FR-04-confirm/README.md) | AC 1–8 · NFR-02, 03, 07, 12 |
-| โทร/ส่ง LINE ถามทุกมื้อ ไม่มีสถานะรวม | **FR-05** | [architecture §6 (`alertSeen`)](docs/03-design/architecture.md) | C-07, C-08 · [`fr/FR-05-caregiver-status`](fr/FR-05-caregiver-status/README.md) | AC 1–10 · NFR-01, 12, 13 |
+| ผู้สูงอายุสมัครบัญชียาก; ผู้ดูแลไม่อยู่ด้วย | **FR-01** | [architecture §6, §7.1](docs/02-design/architecture.md) | S-01, C-01 · [`fr/FR-01-pairing`](fr/FR-01-pairing/README.md) | AC 1–6 · NFR-04, 05, 10 |
+| ผู้ดูแลอยากให้ช่วยกรอกข้อมูลยาจากฉลาก | **FR-02** | [architecture §5, §7.2, ADR-3](docs/02-design/architecture.md) | C-02…C-05 · [`fr/FR-02-label-scan`](fr/FR-02-label-scan/README.md) | AC 1–11 · NFR-06, 08, 09, 11, 14 |
+| ลืมกินยา / กินไม่ตรงเวลา | **FR-03** | [architecture §5.1, §7.3](docs/02-design/architecture.md) | S-03 · [`fr/FR-03-reminder`](fr/FR-03-reminder/README.md) | AC 1–6 · NFR-01 |
+| จำไม่ได้ว่ากินแล้วหรือยัง | **FR-04** | [architecture §6 (`doses`)](docs/02-design/architecture.md) | S-02, S-03 · [`fr/FR-04-confirm`](fr/FR-04-confirm/README.md) | AC 1–9 · NFR-02, 03, 07, 12 |
+| โทร/ส่ง LINE ถามทุกมื้อ ไม่มีสถานะรวม | **FR-05** | [architecture §6 (`alertSeen`)](docs/02-design/architecture.md) | C-07, C-08 · [`fr/FR-05-caregiver-status`](fr/FR-05-caregiver-status/README.md) | AC 1–9 · NFR-01, 12, 13 |
 
 รายละเอียดทีละ AC → โค้ด → เทสต์ อยู่ใน [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) · **SRS เป็นแหล่งความจริง** แก้ SRS ก่อนแล้วคัดมาที่นี่
 
 ## 👥 ทีมและการแบ่งงาน
-| ชื่อ–นามสกุล | รหัสนักศึกษา | GitHub | บทบาท | ฟีเจอร์ที่เขียน + งานส่วนกลาง | งานใน Repo |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| Yar Oo | 6931503064 | [yaroo393-png](https://github.com/yaroo393-png) | Project Manager | **FR-02** อ่านฉลากด้วย AI • ตั้งค่า CI/CD (`.github/workflows/ci.yml`) • สรุปเล่ม Final Report & AI Statement (`docs/05-report/`) | [`fr/FR-02-label-scan`](fr/FR-02-label-scan/README.md) |
-| Takkan Khanlui | 6931503035 | [V31311](https://github.com/V31311) | System Designer | **FR-01** จับคู่ Caregiver-Patient • เขียน Firestore Security Rules • จัดทำ `docs/03-design/architecture.md` | [`fr/FR-01-pairing`](fr/FR-01-pairing/README.md) |
-| Rossatorn Sangkaew | 6931503066 | [IDK-SleepyBro](https://github.com/IDK-SleepyBro) | UX/UI Designer | **FR-03** ระบบแจ้งเตือนกินยา • จัดทำ `docs/03-design/design-system.md` • ออกแบบ UI Components สำหรับผู้สูงอายุ | [`fr/FR-03-reminder`](fr/FR-03-reminder/README.md) |
-| Nichanan Lalua | 6931503049 | [KaidangSuk](https://github.com/KaidangSuk) | Prototype Dev | **FR-04** ยืนยันการกินยา • จัดทำ Clickable Prototypes HTML (`docs/03-design/prototypes/`) ทั้ง Happy/Error States • เขียน Automated Unit Tests ใน `tests/` | [`fr/FR-04-confirm`](fr/FR-04-confirm/README.md) |
-| Suchitra Khomdee | 6931503079 | [Khaiwann](https://github.com/Khaiwann) | QA / Tester | **FR-05** แจ้งผู้ดูแล + สถานะรายวัน • จัดทำและ Commit ตาราง `docs/TRACEABILITY.md` • รวบรวมสไลด์พรีเซนต์ `docs/06-presentation/demo-slides.md` | [`fr/FR-05-caregiver-status`](fr/FR-05-caregiver-status/README.md) |
+| ชื่อ–นามสกุล | รหัสนักศึกษา | GitHub | บทบาท | ฟีเจอร์ที่เขียน (ครบสาย: logic + เทสต์ + หน้าจอ) | งานของฉัน |
+|---|---|---|---|---|---|
+| Yar Oo | 6931503064 | [yaroo393-png](https://github.com/yaroo393-png) | Project Manager | **FR-02** อ่านฉลากด้วย AI · รวมเอกสารทั้งหมด · repo/CI | [`fr/FR-02-label-scan`](fr/FR-02-label-scan/README.md) |
+| Takkan Khanlui | 6931503035 | [V31311](https://github.com/V31311) | System Designer | **FR-01** จับคู่ · `core/firebase.js`, `core/repo.js`, Security Rules · Design doc | [`fr/FR-01-pairing`](fr/FR-01-pairing/README.md) |
+| Rossatorn Sangkaew | 6931503066 | [IDK-SleepyBro](https://github.com/IDK-SleepyBro) | UX/UI Designer | **FR-03** เตือนทุกมื้อ (`mealState`) · Design system · หน้าจอ | [`fr/FR-03-reminder`](fr/FR-03-reminder/README.md) |
+| Nichanan Lalua | 6931503049 | [KaidangSuk](https://github.com/KaidangSuk) | Prototype Developer | **FR-04** ยืนยันมื้อยา · หน้าหลักผู้สูงอายุ | [`fr/FR-04-confirm`](fr/FR-04-confirm/README.md) |
+| Suchitra Khomdee | 6931503079 | [Khaiwann](https://github.com/Khaiwann) | QA / Tester | **FR-05** แจ้งผู้ดูแล + สถานะรายวัน · แผนและผลทดสอบ (MT) | [`fr/FR-05-caregiver-status`](fr/FR-05-caregiver-status/README.md) |
 
 กติกาการทำงาน (branch, PR, การใช้ AI, PDPA): [`RULES.md`](RULES.md) · ส่วนร่วมรายคนวัดจาก GitHub — **ทุกคน commit ด้วยบัญชีของตัวเอง**
 
 ## 📂 สารบัญเอกสารและโครงสร้าง repo
 ```text
 docs/
-├── 01-charter/
+├── 00-charter/
 │   ├── M1-Charter_MedMind.pdf   # M1 (ฉบับส่ง): ปัญหา, ผู้ใช้, ขอบเขต in/out, ตัววัดความสำเร็จ, Gate 1–3, SDLC, ทีม
 │   └── charter.md               # สำเนาอ่านบน GitHub (อังกฤษ) · charter.th.md = ฉบับแปลไทย
-├── 02-requirements/
-│   ├── M2-SRS_MedMind.pdf       # M2 (ฉบับส่ง) SRS v1.2
+├── 01-requirements/
+│   ├── M2-SRS_MedMind.pdf       # M2 (ฉบับส่ง) SRS v1.4
 │   ├── spec.md                  # สำเนา SRS อ่านบน GitHub (อังกฤษ) · spec.th.md = ฉบับแปลไทย (FR, AC, BR, NFR, use case, traceability, AI log §8)
-│   └── backlog.md               # Product Backlog: MoSCoW + pain + ขนาดงาน + สถานะ
-├── 03-design/
+│   ├── backlog.md               # Product Backlog: MoSCoW + pain + ขนาดงาน + สถานะ
+│   └── decision-log.md          # มติที่ทีมอนุมัติ (A1, A5) + Pending Decisions
+├── 02-design/
 │   ├── architecture.md          # สถาปัตยกรรม, ADR 1–8 (รวม Demo mode), โมดูล+สัญญา, ERD, sequence/state
 │   ├── design-system.md         # tokens (ตรวจ contrast แล้ว), คอมโพเนนต์, Screen Map (หน้าจอ ↔ FR)
 │   ├── firestore-rules-draft.md # ร่าง Security Rules + เทสต์ R-1…R-8 (ยังไม่ทดสอบ)
-│   ├── prototypes/              # Clickable Prototypes HTML (Happy/Error States)
-│   └── diagrams/                # use-case-diagram.png
+│   ├── diagrams/                # use-case-diagram.png
+│   └── prototypes/              # ต้นแบบ M3 (README + <วันที่>/index.html)
 ├── 05-report/
 │   ├── final-report.md          # Final Report + ตาราง Golden Thread (โครงร่าง)
 │   └── ai-use-statement.md      # สรุปการใช้ AI (โครงร่าง)
 ├── 06-presentation/
 │   └── demo-slides.md           # โครงสไลด์ Problem → Solution
-├── TRACEABILITY.md              # Golden Thread: AC → โค้ด → เทสต์, NFR, BR, แผนทดสอบมือ MT-01…15
+├── TRACEABILITY.md              # Golden Thread: AC → โค้ด → เทสต์, NFR, BR, แผนทดสอบมือ MT-01…16
 ├── AI_USAGE_LOG.md              # บันทึกการใช้ AI ตามจริง (log เต็ม)
-├── PROJECT-PLAN.md              # ทีมและการแบ่งงาน, sprint, velocity, ความเสี่ยง, บทบาทหมุนเวียน, retrospective
+├── PROJECT-PLAN.md              # sprint, velocity, ความเสี่ยง, บทบาทหมุนเวียน, retrospective
 └── GITHUB-SETUP.md              # labels, milestones, ruleset, issue ชุดแรก
 fr/FR-01…FR-05/README.md          # งานของแต่ละคน (หลักฐานส่วนร่วมรายคน)
 public/                           # เว็บแอป: index.html (เลือกบทบาท) · senior.html · caregiver.html · demo.html (ผู้ตรวจ) · css/ · js/{core,logic,services,features}/
@@ -115,6 +117,7 @@ npm run check         # test + ตรวจความลับ — รัน�
 ## ⚙️ ข้อจำกัดที่สำคัญ (จาก SRS §2.2)
 - การกดยืนยันเป็นการรายงานด้วยตนเอง ไม่ใช่หลักฐานว่ากินยาจริง · ข้อความถึงผู้ดูแลใช้ "Medicine not yet confirmed" (ไม่ใช้ "not taken")
 - ระบบเป็นเว็บแอป **ไม่มี server code** — เตือนผู้สูงอายุและแจ้งผู้ดูแลเฉพาะตอนเปิดหน้าเว็บ (ตอนปิดหน้า/ล็อกจอ ไม่มีการแจ้ง) · เสียงเตือนดังหลังแตะหน้าจอครั้งแรก
+- ทดสอบบน **Android (Chrome) และ iPhone (Safari)** — บน iOS หน้าเว็บอาจถูกพักเมื่อล็อกจอ ต้องทดสอบ (MT-16)
 - ต้องใช้อินเทอร์เน็ตแชร์สถานะ (ยืนยันตอนออฟไลน์จะส่งเมื่อกลับมาออนไลน์)
 - รองรับเฉพาะยาเม็ด/แคปซูลเวลาตายตัว (ไม่รองรับยาเมื่อมีอาการ ยาน้ำ ครึ่งเม็ด)
 - AI อ่านฉลากผิดได้ — ผู้ดูแลต้องตรวจทุกช่องก่อนบันทึก · ระบบไม่วินิจฉัย ไม่แนะนำยา ไม่เปลี่ยนวิธีใช้ยา

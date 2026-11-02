@@ -4,8 +4,8 @@
 
 ## 1. ใครทำอะไร
 - แต่ละคนเป็นเจ้าของฟีเจอร์ตามตาราง **ทีมและการแบ่งงาน** ใน [`README.md`](README.md) และมีโฟลเดอร์ `fr/<FR>/README.md` ของตัวเอง — เขียนเองครบสาย: ตรรกะใน `public/js/logic/` + เทสต์ใน `tests/` → หน้าจอใน `public/js/features/` → ผลทดสอบใน Final Report
-- แก้เฉพาะไฟล์ของตัวเอง · ไฟล์ส่วนรวม (`public/*.html`, `public/css/`, `public/js/core/`, `package.json`, `.github/`, `docs/03-design/`) แก้ได้ แต่ต้องบอกในทีมและเขียนไว้ใน PR
-- ข้อมูลร่วมและสัญญาระหว่างโมดูล (รูปแบบ Meal, Dose, Medicine ฯลฯ) อยู่ใน `docs/03-design/architecture.md` §5–6 — ถ้าจะเปลี่ยน ให้แก้เอกสารนั้นก่อนและบอกทีม
+- แก้เฉพาะไฟล์ของตัวเอง · ไฟล์ส่วนรวม (`public/*.html`, `public/css/`, `public/js/core/`, `package.json`, `.github/`, `docs/02-design/`) แก้ได้ แต่ต้องบอกในทีมและเขียนไว้ใน PR
+- ข้อมูลร่วมและสัญญาระหว่างโมดูล (รูปแบบ Meal, Dose, Medicine ฯลฯ) อยู่ใน `docs/02-design/architecture.md` §5–6 — ถ้าจะเปลี่ยน ให้แก้เอกสารนั้นก่อนและบอกทีม
 
 ## 2. Git และ Pull Request
 1. 1 งาน = 1 Issue · หัวข้อระบุ FR/AC เช่น `FR-03 AC2: เตือนซ้ำ T+5, T+10`
@@ -33,14 +33,14 @@
 ## 5. เมื่อเปลี่ยนอะไร ต้องอัปเดตไฟล์ไหน
 | เปลี่ยนอะไร | อัปเดตไฟล์ |
 |---|---|
-| requirement / AC / BR / NFR | **SRS ก่อน** (Word → PDF ใน `docs/02-requirements/` + `spec.md`) แล้วคัด `backlog.md`, `docs/TRACEABILITY.md`, `fr/<FR>/README.md`, ตาราง Golden Thread ใน `README.md` + Final Report · เพิ่มแถวใน Document history ของ SRS |
+| requirement / AC / BR / NFR | **SRS ก่อน** (Word → PDF ใน `docs/01-requirements/` + `spec.md`) แล้วคัด `backlog.md`, `docs/TRACEABILITY.md`, `fr/<FR>/README.md`, ตาราง Golden Thread ใน `README.md` + Final Report · เพิ่มแถวใน Document history ของ SRS |
 | เพิ่ม/ย้ายไฟล์โค้ด | ตารางแบ่งงานและโครงสร้างใน `README.md`, `fr/<FR>/README.md`, `architecture.md` §5 |
-| หน้าจอ | ป้าย "Covers: FR-xx" บนหน้านั้น + Screen Map ใน `docs/03-design/design-system.md` · ต้องเปิดได้ใน Demo mode |
-| โครงข้อมูล / Security Rules | `docs/03-design/architecture.md` §6 และ `firestore-rules-draft.md` |
+| หน้าจอ | ป้าย "Covers: FR-xx" บนหน้านั้น + Screen Map ใน `docs/02-design/design-system.md` · ต้องเปิดได้ใน Demo mode |
+| โครงข้อมูล / Security Rules | `docs/02-design/architecture.md` §6 และ `firestore-rules-draft.md` |
 | ทดสอบ | ช่อง Test ใน `docs/TRACEABILITY.md` + ตารางผลใน `docs/05-report/final-report.md` §5 |
 | ไฟล์ที่มี 2 ภาษา (README, Charter, SRS) | แก้ **ภาษาต้นฉบับก่อนเสมอ** — README: ไทยเป็นต้นฉบับ (`README.md` → `README.en.md`) · Charter/SRS: อังกฤษเป็นต้นฉบับที่ส่งอาจารย์ (`charter.md`, `spec.md` → `charter.th.md`, `spec.th.md`) แล้วคัดอีกฉบับให้ตรง · เลข FR/BR/NFR/AC ต้องเหมือนกันทุกจุด · ถ้าขัดกันให้ยึดฉบับที่ส่งอาจารย์ · บันทึกการแปลด้วย AI ใน log |
 | ใช้ AI | `docs/AI_USAGE_LOG.md` |
-| สถานะงาน / sprint | บอร์ด GitHub Projects + `docs/02-requirements/backlog.md` + velocity/retro ใน `docs/PROJECT-PLAN.md` |
+| สถานะงาน / sprint | บอร์ด GitHub Projects + `docs/01-requirements/backlog.md` + velocity/retro ใน `docs/PROJECT-PLAN.md` |
 
 ## 6. ก่อนวันส่ง / วันสอบ
 - ทุกคนซ้อมอธิบายฟีเจอร์ของตัวเอง 3–5 นาที: ปัญหา → FR/AC → ไฟล์ที่เขียน → เทสต์ → demo

@@ -1,6 +1,6 @@
 # Product Backlog — MedMind
 
-> คัดจาก SRS v1.2 ([`spec.md`](spec.md) §3.1) — MoSCoW และ "Pain this traces to" ต้องตรงกับ SRS · **ขนาด (story points) เป็นค่าที่เสนอ** ทีมต้องประมาณใหม่พร้อมกัน (Week 10: ทุกคนเปิดตัวเลขพร้อมกัน แล้วคนที่ต่างมากอธิบาย) · สถานะอัปเดตทุกครั้งที่ merge · **เจ้าของงาน enabler (E-x) เป็นข้อเสนอ** ให้ยืนยันใน sprint planning
+> คัดจาก SRS v1.4 ([`spec.md`](spec.md) §3.1) — MoSCoW และ "Pain this traces to" ต้องตรงกับ SRS · **ขนาด (story points) เป็นค่าที่เสนอ** ทีมต้องประมาณใหม่พร้อมกัน (Week 10: ทุกคนเปิดตัวเลขพร้อมกัน แล้วคนที่ต่างมากอธิบาย) · สถานะอัปเดตทุกครั้งที่ merge · **เจ้าของงาน enabler (E-x) เป็นข้อเสนอ** ให้ยืนยันใน sprint planning
 > ขนาด: 1 = เล็กมาก · 2 = เล็ก · 3 = กลาง · 5 = ใหญ่ · 8 = ใหญ่มาก (ควรแตกย่อย) · สถานะ: ⬜ To do · 🔄 Doing · ✅ Done
 
 ## Feature (FR)
@@ -20,11 +20,11 @@
 | ID | งาน | อ้างอิง | ขนาด (เสนอ) | Increment | เจ้าของ | สถานะ |
 |---|---|---|---|---|---|---|
 | E-1 | ตั้ง Firebase project (Spark), Anonymous Auth, Firestore, Hosting | architecture ADR-2 | 2 | 1 | Takkan | ⬜ |
-| E-2 | `core/firebase.js`, `core/clock.js`, `services/dataService.js` (`FirebaseFirestoreService` + `MockFirestoreService`) | architecture §5.2, ADR-8 | 3 | 1 | Takkan | ⬜ |
+| E-2 | `core/firebase.js`, `core/clock.js`, `core/repo.js` (`firestoreRepo` + `localRepo`) | architecture §5, ADR-8 | 3 | 1 | Takkan | ⬜ |
 | E-3 | ข้อมูลตัวอย่าง + สคริปต์ seed คู่ทดสอบ (`core/demoData.js`) | architecture §11 | 2 | 1 | Nichanan | ⬜ |
 | E-4 | Design tokens + โครงหน้า S-00…S-03, C-07 | design-system §2–4 | 3 | 1 | Rossatorn | ⬜ |
 | E-5 | Demo mode `demo.html` (2 บทบาท + ปุ่มเลื่อนนาฬิกา + จำลอง AI ล่ม/ออฟไลน์) | ADR-8, M4 | 5 | 1 → 2 | Nichanan (+ ทุกคนเพิ่มส่วน FR ตัวเอง) | ⬜ |
-| E-6 | Security Rules + เทสต์ Emulator R-1…R-8 | firestore-rules-draft.md | 3 | 2 | Takkan | ⬜ |
+| E-6 | Security Rules + เทสต์ Emulator R-1…R-11 | firestore-rules-draft.md | 3 | 2 | **Suchitra** (ย้ายจาก Takkan — DL-12) | ⬜ |
 | E-7 | แผน/ผลทดสอบมือ MT-01…MT-15 + heuristic evaluation โดยทีมอื่น | TRACEABILITY | 3 | Final | Suchitra | ⬜ |
 | E-8 | Final Report, Demo Slides, AI-Use Statement, README | M4 | 3 | Final | Yar Oo | ⬜ |
 

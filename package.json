@@ -4,15 +4,10 @@
   "private": true,
   "description": "MedMind — ระบบเตือนกินยาและแจ้งสถานะให้ผู้ดูแลผู้สูงอายุ (Intro to Software Engineering 15031001)",
   "type": "module",
-  "engines": {
-    "node": ">=22"
-  },
+  "engines": { "node": ">=22" },
   "scripts": {
     "test": "node --test",
     "check:secrets": "node scripts/check-secrets.js",
     "check": "npm test && npm run check:secrets"
-  },
-  "dependencies": {
-    "firebase": "12.19.0"
   }
 }

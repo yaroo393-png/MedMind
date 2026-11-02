@@ -9,13 +9,14 @@
 ## Current status
 | Part | Status |
 |---|---|
-| M1 Team Charter | ✅ Complete (scope in/out + success measure) — [`M1-Charter_MedMind.pdf`](docs/01-charter/M1-Charter_MedMind.pdf) · readable on GitHub: [`charter.md`](docs/01-charter/charter.md) ([Thai](docs/01-charter/charter.th.md)) |
-| M2 SRS | ✅ v1.2 (FR-01–05 Must, FR-06 Should, FR-07–09 Could · BR-01–19 · NFR-01–14 · use cases + diagram · document history) — [`M2-SRS_MedMind.pdf`](docs/02-requirements/M2-SRS_MedMind.pdf) · [`spec.md`](docs/02-requirements/spec.md) ([Thai](docs/02-requirements/spec.th.md)) · [`backlog.md`](docs/02-requirements/backlog.md) |
-| M2 Design | 🟡 Draft (includes Demo mode, ADR-8, ADR-9) — [`architecture.md`](docs/03-design/architecture.md), [`design-system.md`](docs/03-design/design-system.md), [`firestore-rules-draft.md`](docs/03-design/firestore-rules-draft.md) · waiting for the team to review and decide §11 (documents in Thai) |
+| M1 Team Charter | ✅ Complete (scope in/out + success measure) — [`M1-Charter_MedMind.pdf`](docs/00-charter/M1-Charter_MedMind.pdf) · readable on GitHub: [`charter.md`](docs/00-charter/charter.md) ([Thai](docs/00-charter/charter.th.md)) |
+| M2 SRS | ✅ v1.4 (FR-01–05 Must, FR-06 Should, FR-07–09 Could · BR-01–20 · NFR-01–14 · use cases + diagram · document history) — [`M2-SRS_MedMind.pdf`](docs/01-requirements/M2-SRS_MedMind.pdf) · [`spec.md`](docs/01-requirements/spec.md) ([Thai](docs/01-requirements/spec.th.md)) · [`backlog.md`](docs/01-requirements/backlog.md) |
+| M2 Design | 🟡 Draft (includes Demo mode, ADR-8, ADR-9) — [`architecture.md`](docs/02-design/architecture.md), [`design-system.md`](docs/02-design/design-system.md), [`firestore-rules-draft.md`](docs/02-design/firestore-rules-draft.md) · waiting for the team to review and decide §11 (documents in Thai) |
 | Traceability (Golden Thread) | 🟡 Structure ready — [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) · Code/Test columns are filled in as code is written |
+| M3 prototype (`docs/02-design/prototypes/`) | ⬜ Waiting for the prototype's owner to import the earlier 26-screen baseline through their own PR, then adapt it to SRS v1.4 — plan and criteria: [folder README](docs/02-design/prototypes/README.md) |
 | System (web app) | ⬜ Not started — Increment 1: FR-03–05 · Increment 2: FR-01–02 |
 | Automated tests | ⬜ Only the repository-structure tests exist (`tests/repo-structure.test.js`) · FR tests are added together with the code |
-| Project plan (Week 10) | 🟡 Team split, sprints 0–3, risks, rotating roles, retrospective — [`docs/PROJECT-PLAN.md`](docs/PROJECT-PLAN.md) |
+| Project plan (Week 10) | 🟡 Sprints 0–3, risks, rotating roles, retrospective — [`docs/PROJECT-PLAN.md`](docs/PROJECT-PLAN.md) |
 | Final Report / AI-Use Statement / Demo | 🟡 Skeletons — [`docs/05-report/`](docs/05-report/), [`docs/06-presentation/`](docs/06-presentation/) |
 
 > **[ ]** = no real data yet, nothing is guessed · this README is updated when there are real results
@@ -45,41 +46,42 @@
 
 | Problem | → FR | → Design | → Feature | → Test |
 |---|---|---|---|---|
-| Older adults find sign-up hard; the caregiver is not there | **FR-01** | [architecture §6, §7.1](docs/03-design/architecture.md) | S-01, C-01 · [`fr/FR-01-pairing`](fr/FR-01-pairing/README.md) | AC 1–6 · NFR-04, 05, 10 |
-| The caregiver wants help filling in medicine details from the label | **FR-02** | [architecture §5, §7.2, ADR-3](docs/03-design/architecture.md) | C-02…C-05 · [`fr/FR-02-label-scan`](fr/FR-02-label-scan/README.md) | AC 1–9 · NFR-06, 08, 09, 11, 14 |
-| Forgetting a dose / taking it late | **FR-03** | [architecture §5.1, §7.3](docs/03-design/architecture.md) | S-03 · [`fr/FR-03-reminder`](fr/FR-03-reminder/README.md) | AC 1–6 · NFR-01 |
-| Not remembering whether the medicine was taken | **FR-04** | [architecture §6 (`doses`)](docs/03-design/architecture.md) | S-02, S-03 · [`fr/FR-04-confirm`](fr/FR-04-confirm/README.md) | AC 1–8 · NFR-02, 03, 07, 12 |
-| Calling or messaging for every meal; no single status | **FR-05** | [architecture §6 (`alertSeen`)](docs/03-design/architecture.md) | C-07, C-08 · [`fr/FR-05-caregiver-status`](fr/FR-05-caregiver-status/README.md) | AC 1–10 · NFR-01, 12, 13 |
+| Older adults find sign-up hard; the caregiver is not there | **FR-01** | [architecture §6, §7.1](docs/02-design/architecture.md) | S-01, C-01 · [`fr/FR-01-pairing`](fr/FR-01-pairing/README.md) | AC 1–6 · NFR-04, 05, 10 |
+| The caregiver wants help filling in medicine details from the label | **FR-02** | [architecture §5, §7.2, ADR-3](docs/02-design/architecture.md) | C-02…C-05 · [`fr/FR-02-label-scan`](fr/FR-02-label-scan/README.md) | AC 1–11 · NFR-06, 08, 09, 11, 14 |
+| Forgetting a dose / taking it late | **FR-03** | [architecture §5.1, §7.3](docs/02-design/architecture.md) | S-03 · [`fr/FR-03-reminder`](fr/FR-03-reminder/README.md) | AC 1–6 · NFR-01 |
+| Not remembering whether the medicine was taken | **FR-04** | [architecture §6 (`doses`)](docs/02-design/architecture.md) | S-02, S-03 · [`fr/FR-04-confirm`](fr/FR-04-confirm/README.md) | AC 1–9 · NFR-02, 03, 07, 12 |
+| Calling or messaging for every meal; no single status | **FR-05** | [architecture §6 (`alertSeen`)](docs/02-design/architecture.md) | C-07, C-08 · [`fr/FR-05-caregiver-status`](fr/FR-05-caregiver-status/README.md) | AC 1–9 · NFR-01, 12, 13 |
 
 AC → code → test, one by one, is in [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) · **the SRS is the source of truth** — change the SRS first, then copy the change here.
 
 ## 👥 Team and work split
-| Name | Student ID | GitHub | Role | Feature written + shared work | Repo folder |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| Yar Oo | 6931503064 | [yaroo393-png](https://github.com/yaroo393-png) | Project Manager | **FR-02** AI label reading • CI/CD setup (`.github/workflows/ci.yml`) • compiling the Final Report & AI Statement (`docs/05-report/`) | [`fr/FR-02-label-scan`](fr/FR-02-label-scan/README.md) |
-| Takkan Khanlui | 6931503035 | [V31311](https://github.com/V31311) | System Designer | **FR-01** Caregiver-Patient pairing • writing the Firestore Security Rules • preparing `docs/03-design/architecture.md` | [`fr/FR-01-pairing`](fr/FR-01-pairing/README.md) |
-| Rossatorn Sangkaew | 6931503066 | [IDK-SleepyBro](https://github.com/IDK-SleepyBro) | UX/UI Designer | **FR-03** medication reminders • preparing `docs/03-design/design-system.md` • designing UI components for older adults | [`fr/FR-03-reminder`](fr/FR-03-reminder/README.md) |
-| Nichanan Lalua | 6931503049 | [KaidangSuk](https://github.com/KaidangSuk) | Prototype Dev | **FR-04** confirming medicine taken • clickable HTML prototypes (`docs/03-design/prototypes/`) covering happy and error states • writing automated unit tests in `tests/` | [`fr/FR-04-confirm`](fr/FR-04-confirm/README.md) |
-| Suchitra Khomdee | 6931503079 | [Khaiwann](https://github.com/Khaiwann) | QA / Tester | **FR-05** caregiver alert + daily status • building and committing the `docs/TRACEABILITY.md` table • compiling the presentation slides `docs/06-presentation/demo-slides.md` | [`fr/FR-05-caregiver-status`](fr/FR-05-caregiver-status/README.md) |
+| Name | Student ID | GitHub | Role | Feature written (whole chain: logic + tests + screens) | My work |
+|---|---|---|---|---|---|
+| Yar Oo | 6931503064 | [yaroo393-png](https://github.com/yaroo393-png) | Project Manager | **FR-02** AI label reading · all project documents · repo/CI | [`fr/FR-02-label-scan`](fr/FR-02-label-scan/README.md) |
+| Takkan Khanlui | 6931503035 | [V31311](https://github.com/V31311) | System Designer | **FR-01** pairing · `core/firebase.js`, `core/repo.js`, Security Rules · design document | [`fr/FR-01-pairing`](fr/FR-01-pairing/README.md) |
+| Rossatorn Sangkaew | 6931503066 | [IDK-SleepyBro](https://github.com/IDK-SleepyBro) | UX/UI Designer | **FR-03** meal reminders (`mealState`) · design system · screens | [`fr/FR-03-reminder`](fr/FR-03-reminder/README.md) |
+| Nichanan Lalua | 6931503049 | [KaidangSuk](https://github.com/KaidangSuk) | Prototype Developer | **FR-04** confirming a meal · the older adult's home screen | [`fr/FR-04-confirm`](fr/FR-04-confirm/README.md) |
+| Suchitra Khomdee | 6931503079 | [Khaiwann](https://github.com/Khaiwann) | QA / Tester | **FR-05** caregiver alert + daily status · test plan and results (MT) | [`fr/FR-05-caregiver-status`](fr/FR-05-caregiver-status/README.md) |
 
 Team rules (branches, PRs, AI use, PDPA): [`RULES.md`](RULES.md) · individual contribution is measured from GitHub — **everyone commits with their own account**.
 
 ## 📂 Document index and repository structure
 ```text
 docs/
-├── 01-charter/
+├── 00-charter/
 │   ├── M1-Charter_MedMind.pdf   # M1 (submitted): problem, users, scope in/out, success measure, Gates 1–3, SDLC, team
 │   ├── charter.md               # readable copy (English) · charter.th.md = Thai translation
-├── 02-requirements/
-│   ├── M2-SRS_MedMind.pdf       # M2 (submitted) SRS v1.2
+├── 01-requirements/
+│   ├── M2-SRS_MedMind.pdf       # M2 (submitted) SRS v1.4
 │   ├── spec.md                  # readable SRS copy (English) · spec.th.md = Thai translation
-│   └── backlog.md               # Product backlog: MoSCoW + pain + size + status
-├── 03-design/                   # architecture.md, design-system.md, firestore-rules-draft.md, prototypes/, diagrams/ (Thai)
+│   ├── backlog.md               # Product backlog: MoSCoW + pain + size + status
+│   └── decision-log.md          # decisions the team approved (A1, A5) + pending decisions
+├── 02-design/                   # architecture.md, design-system.md, firestore-rules-draft.md, diagrams/ (Thai)
 ├── 05-report/                   # final-report.md, ai-use-statement.md (skeletons)
 ├── 06-presentation/             # demo-slides.md
-├── TRACEABILITY.md              # Golden Thread: AC → code → test, NFR, BR, manual tests MT-01…15
+├── TRACEABILITY.md              # Golden Thread: AC → code → test, NFR, BR, manual tests MT-01…16
 ├── AI_USAGE_LOG.md              # the full, honest AI usage log
-├── PROJECT-PLAN.md              # team split, sprints, velocity, risks, rotating roles, retrospective
+├── PROJECT-PLAN.md              # sprints, velocity, risks, rotating roles, retrospective
 └── GITHUB-SETUP.md              # labels, milestones, ruleset, first issues
 fr/FR-01…FR-05/README.md          # each member's work (evidence of individual contribution)
 public/                           # web app: index.html (role choice) · senior.html · caregiver.html · demo.html (reviewers) · css/ · js/{core,logic,services,features}/
@@ -108,6 +110,7 @@ Open the site locally (once pages exist): point a static server at the `public/`
 ## ⚙️ Important limits (from SRS §2.2)
 - Confirming is self-reported, not proof that the medicine was taken · the caregiver message is "Medicine not yet confirmed" (never "not taken").
 - The system is a web app with **no server code** — the older adult is reminded and the caregiver is alerted only while the page is open (nothing happens when the page is closed or the screen is locked) · the reminder sound plays only after the first tap on the page.
+- Tested on **Android (Chrome) and iPhone (Safari)** — on iOS the page may be suspended when the screen locks, so this must be tested (MT-16).
 - An internet connection is needed to share status (a confirmation made offline is sent when the connection returns).
 - Only tablets and capsules taken at fixed times are supported (no as-needed medicines, liquids or half tablets).
 - The AI can misread a label — the caregiver must check every field before saving · the system gives no diagnosis, no medicine advice and never changes how a medicine is taken.

@@ -4,7 +4,7 @@
 |---|---|
 | **ผู้รับผิดชอบ** | Takkan Khanlui ([@V31311](https://github.com/V31311)) — System Designer |
 | **Priority** | Must |
-| **SRS** | [`M2-SRS_MedMind.pdf`](../../docs/02-requirements/M2-SRS_MedMind.pdf) §3 · [`spec.md`](../../docs/02-requirements/spec.md) |
+| **SRS** | [`M2-SRS_MedMind.pdf`](../../docs/01-requirements/M2-SRS_MedMind.pdf) §3 · [`spec.md`](../../docs/01-requirements/spec.md) |
 | **Traceability** | [`docs/TRACEABILITY.md`](../../docs/TRACEABILITY.md) หัวข้อ FR-01 |
 
 > ไฟล์นี้คือหลักฐานงานของคุณใน GitHub: เติมความคืบหน้า ลิงก์ PR/Issue และสิ่งที่เรียนรู้ ทุกครั้งที่ merge งาน
@@ -30,13 +30,13 @@ Definition: the invite code (QR + 6 digits) works once and expires after 10 minu
 
 ## ไฟล์ที่ต้องเขียน
 
-- โค้ด: logic/pairing.js, features/pairing.js, services/*FirestoreService.js (ส่วนจับคู่/ยกเลิกจับคู่)
+- โค้ด: logic/pairing.js, features/pairing.js, core/repo.js
 - เทสต์: tests/pairing.test.js, Emulator R-1…R-8
-- หน้าจอ: ดู Screen Map ใน [`design-system.md`](../../docs/03-design/design-system.md) §4 · ทุกหน้าต้องมี "Covers: FR-01"
+- หน้าจอ: ดู Screen Map ใน [`design-system.md`](../../docs/02-design/design-system.md) §4 · ทุกหน้าต้องมี "Covers: FR-01"
 
 ## พึ่งพา / เชื่อมกับโมดูลอื่น
 
-ใช้ `core/firebase.js`, `services/dataService.js` (System Designer) · ผลจับคู่เป็นฐานของ FR-02–05
+ใช้ `core/firebase.js`, `core/repo.js` (System Designer) · ผลจับคู่เป็นฐานของ FR-02–05
 
 ## ก่อนสอบปากเปล่า — ต้องตอบได้
 

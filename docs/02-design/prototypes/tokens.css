@@ -1,0 +1,31 @@
+/* Design tokens ของ MedMind — ต้องตรงกับ docs/02-design/design-system.md §2 ทุกค่า
+ * ร่างเริ่มต้น: Rossatorn (UX/UI) ปรับได้ แต่ต้องแก้ design-system.md ให้ตรงกันและตรวจ contrast ใหม่ (NFR-03: ≥ 4.5 : 1)
+ * กติกา M3: หน้าจอและต้นแบบทุกหน้า "ห้ามคิดสีเอง" — ใช้ var(--ชื่อ) เท่านั้น ห้ามใส่ #hex ลอย ๆ นอกไฟล์นี้ */
+:root {
+  /* สี */
+  --text: #1A1A1A;        /* 17.4:1 บนขาว */
+  --text-muted: #5A5A5A;  /* 6.9:1 บนขาว */
+  --bg: #FFFFFF;
+  --surface: #F2F5FF;
+  --primary: #1F4FD8;     /* 6.6:1 กับตัวอักษรขาว */
+  --taken: #1E7A34;       /* ปุ่ม "กินแล้ว" 5.4:1 กับตัวอักษรขาว */
+  --notyet: #B3261E;      /* ปุ่ม "ยังไม่กิน" / ข้อผิดพลาด 6.5:1 กับตัวอักษรขาว */
+  --warn-bg: #FFF4CC;    /* แถบแจ้งเตือนผู้ดูแล */
+  --warn-text: #7A4B00;  /* 6.7:1 บน --warn-bg */
+  --on-color: #FFFFFF;   /* ตัวอักษรบนปุ่มสี */
+  /* ตัวอักษร (NFR-03) */
+  --fs-body: 18px;
+  --fs-med-name: 24px;
+  --fs-h1: 28px;
+  --fs-h2: 22px;
+  --font: system-ui, "Noto Sans Thai", "Sarabun", sans-serif;
+  /* ขนาดปุ่ม (NFR-03) */
+  --btn-h: 64px;          /* ปุ่ม กินแล้ว / ยังไม่กิน อย่างน้อย */
+  --tap-min: 48px;        /* พื้นที่แตะอื่นอย่างน้อย */
+  /* ระยะและมุม */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --radius: 12px;
+}

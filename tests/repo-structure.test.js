@@ -6,16 +6,20 @@ import { existsSync, readFileSync } from 'node:fs';
 
 const mustExist = [
   'README.md', 'CLAUDE.md', 'RULES.md', '.gitignore',
-  'docs/01-charter/M1-Charter_MedMind.pdf',
-  'docs/01-charter/charter.md',
-  'docs/01-charter/charter.th.md',
+  'docs/00-charter/M1-Charter_MedMind.pdf',
+  'docs/00-charter/charter.md',
+  'docs/00-charter/charter.th.md',
   'README.en.md',
-  'docs/02-requirements/M2-SRS_MedMind.pdf',
-  'docs/02-requirements/spec.md',
-  'docs/02-requirements/spec.th.md',
-  'docs/02-requirements/backlog.md',
-  'docs/03-design/architecture.md',
-  'docs/03-design/design-system.md',
+  'docs/01-requirements/M2-SRS_MedMind.pdf',
+  'docs/01-requirements/spec.md',
+  'docs/01-requirements/spec.th.md',
+  'docs/01-requirements/backlog.md',
+  'docs/01-requirements/decision-log.md',
+  'docs/02-design/architecture.md',
+  'docs/02-design/design-system.md',
+  'docs/02-design/prototypes/README.md',
+  'docs/02-design/prototypes/tokens.css',
+  'docs/01-requirements/label-sample-intake.md',
   'docs/TRACEABILITY.md',
   'docs/AI_USAGE_LOG.md',
   'docs/PROJECT-PLAN.md',
@@ -31,8 +35,8 @@ for (const f of mustExist) {
 // ไฟล์ 2 ภาษาต้องมีปุ่มสลับภาษาลิงก์ไปหากัน
 const pairs = [
   ['README.md', 'README.en.md'],
-  ['docs/01-charter/charter.md', 'docs/01-charter/charter.th.md'],
-  ['docs/02-requirements/spec.md', 'docs/02-requirements/spec.th.md'],
+  ['docs/00-charter/charter.md', 'docs/00-charter/charter.th.md'],
+  ['docs/01-requirements/spec.md', 'docs/01-requirements/spec.th.md'],
 ];
 for (const [a, b] of pairs) {
   const base = (p) => p.split('/').pop();
@@ -45,7 +49,7 @@ for (const [a, b] of pairs) {
 const idsOf = (f, re) => [...new Set(readFileSync(f, 'utf8').match(re) ?? [])].sort().join(',');
 for (const re of [/FR-0\d/g, /BR-\d\d/g, /NFR-\d\d/g, /UC-\d/g]) {
   test(`SRS สองภาษามีเลข ${re.source} ตรงกัน`, () => {
-    assert.equal(idsOf('docs/02-requirements/spec.md', re), idsOf('docs/02-requirements/spec.th.md', re));
+    assert.equal(idsOf('docs/01-requirements/spec.md', re), idsOf('docs/01-requirements/spec.th.md', re));
   });
 }
 

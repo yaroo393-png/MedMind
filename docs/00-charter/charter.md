@@ -2,7 +2,7 @@
 
 # Team Charter (M1)
 
-> สำเนา Markdown ของ Team Charter (M1) สำหรับอ่านบน GitHub — ฉบับที่ส่งคือ [`M1-Charter_MedMind.pdf`](M1-Charter_MedMind.pdf) · แก้ทั้งสองไฟล์ให้ตรงกัน
+> สำเนา Markdown ของ Team Charter (M1) สำหรับอ่านบน GitHub — ฉบับที่ส่งคือ [`M1-Charter_MedMind.pdf`](M1-Charter_MedMind.pdf) · แก้ทั้งสองไฟล์ให้ตรงกัน **ยกเว้นตารางรับทราบกติกาด้านล่างสุด ซึ่งมีเฉพาะในไฟล์ `.md` นี้ (ไม่ใส่ใน PDF — PM ตัดสินใจ 2 พ.ย. ดู decision-log DL-09)**
 
 **Project name:** MedMind — medication reminders and medication status for the caregivers of older adults
 
@@ -65,3 +65,20 @@
 ## PROCESS & TEAM
 
 **Chosen SDLC:** Incremental — Increment 1: core loop (remind → confirm → alert, FR-03–05) on real shared data with a team test pair; Increment 2: pairing and AI label reading (FR-01, FR-02), because label-reading accuracy is the biggest unknown and must not block the core loop.
+
+## INDIVIDUAL CONTRIBUTION — ACKNOWLEDGEMENT
+
+**Policy:** project marks are team marks multiplied by an individual factor (1.00 / 0.70 / 0.40) that can only lower a mark, and only when GitHub shows little or no meaningful work and the student has had three days to respond. Evidence is GitHub only (contribution graph, pull requests, issues, meaningful commits, committed documents and diagrams); there is no peer assessment. All work, including documents and diagrams, must be committed to the team repository.
+
+**Acknowledgement:** each team member confirms that they have read and understood this policy by typing their own name and the date in the table in docs/00-charter/charter.md of the team repository, through their own GitHub account. The commit history of that file shows who typed what and when.
+
+### Acknowledgement table (this file only)
+Each member types **their own** name and date by opening a small pull request from **their own GitHub account** that changes only their row (format of the date: `2 Nov 2026`). Nobody types for another member.
+
+| Name | Student ID | Typed name | Date |
+|---|---|---|---|
+| Yar Oo | 6931503064 | | |
+| Takkan Khanlui | 6931503035 | | |
+| Rossatorn Sangkaew | 6931503066 | | |
+| Nichanan Lalua | 6931503049 | | |
+| Suchitra Khomdee | 6931503079 | | |
