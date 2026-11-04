@@ -12,7 +12,7 @@
 | M2 SRS | ✅ v1.5 (FR-01–05 Must, FR-06 Should, FR-07–09 Could · BR-01–21 · NFR-01–14 · use case + diagram · Document history) — [`M2-SRS_MedMind.pdf`](docs/01-requirements/M2-SRS_MedMind.pdf) · [`spec.md`](docs/01-requirements/spec.md) · [`backlog.md`](docs/01-requirements/backlog.md) |
 | M2 Design | 🟡 ฉบับร่าง (รวม Demo mode, ADR-8) — [`architecture.md`](docs/02-design/architecture.md), [`design-system.md`](docs/02-design/design-system.md), [`firestore-rules-draft.md`](docs/02-design/firestore-rules-draft.md) · รอทีมตรวจและตัดสินใจ §11 |
 | Traceability (Golden Thread) | 🟡 โครงพร้อม — [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) · ช่อง Code/Test เติมเมื่อมีโค้ด |
-| ต้นแบบ M3 (`docs/02-design/prototypes/`) | ⬜ รอเจ้าของต้นแบบนำเข้า baseline เก่า (26 หน้า) ผ่าน PR ของตนเอง แล้วปรับตาม SRS v1.5 — แผนและเกณฑ์: [README ของโฟลเดอร์](docs/02-design/prototypes/README.md) |
+| ต้นแบบ M3 (`docs/02-design/prototypes/`) | 🟡 ร่างแรก **สร้างใหม่ทั้งชุด** (ครบ FR-01–05 + ทางที่ผิด + โหมดสาธิต 2 จอ — เปิดได้โดยไม่ต้องมี server) — [`2569-11-04/index.html`](docs/02-design/prototypes/2569-11-04/index.html) · [`NOTES.md`](docs/02-design/prototypes/2569-11-04/NOTES.md) · รอเจ้าของงานตรวจ/ทดสอบบนมือถือจริง (MT-08, MT-16) |
 | ระบบ (เว็บแอป) | ⬜ ยังไม่เริ่มเขียน — Increment 1: FR-03–05 · Increment 2: FR-01–02 |
 | เทสต์อัตโนมัติ | ⬜ มีเฉพาะเทสต์โครง repo (`tests/repo-structure.test.js`) · เทสต์ของ FR เพิ่มพร้อมโค้ด |
 | แผนงาน (Week 10) | 🟡 sprint 0–3, ความเสี่ยง, บทบาทหมุนเวียน, retro — [`docs/PROJECT-PLAN.md`](docs/PROJECT-PLAN.md) |
@@ -80,7 +80,7 @@ docs/
 │   ├── design-system.md         # tokens (ตรวจ contrast แล้ว), คอมโพเนนต์, Screen Map (หน้าจอ ↔ FR)
 │   ├── firestore-rules-draft.md # ร่าง Security Rules + เทสต์ R-1…R-8 (ยังไม่ทดสอบ)
 │   ├── diagrams/                # use-case-diagram.png
-│   └── prototypes/              # ต้นแบบ M3 (README + <วันที่>/index.html)
+│   └── prototypes/              # ต้นแบบ M3 (README + tokens.css + 2569-11-04/: index.html, app.html, demo.html, js/, css/, NOTES.md)
 ├── 05-report/
 │   ├── final-report.md          # Final Report + ตาราง Golden Thread (โครงร่าง)
 │   └── ai-use-statement.md      # สรุปการใช้ AI (โครงร่าง)
