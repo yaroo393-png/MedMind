@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ต้นแบบ MedMind — จอเดียว</title>
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="css/proto.css">
+</head>
+<body>
+<div class="page">
+  <header class="pagebar">
+    <h1>ต้นแบบ MedMind (M3) — จอเดียว · ข้อมูลสมมติ</h1>
+    <p class="covers">Covers: FR-01, FR-02, FR-03, FR-04, FR-05 (เลือกหน้าจอจากสารบัญ หรือสลับบทบาทด้านล่าง)</p>
+    <p class="note">ไม่มี server/ฐานข้อมูล · เวลาและข้อมูลทั้งหมดเป็นของจำลอง · <a href="index.html">สารบัญหน้าจอ</a> · <a href="demo.html">โหมดสาธิต 2 จอ</a></p>
+    <div id="toolbar"></div>
+  </header>
+  <div class="phone-wrap">
+    <div class="rolebar" id="rolebar" role="group" aria-label="ดูเป็นบทบาท">
+      <button type="button" data-role="senior">ดูเป็น: ผู้สูงอายุ</button>
+      <button type="button" data-role="caregiver">ดูเป็น: ผู้ดูแล</button>
+    </div>
+    <div class="phone" id="phone"></div>
+  </div>
+</div>
+<script src="js/mock.js"></script>
+<script src="js/store.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/phone.js"></script>
+<script src="js/screens/pairing.js"></script>
+<script src="js/screens/senior-home.js"></script>
+<script src="js/screens/senior-reminder.js"></script>
+<script src="js/screens/status.js"></script>
+<script src="js/screens/medicine.js"></script>
+<script src="js/shell.js"></script>
+<script>MM.bootApp();</script>
+</body>
+</html>
