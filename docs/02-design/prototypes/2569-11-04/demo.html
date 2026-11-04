@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>โหมดสาธิต MedMind — ผู้สูงอายุและผู้ดูแลคู่กัน</title>
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="css/proto.css">
+</head>
+<body>
+<div class="page">
+  <header class="pagebar">
+    <p class="demo-banner" role="note">โหมดสาธิต — ข้อมูลตัวอย่างและนาฬิกาจำลอง ไม่ใช่ข้อมูลจริง ไม่ส่งข้อมูลออก</p>
+    <h1>MedMind — ผู้สูงอายุและผู้ดูแลในหน้าเดียว</h1>
+    <p class="covers">Covers: FR-01–FR-05 (ADR-8 Demo mode) · เดินครบทุก Must FR และทางที่ผิดได้ในเบราว์เซอร์เดียว</p>
+    <p class="note">กดปุ่มเวลาจำลองเพื่อไปถึงเวลาเตือน แล้วลอง "กินแล้ว" / "ยังไม่กิน" ฝั่งซ้าย ดูผลฝั่งขวา · <a href="index.html">สารบัญหน้าจอ</a> · <a href="app.html">จอเดียว</a></p>
+    <div id="toolbar"></div>
+  </header>
+  <div class="phones">
+    <div class="phone-wrap"><h2>เครื่องผู้สูงอายุ</h2><div class="phone" id="phone-senior"></div></div>
+    <div class="phone-wrap"><h2>เครื่องผู้ดูแล</h2><div class="phone" id="phone-cg"></div></div>
+  </div>
+</div>
+<script src="js/mock.js"></script>
+<script src="js/store.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/phone.js"></script>
+<script src="js/screens/pairing.js"></script>
+<script src="js/screens/senior-home.js"></script>
+<script src="js/screens/senior-reminder.js"></script>
+<script src="js/screens/status.js"></script>
+<script src="js/screens/medicine.js"></script>
+<script src="js/shell.js"></script>
+<script>MM.bootDemo();</script>
+</body>
+</html>
