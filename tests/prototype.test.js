@@ -240,3 +240,52 @@ test('ช่องตั้งเวลาจำลอง: อ่าน HH:MM[:S
   assert.equal(M.fmtHMSms(M.hm(12, 0) + 1), '12:00:00.001');
   assert.equal(M.fmtHMSms(M.END_OF_DAY), '23:59:59.999');
 });
+
+// ---------- ตั้งค่าการแสดงผล: ขนาดตัวอักษร 3 ระดับ + โหมดมืด (หน้าตั้งค่า S-04 / C-09) ----------
+const tokensCss = readFileSync(fileURLToPath(new URL('../docs/02-design/prototypes/tokens.css', import.meta.url)), 'utf8');
+const block = (sel) => { const m = tokensCss.match(new RegExp(sel.replace(/[[\]"=]/g, '\\$&') + '\\s*\\{([^}]*)\\}')); return m ? m[1] : ''; };
+const tokenOf = (css, name) => { const m = css.match(new RegExp('--' + name + ':\\s*(#[0-9A-Fa-f]{6}|[0-9.]+px)')); return m ? m[1] : null; };
+const luminance = (hex) => {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+const contrast = (a, b) => { const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x); return (hi + 0.05) / (lo + 0.05); };
+
+test('NFR-03: ขนาดตัวอักษร/ปุ่มทุกระดับ (ปกติ ใหญ่ ใหญ่มาก) ไม่ต่ำกว่าเกณฑ์ และเรียงจากเล็กไปใหญ่', () => {
+  const levels = [tokensCss.match(/:root\s*\{([^}]*)\}/)[1], block('[data-size="large"]'), block('[data-size="xlarge"]')];
+  let prev = 0;
+  for (const css of levels) {
+    const body = parseFloat(tokenOf(css, 'fs-body')), med = parseFloat(tokenOf(css, 'fs-med-name')), btn = parseFloat(tokenOf(css, 'btn-h'));
+    assert.ok(body >= 18 && med >= 24 && btn >= 64, `ต่ำกว่าเกณฑ์ NFR-03: ${body}/${med}/${btn}`);
+    assert.ok(body > prev, 'ระดับต้องใหญ่ขึ้นเรื่อย ๆ');
+    prev = body;
+  }
+});
+
+test('WCAG 1.4.3: โหมดมืด — ทุกคู่สีที่ใช้จริง contrast ≥ 4.5 : 1', () => {
+  const d = block('[data-theme="dark"]'), c = (n) => tokenOf(d, n);
+  const pairs = [['text', 'bg'], ['text', 'surface'], ['text', 'bg-grad-1'], ['text', 'bg-grad-2'], ['text-muted', 'bg'], ['text-muted', 'surface'], ['text-muted', 'bg-grad-1'],
+    ['primary', 'bg'], ['primary', 'accent-soft'], ['on-color', 'primary'], ['on-color', 'taken'], ['on-color', 'notyet'], ['accent', 'bg'], ['accent', 'accent-soft'],
+    ['text', 'accent-soft'], ['hero-text', 'hero-bg'], ['warn-text', 'warn-bg'], ['taken', 'bg'], ['taken', 'surface'], ['notyet', 'bg']];
+  for (const [fg, bg] of pairs) {
+    assert.ok(c(fg) && c(bg), `โหมดมืดขาด token ${fg}/${bg}`);
+    assert.ok(contrast(c(fg), c(bg)) >= 4.5, `โหมดมืด ${fg} บน ${bg} = ${contrast(c(fg), c(bg)).toFixed(1)} (< 4.5)`);
+  }
+});
+
+test('ตั้งค่าการแสดงผล: หน้าตั้งค่าทั้งผู้สูงอายุ (S-04) และผู้ดูแล (C-09) มีตัวเลือกขนาดตัวอักษรและโหมดสี · ปุ่มบอกสถานะด้วย aria-pressed', () => {
+  assert.match(read('js/screens/pairing.js'), /senior-settings[\s\S]*prefsCard\(p\)[\s\S]*cg-settings[\s\S]*prefsCard\(p\)/);
+  const ui = read('js/ui.js');
+  for (const s of ["'ปกติ'", "'ใหญ่'", "'ใหญ่มาก'", "'สว่าง'", "'มืด'", 'aria-pressed']) assert.ok(ui.includes(s), `ui.js ไม่มี ${s}`);
+  const ph = read('js/phone.js');
+  assert.ok(ph.includes("ACTS['size-step']") && ph.includes("ACTS['set-theme']") && ph.includes('data-size') && ph.includes('data-theme'));
+  for (const k of ["'minus'", "'plus'", "'sun'", "'moon'", "icon('gear')"]) assert.ok(ui.includes(k), `ui.js ไม่ได้ใช้ไอคอน ${k}`);
+});
+
+test('แถบล่าง: ผู้สูงอายุมีข้อความใต้ไอคอน (fs-tab ≥ 18px ทุกระดับ, NFR-03) · ผู้ดูแลไอคอนอย่างเดียว · ทุกปุ่มมี aria-label', () => {
+  const tabs = read('js/phone.js').match(/function tabsHtml[\s\S]*?\n  }/)[0];
+  assert.ok(tabs.includes('aria-label'), 'ปุ่มแถบล่างต้องมี aria-label');
+  assert.match(tabs, /p\.role === 'senior' \? '<span class="tab-label">'/);
+  const levels = [tokensCss.match(/:root\s*\{([^}]*)\}/)[1], block('[data-size="large"]'), block('[data-size="xlarge"]')];
+  for (const css of levels) assert.ok(parseFloat(tokenOf(css, 'fs-tab')) >= 18, 'ข้อความแถบล่างต่ำกว่า 18px');
+});
