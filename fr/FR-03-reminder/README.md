@@ -48,11 +48,11 @@ Definition — reminder timeline, shared with FR-04 and FR-05 (T = the meal's re
 
 ## ความคืบหน้า
 
-- [ ] Issue ถูกสร้างและ assign
-- [ ] ตรรกะ + เทสต์ผ่าน (`npm test`)
+- [x] Issue ถูกสร้างและ assign (#14)
+- [x] ตรรกะ + เทสต์ผ่าน (`npm test`) — `logic/mealTimeline.js` + `tests/mealTimeline.test.js` (18) + `tests/time.test.js` (3) (5 พ.ย. 2569)
 - [ ] หน้าจอเชื่อมกับ logic
 - [ ] ทดสอบบนมือถือจริง (MT ที่เกี่ยวข้อง)
-- [ ] `docs/TRACEABILITY.md` อัปเดตแล้ว
+- [x] `docs/TRACEABILITY.md` อัปเดตแล้ว (ส่วน logic — หน้าจอยังไม่ทำ)
 - [ ] บันทึกการใช้ AI แล้ว
 
 **ลิงก์ PR / Issue:** (เติมที่นี่)
