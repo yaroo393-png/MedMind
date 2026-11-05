@@ -52,11 +52,11 @@ Definition: the older adult confirms on the reminder screen (FR-03) or on their 
 
 ## ความคืบหน้า
 
-- [ ] Issue ถูกสร้างและ assign
-- [ ] ตรรกะ + เทสต์ผ่าน (`npm test`)
+- [x] Issue ถูกสร้างและ assign (#15)
+- [x] ตรรกะ + เทสต์ผ่าน (`npm test`) — `logic/confirm.js` + `tests/confirm.test.js` (5 พ.ย. 2569: TC-04.1, 04.2, 04.5, 04.8, 04.9, AC10 · A5-T01, T02, T03, T06)
 - [ ] หน้าจอเชื่อมกับ logic
 - [ ] ทดสอบบนมือถือจริง (MT ที่เกี่ยวข้อง)
-- [ ] `docs/TRACEABILITY.md` อัปเดตแล้ว
+- [x] `docs/TRACEABILITY.md` อัปเดตแล้ว (ส่วน logic — หน้าจอยังไม่ทำ)
 - [ ] บันทึกการใช้ AI แล้ว
 
 **ลิงก์ PR / Issue:** (เติมที่นี่)
