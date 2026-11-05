@@ -53,11 +53,11 @@ Definition: only the caregiver can add or edit medicines. A medicine has a name 
 
 ## ความคืบหน้า
 
-- [ ] Issue ถูกสร้างและ assign
-- [ ] ตรรกะ + เทสต์ผ่าน (`npm test`)
+- [x] Issue ถูกสร้างและ assign (#12, #13)
+- [ ] ตรรกะ + เทสต์ผ่าน (`npm test`) — ✅ `logic/schedule.js` + `tests/schedule.test.js` 16 เทสต์ (5 พ.ย. 2569) · ⬜ `logic/labelDraft.js` (#13)
 - [ ] หน้าจอเชื่อมกับ logic
 - [ ] ทดสอบบนมือถือจริง (MT ที่เกี่ยวข้อง)
-- [ ] `docs/TRACEABILITY.md` อัปเดตแล้ว
+- [x] `docs/TRACEABILITY.md` อัปเดตแล้ว (ส่วน `schedule.js`)
 - [ ] บันทึกการใช้ AI แล้ว
 
 **ลิงก์ PR / Issue:** (เติมที่นี่)
