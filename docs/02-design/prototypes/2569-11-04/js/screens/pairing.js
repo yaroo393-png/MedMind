@@ -45,7 +45,7 @@
     if (p.ui.dialog === 'unpair1') overlay = dialog('dlg-' + p.role + '-1', 'ยกเลิกจับคู่?', 'ผู้ดูแลจะเห็นข้อมูลของคุณไม่ได้ทันที และข้อมูลของคู่นี้จะถูกลบ', 'ต่อไป', 'unpair-next');
     if (p.ui.dialog === 'unpair2') overlay = dialog('dlg-' + p.role + '-2', 'ยืนยันอีกครั้ง', 'ยาและประวัติการยืนยันจะถูกลบ ย้อนกลับไม่ได้', 'ยืนยันยกเลิกจับคู่', 'unpair-yes');
     return { title: 'ตั้งค่า', covers: 'FR-01, BR-17 (ยกเลิกจับคู่ 2 ขั้น)', overlay: overlay, body:
-      '<h1>ตั้งค่า</h1><div class="card"><p>เสียงเตือน: <b>' + (st.sound ? 'เปิดแล้ว' : 'ยังไม่เปิด (แตะหน้าจอ 1 ครั้ง)') + '</b></p></div>' +
+      '<h1>ตั้งค่า</h1>' + U.prefsCard(p) + '<div class="card"><p>เสียงเตือน: <b>' + (st.sound ? 'เปิดแล้ว' : 'ยังไม่เปิด (แตะหน้าจอ 1 ครั้ง)') + '</b></p></div>' +
       '<div class="card"><h2>จับคู่</h2><p>' + (st.pair.joined ? 'เชื่อมต่อกับผู้ดูแลแล้ว' : 'ยังไม่ได้จับคู่') + '</p>' + (st.pair.joined ? btn('notyet', 'ยกเลิกจับคู่', 'unpair-ask') : '') + '</div>' };
   };
 
@@ -68,7 +68,7 @@
     var overlay = '';
     if (p.ui.dialog === 'unpair1') overlay = dialog('dlg-' + p.role + '-1', 'ยกเลิกจับคู่?', 'คุณจะเห็นข้อมูลของผู้สูงอายุไม่ได้ทันที และข้อมูลของคู่นี้จะถูกลบ', 'ต่อไป', 'unpair-next');
     if (p.ui.dialog === 'unpair2') overlay = dialog('dlg-' + p.role + '-2', 'ยืนยันอีกครั้ง', 'ยาและประวัติการยืนยันจะถูกลบ ย้อนกลับไม่ได้', 'ยืนยันยกเลิกจับคู่', 'unpair-yes');
-    return { title: 'ตั้งค่า', covers: 'FR-01, BR-17 (ยกเลิกจับคู่ 2 ขั้น)', overlay: overlay, body: '<h1>ตั้งค่า</h1>' +
+    return { title: 'ตั้งค่า', covers: 'FR-01, BR-17 (ยกเลิกจับคู่ 2 ขั้น)', overlay: overlay, body: '<h1>ตั้งค่า</h1>' + U.prefsCard(p) +
       '<div class="card"><h2>จับคู่</h2><p>' + (st.pair.joined ? 'เชื่อมต่อกับผู้สูงอายุแล้ว' : 'ยังไม่ได้จับคู่') + '</p>' + (st.pair.joined ? btn('notyet', 'ยกเลิกจับคู่', 'unpair-ask') : '') + '</div>' };
   };
 

@@ -12,10 +12,11 @@
   function clone(o) { return JSON.parse(JSON.stringify(o)); }
 
   // ---------- ไอคอน SVG วาดเอง (ไม่มีลิขสิทธิ์ภายนอก) สีมาจาก currentColor ----------
+  // ไอคอน home/bell/gear/plus/minus/sun/moon มาจากชุด medmind-icons (SVG เส้นมน stroke 1.8, currentColor) · gear ขยายให้ขนาดเท่าไอคอนอื่น (ไฟล์ต้นฉบับมีรูปเล็กกว่ากรอบ)
   var ICON_PATHS = {
-    home: '<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
-    bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/>',
-    gear: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1L7 17M17 7l2.1-2.1"/>',
+    home: '<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+    bell: '<path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+    gear: '<g transform="translate(12 12) scale(1.42) translate(-12.7 -11.05)"><g fill="none" stroke="currentColor" stroke-width="1.27" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8.2a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6Z"/><path d="m19.4 13.5 1.1.9-1.5 2.6-1.4-.5a7.9 7.9 0 0 1-1.6.9l-.3 1.5h-3l-.3-1.5a7.9 7.9 0 0 1-1.6-.9l-1.4.5-1.5-2.6 1.1-.9a7.2 7.2 0 0 1 0-1.9l-1.1-.9 1.5-2.6 1.4.5a7.9 7.9 0 0 1 1.6-.9l.3-1.5h3l.3 1.5a7.9 7.9 0 0 1 1.6.9l1.4-.5 1.5 2.6-1.1.9a7.2 7.2 0 0 1 0 1.9Z" transform="translate(-1.5 -1.5)"/></g></g>',
     pill: '<path d="M10.5 20.5a5 5 0 0 1-7-7l7-7a5 5 0 0 1 7 7z"/><path d="M8.5 8.5l7 7"/>',
     status: '<path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/>',
     clock: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M5 3L2 6M22 6l-3-3"/>',
@@ -26,6 +27,10 @@
     family: '<circle cx="9" cy="7" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20v-1a5 5 0 0 1 5-5h2a5 5 0 0 1 5 5v1M15 20v-1a4 4 0 0 1 6-3.5"/>',
     sparkle: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/>',
     alert: '<circle cx="12" cy="12" r="9"/><path d="M12 7v6m0 4h.01"/>',
+    plus: '<g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></g>',
+    minus: '<path d="M5 12h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+    sun: '<g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></g>',
+    moon: '<path d="M20.2 15.3A8.6 8.6 0 0 1 8.7 3.8 8.8 8.8 0 1 0 20.2 15.3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
     check: '<circle cx="12" cy="12" r="9"/><path d="m7 12 3 3 7-7"/>'
   };
   function icon(name, cls) { return '<svg class="ico' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" aria-hidden="true">' + (ICON_PATHS[name] || '') + '</svg>'; }
@@ -116,7 +121,23 @@
       btn('notyet', esc(yesLabel), yesAct) + btn('ghost', 'ไม่ยกเลิก', 'unpair-no') + '</div></div>';
   }
 
-  root.MM.ui = { esc: esc, clone: clone, icon: icon, logo: logo, mascot: mascot, hero: hero, btn: btn, chip: chip, medList: medList, mealCard: mealCard, flag: flag,
+  // การ์ด "การแสดงผล" ในหน้าตั้งค่า: ขนาดตัวอักษร (ปุ่ม − / +) + โหมดสว่าง/มืด (ตั้งรายเครื่อง เก็บใน p.pref)
+  var SIZES = [['normal', 'ปกติ'], ['large', 'ใหญ่'], ['xlarge', 'ใหญ่มาก']], THEMES = [['light', 'สว่าง', 'sun'], ['dark', 'มืด', 'moon']];
+  function stepBtn(dir, label, ico, disabled) {
+    return '<button type="button" class="step-btn" data-act="size-step" data-dir="' + dir + '" aria-label="' + esc(label) + '"' + (disabled ? ' aria-disabled="true"' : '') + '>' + icon(ico) + '</button>';
+  }
+  function prefsCard(p) {
+    var pr = p.pref || { size: 'normal', theme: 'light' };
+    var i = SIZES.map(function (s) { return s[0]; }).indexOf(pr.size);
+    return '<div class="card"><h2 class="h-card">' + icon('gear') + 'การแสดงผล</h2><p class="hint">ตั้งค่าเฉพาะเครื่องนี้ · ตัวอักษรทุกระดับไม่เล็กกว่าเกณฑ์ NFR-03</p>' +
+      '<p class="pref-label">ขนาดตัวอักษร</p><div class="stepper" role="group" aria-label="ขนาดตัวอักษร">' +
+      stepBtn(-1, 'ลดขนาดตัวอักษร', 'minus', i <= 0) + '<span class="step-val">' + esc(SIZES[i][1]) + '</span>' + stepBtn(1, 'เพิ่มขนาดตัวอักษร', 'plus', i >= SIZES.length - 1) + '</div>' +
+      '<p class="pref-label">โหมดสี</p><div class="seg" role="group" aria-label="โหมดสี">' + THEMES.map(function (t) {
+        return '<button type="button" class="seg-btn' + (t[0] === pr.theme ? ' is-on' : '') + '" data-act="set-theme" data-v="' + t[0] + '" aria-pressed="' + (t[0] === pr.theme) + '">' + icon(t[2]) + esc(t[1]) + '</button>';
+      }).join('') + '</div></div>';
+  }
+
+  root.MM.ui = { prefsCard: prefsCard, esc: esc, clone: clone, icon: icon, logo: logo, mascot: mascot, hero: hero, btn: btn, chip: chip, medList: medList, mealCard: mealCard, flag: flag,
     qrGrid: qrGrid, focusMeal: focusMeal, medSummary: medSummary, heroCard: heroCard, dialog: dialog };
   root.MM.esc = esc;
 })(window);

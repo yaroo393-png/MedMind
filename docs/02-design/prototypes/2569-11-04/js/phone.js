@@ -10,6 +10,7 @@
   function Phone(el, role, opts) {
     this.el = el; this.role = role; this.opts = opts || {};
     this.route = this.opts.route || (role === 'senior' ? 'senior-home' : 'cg-status');
+    this.pref = { size: 'normal', theme: 'light' }; // ตั้งค่าการแสดงผลรายเครื่อง (หน้าตั้งค่า S-04 / C-09)
     this.ui = { times: clone(S.s.mealTimes), sample: 'ok', cover: {}, tick: false, codeInput: '', error: null };
     this.toastTimer = null; this.aiTimer = null; this.audio = null;
     // view = ส่วนที่วาดใหม่ทุกครั้ง · live = กล่องข้อความสถานะที่ไม่ถูกวาดทับ screen reader จึงอ่านได้ (WCAG 4.1.3)
@@ -53,7 +54,7 @@
     else if (e.shiftKey && cur === first) { e.preventDefault(); last.focus(); }
     else if (!e.shiftKey && cur === last) { e.preventDefault(); first.focus(); }
   };
-  var FOCUS_ATTRS = ['act', 'to', 'meal', 'key', 'path', 'region', 'role', 'field', 'live', 'time', 'i', 'id'];
+  var FOCUS_ATTRS = ['act', 'v', 'dir', 'to', 'meal', 'key', 'path', 'region', 'role', 'field', 'live', 'time', 'i', 'id'];
   // จำว่ากำลังโฟกัสปุ่มไหน (จาก data-*) เพื่อคืนโฟกัสหลังวาดหน้าใหม่
   P.focusKey = function () {
     var a = document.activeElement;
@@ -90,6 +91,7 @@
   P.render = function () {
     var st = S.s;
     if (NEEDS_PAIR[this.route] && !st.pair.joined) this.route = this.role === 'senior' ? 'senior-pair' : 'cg-pair';
+    this.el.setAttribute('data-size', this.pref.size); this.el.setAttribute('data-theme', this.pref.theme);
     var fn = SCREENS[this.route] || SCREENS['role'];
     var scr = fn(this, st);
     var tabs = this.role === 'senior' ? tabsSenior(this, st) : tabsCaregiver(this, st);
@@ -129,6 +131,13 @@
 
   // ---------- การกระทำกลาง ----------
   ACTS['go'] = function (p, d) { p.go(d.to); };
+  ACTS['size-step'] = function (p, d) { // ปุ่ม − / + (ที่ขอบสุดไม่ทำอะไร: ปุ่มยังโฟกัสได้ ใช้ aria-disabled)
+    var order = ['normal', 'large', 'xlarge'], names = { normal: 'ปกติ', large: 'ใหญ่', xlarge: 'ใหญ่มาก' };
+    var i = order.indexOf(p.pref.size) + Number(d.dir);
+    if (i < 0 || i >= order.length) { p.toast(i < 0 ? 'เล็กที่สุดแล้ว (ปกติ)' : 'ใหญ่ที่สุดแล้ว'); return; }
+    p.pref.size = order[i]; p.render(); p.toast('ขนาดตัวอักษร: ' + names[order[i]]);
+  };
+  ACTS['set-theme'] = function (p, d) { p.pref.theme = d.v; p.render(); p.toast('โหมดสี: ' + (d.v === 'dark' ? 'มืด' : 'สว่าง')); };
   ACTS['toast-close'] = function (p) { clearTimeout(p.toastTimer); p.live.innerHTML = ''; };
 
   // ---------- แถบล่าง ----------
@@ -143,8 +152,8 @@
   function tabsHtml(p, items) {
     return '<nav class="tabs" aria-label="เมนู">' + items.map(function (t) {
       var on = p.route === t[0] || (t[0] === 'cg-meds' && /^cg-(meals|photo|cover|ai|draft)$/.test(p.route));
-      return '<button type="button" class="tab' + (on ? ' is-on' : '') + '" data-act="go" data-to="' + t[0] + '"' + (on ? ' aria-current="page"' : '') + '>' +
-        icon(t[3]) + esc(t[1]) + (t[2] ? '<span class="badge">' + t[2] + '</span>' : '') + '</button>';
+      return '<button type="button" class="tab' + (on ? ' is-on' : '') + '" data-act="go" data-to="' + t[0] + '" aria-label="' + esc(t[1] + (t[2] ? ' (' + t[2] + ' รายการ)' : '')) + '" title="' + esc(t[1]) + '"' + (on ? ' aria-current="page"' : '') + '>' +
+        icon(t[3]) + (p.role === 'senior' ? '<span class="tab-label">' + esc(t[1]) + '</span>' : '') + (t[2] ? '<span class="badge" aria-hidden="true">' + t[2] + '</span>' : '') + '</button>';
     }).join('') + '</nav>';
   }
 

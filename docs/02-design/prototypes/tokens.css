@@ -34,6 +34,7 @@
   --fs-med-name: 24px;
   --fs-h1: 28px;
   --fs-h2: 22px;
+  --fs-tab: 18px;          /* ข้อความใต้ไอคอนแถบล่างของผู้สูงอายุ: เล็กกว่าตัวอักษรหลักเมื่อขยาย แต่ไม่ต่ำกว่า 18px (NFR-03) */
   --font: "Sarabun", system-ui, "Noto Sans Thai", sans-serif; /* Sarabun (OFL) โหลดจากไฟล์ในเครื่อง ไม่ใช้ฟอนต์จากเน็ต */
   /* ขนาดปุ่ม (NFR-03) */
   --btn-h: 64px;           /* ปุ่ม กินแล้ว / ยังไม่กิน อย่างน้อย */
@@ -45,4 +46,35 @@
   --space-4: 32px;
   --radius: 16px;
   --radius-lg: 24px;
+}
+
+/* ---------- ตั้งค่าการแสดงผล (หน้าตั้งค่า S-04 / C-09) — ตั้งรายเครื่อง ผ่าน data-size / data-theme บนจอมือถือ ----------
+ * ทุกระดับไม่ต่ำกว่าเกณฑ์ NFR-03 (ตัวอักษร ≥ 18px · ชื่อยา ≥ 24px · ปุ่มกิน ≥ 64px) — ระดับ "ปกติ" คือค่าใน :root ด้านบน */
+[data-size="large"] {
+  --fs-body: 22px; --fs-med-name: 30px; --fs-h1: 32px; --fs-h2: 26px; --fs-tab: 19px;
+  --btn-h: 72px; --tap-min: 56px;
+}
+[data-size="xlarge"] {
+  --fs-body: 26px; --fs-med-name: 34px; --fs-h1: 36px; --fs-h2: 30px; --fs-tab: 20px;
+  --btn-h: 80px; --tap-min: 64px;
+}
+/* โหมดมืด — ไม่ใช่ requirement ใน SRS (เป็นตัวเลือกการแสดงผลของต้นแบบ) · ตรวจ contrast ทุกคู่ ≥ 4.5 : 1 แล้ว ตัวเลขใน design-system.md §2 */
+[data-theme="dark"] {
+  --text: #E9F2EC;
+  --text-muted: #B3C4B9;
+  --bg: #17251F;
+  --surface: #22362D;
+  --bg-grad-1: #0F1A15;
+  --bg-grad-2: #142119;
+  --primary: #8EDBB0;
+  --accent: #A5DDA0;
+  --accent-soft: #2F4A33;
+  --hero-bg: #2E4D3A;
+  --hero-text: #EAF4EE;
+  --taken: #7FD39B;
+  --notyet: #F29B90;
+  --warn-bg: #3B2E14;
+  --warn-text: #F4CF86;
+  --on-color: #0E1C16;     /* ตัวอักษรบนปุ่มสี (โหมดมืดใช้ตัวมืดบนปุ่มสว่าง) */
+  --shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
 }
