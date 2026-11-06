@@ -22,21 +22,35 @@ service cloud.firestore {
 
     // ----- รหัสเชิญ (BR-01) -----
     match /invites/{code} {
+      // DL-20 (6 พ.ย. 2569): ช่อง consented / hasCaregiver เป็น "สำเนาเพื่อแสดงเหตุผล" ให้เครื่องผู้ดูแลบอกได้ว่าทำไมถูกปฏิเสธ (FR-01 ข้อ 2/4/5)
+      //   ผู้ตัดสินจริงยังเป็นเอกสาร pairs/{pairId} (ตรวจใน update ด้านล่าง) — สำเนาผิดไม่ทำให้จับคู่ผ่าน
       // ผู้สูงอายุสร้างรหัสของ pair ตัวเอง อายุ 10 นาที
       allow create: if signedIn()
         && request.resource.data.seniorUid == request.auth.uid
         && request.resource.data.usedAt == null
+        && request.resource.data.consented == (getAfter(pairRef(request.resource.data.pairId)).data.consentAt != null) // getAfter: สร้าง pair กับรหัสใน batch เดียวกันได้
+        && request.resource.data.hasCaregiver == false
         && request.resource.data.expiresAt <= request.time + duration.value(10, 'm');
-      // ผู้ดูแลใช้รหัส: ต้องยังไม่ใช้ ไม่หมดอายุ ผู้สูงอายุยินยอมแล้ว และยังไม่มีผู้ดูแล
-      allow update: if signedIn()
-        && resource.data.usedAt == null
-        && request.time < resource.data.expiresAt
-        && get(pairRef(resource.data.pairId)).data.consentAt != null
-        && get(pairRef(resource.data.pairId)).data.caregiverUid == null
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['usedAt', 'usedBy'])
-        && request.resource.data.usedBy == request.auth.uid
-        && getAfter(pairRef(resource.data.pairId)).data.caregiverUid == request.auth.uid;
-      allow read, delete: if false; // ลบผ่านการลบ pair (ดูหมายเหตุ) หรือให้ผู้สูงอายุลบรหัสเก่าของตัวเอง
+      // อ่านได้ทีละเอกสารเมื่อรู้รหัส (ใช้เลือกข้อความ) — ห้ามไล่ดูทั้งหมด (list) กันการกวาดหารหัส
+      allow get: if signedIn();
+      allow list: if false;
+      // (1) ผู้ดูแลใช้รหัส: ยังไม่ใช้ ไม่หมดอายุ (รวมตรง expiresAt พอดี — "เกิน 10 นาที" จึงหมดอายุ) ผู้สูงอายุยินยอมแล้ว และยังไม่มีผู้ดูแล
+      // (2) ผู้สูงอายุอัปเดตสำเนา consented หลังกดยินยอม (batch เดียวกับการตั้ง consentAt)
+      allow update: if signedIn() && (
+        ( resource.data.usedAt == null
+          && request.time <= resource.data.expiresAt
+          && get(pairRef(resource.data.pairId)).data.consentAt != null
+          && get(pairRef(resource.data.pairId)).data.caregiverUid == null
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['usedAt', 'usedBy', 'hasCaregiver'])
+          && request.resource.data.usedBy == request.auth.uid
+          && request.resource.data.hasCaregiver == true
+          && getAfter(pairRef(resource.data.pairId)).data.caregiverUid == request.auth.uid )
+        || ( resource.data.seniorUid == request.auth.uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['consented'])
+          && request.resource.data.consented == true
+          && getAfter(pairRef(resource.data.pairId)).data.consentAt != null )
+      );
+      allow delete: if false; // ลบผ่านการลบ pair (ดูหมายเหตุ) หรือให้ผู้สูงอายุลบรหัสเก่าของตัวเอง
     }
 
     // ----- คู่ (pair) -----
@@ -137,3 +151,6 @@ service cloud.firestore {
 | R-9 | สร้าง dose โดย `serverReceivedAt` ไม่เท่า `request.time` (เครื่องใส่เวลาเอง) หรือมี field เกิน | ปฏิเสธ | BR-20, NFR-07 |
 | R-10 | สร้าง dose ที่ `status` ไม่ตรงกฎ: (a) `confirmedAt = T+15:00` แต่ `status = taken_late` (b) `confirmedAt = T+15:00.001` แต่ `status = taken` | (a) ปฏิเสธ (b) ปฏิเสธ · ส่วน `confirmedAt = T+15:00` + `taken` และ `confirmedAt = T+15:00.001` + `taken_late` ต้องสำเร็จ | A5-T02, A5-T03 |
 | R-11 | บันทึกยาที่ไม่มี `slots` หรือ `slots` ว่าง | ปฏิเสธ | A1, FR-02 |
+| R-12 | ผู้ใช้ที่รู้รหัส `get` เอกสารรหัส · ผู้ใช้ `list` รหัสทั้งหมด | `get` สำเร็จ · `list` ปฏิเสธ | FR-01 AC 2/4/5 (เลือกข้อความ), NFR-04 · DL-20 |
+| R-13 | ใช้รหัสที่ `request.time` = `expiresAt` พอดี · และหลัง `expiresAt` | พอดี: สำเร็จ · หลัง: ปฏิเสธ | FR-01 AC 4, BR-01 · DL-20 |
+| R-14 | ผู้ดูแลแก้ `consented` เอง / ผู้สูงอายุตั้ง `consented = true` โดยยังไม่ยินยอมใน pair | ปฏิเสธทั้งคู่ | NFR-05 · DL-20 |

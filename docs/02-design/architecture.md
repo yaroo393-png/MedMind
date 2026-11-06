@@ -177,6 +177,78 @@ flowchart TB
 
 หลักที่ใช้: อินเทอร์เฟซเล็กและคนเรียกพึ่งแค่ลายเซ็น (M3) · ตรรกะไม่วาดหน้าจอ จึงคืน "ชนิด/label" ไม่คืนข้อความ (M3) · หนึ่งฟังก์ชันทำเรื่องเดียวและตั้งชื่อค่าคงที่ (สัปดาห์ 6) · เทสต์ที่ขอบ (สัปดาห์ 7) — เคส C-T01…C-T05 และ A5-T01…T07 ใน `docs/TRACEABILITY.md`
 
+### 5.4 สัญญา FR-02 `logic/labelDraft.js` และรูป JSON ที่ AI คืน (**ตกลงแล้ว — decision-log DL-19**)
+> ทีมตกลงแล้ว 6 พ.ย. 2569 (DL-19) — Yar (`labelDraft.js`, #13) กับคนทำ `aiLabel.js` เขียนแยกกันได้ตามนี้ · จะเปลี่ยนต้องแก้หัวข้อนี้ก่อน (RULES §1) · ที่มาของกฎ: FR-02 ข้อ 1–6, 8, 10, 11 · BR-04, BR-05, BR-07, BR-19 · NFR-09, NFR-14
+
+**(ก) JSON ที่ `services/aiLabel.js` คืน (`aiJson`) — ไม่มีช่องชื่อผู้ป่วย/HN/เลขบัตร/วันเกิด (NFR-09, NFR-14)**
+```js
+{ name: string | null,                 // ชื่อยา
+  instructionText: string | null,      // ข้อความวิธีกินตามฉลาก
+  warnings: string | null, contraindications: string | null,
+  asNeeded: boolean,                   // true = ฉลากเป็นยากินเมื่อมีอาการ (BR-07)
+  slots: [ { meal: 'breakfast' | 'lunch' | 'dinner' | 'bedtime' | null,
+             timing: 'after_meal' | 'before_meal' | 'at_bedtime' | null,
+             minutesBefore: number | null,
+             tabletsPerDose: number | null } ] }
+```
+กติกาให้ AI: อ่านไม่ออกหรือฉลากไม่บอก = `null` **ห้ามเดา** · "วันละ N ครั้ง" ไม่ระบุมื้อ = N slot ที่ `meal = null` (ใส่จำนวนเม็ดถ้าอ่านได้) · เวลาที่ไม่ผูกกับมื้อ ("ทุก 6 ชั่วโมง", "วันเว้นวัน") = slot ที่ `meal = null` และ `timing = null` · AI ไม่ตัดสินเวลาเตือน (BR-06 คำนวณใน `schedule.js`) · สองกรณีหลังได้ผลเหมือนกันตาม FR-02 ข้อ 3 (ช่องว่าง + "โปรดตรวจสอบ") จึงไม่ต้องแยกเหตุผล
+
+**ผลจาก AI เป็นข้อมูลที่ไม่น่าไว้ใจ:** `buildDraft` ตรวจชนิดทุกช่อง — ชนิดผิดหรือค่านอก enum = `null` + `checks` · ตัดข้อความยาวเกิน 200 ตัวอักษร · `tabletsPerDose`/`minutesBefore` ต้องเป็นจำนวนเต็มบวก · หน้าจอ escape ทุกข้อความก่อนใส่ HTML (CLAUDE.md) · ช่องข้อความอิสระ (`instructionText`, `warnings`, `contraindications`) อาจมีข้อมูลส่วนตัวหลุดมาถ้าปิดฉลากไม่ครบ — ผู้ดูแลเห็นและแก้ในหน้าร่างก่อนบันทึกทุกครั้ง (BR-04)
+
+**(ข) ร่างยา `Draft` (คืนจาก `buildDraft`)**
+```js
+{ name, instructionText, warnings, contraindications,         // ค่าเดียวกับ aiJson (null = ว่าง)
+  slots: [ Slot ที่ field เป็น null ได้ ],
+  unsupported: null | 'as_needed',                            // BR-07 → หน้าจอแสดง "ยังไม่รองรับยาที่กินเมื่อมีอาการ" ไม่สร้างเวลาเตือน (FR-02 ข้อ 4)
+  checks: [ { path: 'name' | 'slots[0].meal' | ..., reason } ] }  // = "โปรดตรวจสอบ" เฉพาะช่อง/slot นั้น (BR-04)
+```
+`reason` ∈ `missing` (ช่องว่าง/อ่านไม่ออก — ตรวจก่อน) · แล้วจึงใช้เหตุผลของ `validateSlot`/`groupMeals` §5.2 ตามชื่อเดิม: `invalid_meal`, `invalid_timing`, `minutesBefore_required`, `invalid_tablets`, `meal_timing_mismatch`, `duplicate_slot`, `conflicting_tablets`, `invalid_reminder_time` (ไม่คิดกฎซ้ำ — เรียกฟังก์ชันของ `schedule.js`) · ลำดับนี้ทำให้ `meal = null` ได้ `missing` ไม่ใช่ `invalid_meal`
+
+| ฟังก์ชัน | รับ → คืน | หมายเหตุ |
+|---|---|---|
+| `buildDraft(aiJson, { mealTimes })` | → `Draft` | **ไม่ throw** — JSON ผิดรูป/ไม่ใช่ object → ร่างว่างทั้งหมด + `checks` (FR-02 ข้อ 3) · ไม่เดาค่า · ไม่มีช่องชื่อผู้ป่วย/HN |
+| `applyEdit(draft, path, value, { mealTimes })` | → `Draft` ใหม่ | ค่าที่ผู้ดูแลแก้ชนะค่าจาก AI (ข้อ 2) · คำนวณ `checks` ใหม่ · ไม่แก้ `draft` เดิม |
+| `removeSlot(draft, index)` | → `Draft` ใหม่ | "แก้หรือลบ slot" เพื่อปลดการบล็อกบันทึก (ข้อ 11) |
+| `canSave(draft)` | → `boolean` | `true` เมื่อ `unsupported = null`, `checks` ว่าง, มี slot ≥ 1 และมีชื่อยา (BR-04, BR-05) |
+| `canSend({ coveredTicked })` | → `boolean` | `false` ถ้ายังไม่ติ๊ก "ปิดชื่อและ HN แล้ว" (ข้อ 8, BR-19) |
+| `toMedicine(draft)` | → `Medicine` (§5.1) | ตัด `checks`/`unsupported` ออก · โยนข้อผิดพลาดถ้า `canSave` เป็น `false` · ส่งต่อให้ `repo.saveMedicine` |
+
+ยกเลิก (ข้อ 6) ไม่ต้องมีฟังก์ชัน — ร่างเป็นข้อมูลในหน้าจอ ไม่เรียก `saveMedicine` = ไม่มีอะไรถูกบันทึก
+
+**(ค) `services/aiLabel.js` — `requestDraft(redactedImage) → Promise<aiJson>`**
+โยน `AiUnavailableError` ที่มี `reason` ∈ `offline` · `service_down` · `quota` · `unreadable` เมื่อใช้ไม่ได้ → หน้าจอบอกเหตุผลและเปิดฟอร์มกรอกเองที่ว่าง (ข้อ 5) · ส่งเฉพาะภาพที่ปิดแล้ว (ข้อ 8, 9) · Demo mode ใช้ `localRepo`/`demoData.labelDrafts` แทนการเรียก AI
+
+**(ง) ข้อมูลตัวอย่างที่ `core/demoData.js` ต้องมี (ให้เทสต์และ Demo mode ใช้ร่วมกัน):** ใบอ่านครบ (A1-T01: 1/1/2 เม็ด) · ใบที่มีช่อง `null` และ "วันละ 3 ครั้ง" ไม่ระบุมื้อ · ใบยากินเมื่อมีอาการ · ใบก่อนอาหารไม่บอกนาที · ใบ slot ซ้ำ/เม็ดขัดกัน
+
+### 5.5 สัญญา FR-01 `logic/pairing.js` และการจับคู่ใน repo (**ตกลงแล้ว — decision-log DL-20**)
+> ทีมตกลงแล้ว 6 พ.ย. 2569 (DL-20) — ที่มาของกฎ: FR-01 ข้อ 1–6 · BR-01, BR-02, BR-17 · NFR-04, NFR-05, NFR-10 · logic ล้วน (ไม่ใช้ `Date.now()` และไม่สุ่มเอง — รับ `now` และตัวสุ่มเป็นพารามิเตอร์)
+> **ผู้ตัดสินจริงคือ Security Rules ไม่ใช่โค้ดบนเครื่อง:** `joinCheck` ใช้เลือกข้อความให้ผู้ใช้และใช้ใน `localRepo` เท่านั้น — บน Firestore เครื่องผู้ดูแลแก้ไขอะไรก็ได้ จึงต้องให้ Rules ตรวจเงื่อนไขเดียวกันซ้ำ (R-2…R-5) · Rules ต้องใช้ขอบเวลาเดียวกับ `joinCheck`
+
+| ฟังก์ชัน / ค่าคงที่ | รับ → คืน | หมายเหตุ |
+|---|---|---|
+| `INVITE_TTL_MIN = 10` | — | รหัสหมดอายุ 10 นาที (BR-01) |
+| `makeInvite({ now, randomInt })` | → `{ code, expiresAt, usedAt: null }` | `code` = 6 หลัก (มี 0 นำหน้าได้) · `randomInt(n) → 0…n−1` ต้องมาจาก `crypto.getRandomValues` ไม่ใช่ `Math.random` (รหัสเป็นกุญแจเข้าถึงข้อมูลสุขภาพ) · ส่งเข้ามาเพื่อให้เทสต์ได้ |
+| `joinCheck({ now, invite, enteredCode })` | → `{ ok: true }` หรือ `{ ok: false, reason }` | `reason` ∈ `wrong_code`, `already_has_caregiver`, `expired`, `already_used`, `not_consented` — **ลำดับตรวจตามนี้**: `already_has_caregiver` มาก่อน `expired`/`already_used` เพราะผู้ดูแลคนที่สองมักใช้รหัสเก่าที่หมดอายุหรือใช้แล้ว แต่ข้อ 5 ต้องได้ "ผู้สูงอายุคนนี้มีผู้ดูแลแล้ว" · ขอบเวลา: `now ≤ expiresAt` ยังใช้ได้ ("older than 10 minutes" = เกิน 10 นาที) |
+| `pairingState(pair)` | → `'waiting_consent'` / `'waiting_caregiver'` / `'connected'` | ใช้เลือกหน้าจอ (ข้อ 1, 3) · หน้าจอแปลง `reason` เป็นข้อความเอง ไม่ต้องมีฟังก์ชันแปลงใน logic |
+
+`Invite` ที่ `joinCheck` รับ: `{ code, expiresAt, usedAt, consented, hasCaregiver }` — **`consented` และ `hasCaregiver` ต้องอยู่ในเอกสารรหัสด้วย** เพราะบน Firestore ผู้ดูแลยังอ่าน `pairs/{pairId}` ไม่ได้ก่อนจับคู่ (R-1) ถ้าไม่มีสองช่องนี้ เครื่องผู้ดูแลรู้แค่ว่า "ถูกปฏิเสธ" แต่บอกเหตุผลตามข้อ 2/4/5 ไม่ได้ · ผู้สูงอายุอัปเดตสองช่องนี้ในชุดเดียวกับการกดยินยอม/การจับคู่ (batch) · `Pair`: `{ seniorId, caregiverId | null, consentAt | null }`
+
+**แก้ `firestore-rules-draft.md` แล้ว (R-12…R-14 · Suchitra เจ้าของ E-6 ตรวจก่อน merge):** `invites/{code}` อนุญาต `get` (อ่านทีละเอกสารเมื่อรู้รหัส) แต่ห้าม `list` · ขอบเวลาใช้ `request.time <= expiresAt` (ตอนนี้ร่างใช้ `<` ซึ่งปฏิเสธที่ 10:00 พอดี) · ตรวจ `consented`/`hasCaregiver` ในรหัสให้ตรงกับ `pairs/{pairId}`
+
+**ความเสี่ยงที่ยอมรับ (บอกในรายงาน):** รหัส 6 หลักมี 1,000,000 แบบ ไม่มี server จำกัดจำนวนครั้งที่ลอง — ลดความเสี่ยงด้วยอายุ 10 นาที ใช้ครั้งเดียว ห้าม `list` และ App Check · ผู้ใช้ไม่มีบัญชี ถ้าล้างข้อมูลเบราว์เซอร์ต้องจับคู่ใหม่ (SRS §2.2) — ผู้สูงอายุกดยกเลิกจับคู่แล้วให้ผู้ดูแลสแกนรหัสใหม่
+
+**เพิ่มใน `core/repo.js` (`localRepo` และ `firestoreRepo` ต้องมีชื่อและรูปเดียวกัน — ต่อจาก §6.3):**
+| เมธอด | รับ → คืน | กฎ |
+|---|---|---|
+| `createPairing({ seniorId })` | → `{ pair, invite }` | ผู้สูงอายุเปิดแอปครั้งแรก: สร้างคู่และรหัส (ข้อ 1) · ไม่มีการ "ลองใหม่อัตโนมัติ" หลังยินยอม — ผู้ดูแลกดเชื่อมต่ออีกครั้ง (§7.1) |
+| `createInviteCode()` | → `invite` ใหม่ | กด "สร้างรหัสใหม่" — รหัสเดิมใช้ไม่ได้อีก (BR-01) |
+| `recordConsent()` | → `void` | ตั้ง `consentAt` (BR-02) |
+| `joinWithCode({ code, caregiverId })` | → `{ ok: true }` / `{ ok: false, reason }` | ใช้ `joinCheck` · สำเร็จแล้วตั้ง `caregiverId` และ `usedAt` พร้อมกัน (ข้อ 3) |
+| `getPairing()` | → `{ pair, invite }` หรือ `null` | — |
+| `cancelPairing()` | → `void` | ลบคู่ ยา ประวัติ และรหัสทั้งหมด (BR-17, ข้อ 6) แล้วสร้างรหัสใหม่ให้ผู้สูงอายุ · การยืนยัน 2 ขั้นเป็นหน้าที่ของหน้าจอ |
+
+**ทดสอบ:** `tests/pairing.test.js` (logic ล้วน) ครอบข้อ 2–5 พร้อมขอบเวลา — รหัสอายุ 10:00.000 ยังใช้ได้ · 10:00.001 หมดอายุ · ผู้ดูแลคนที่สองใช้รหัสที่หมดอายุแล้วได้ `already_has_caregiver` · `makeInvite` ใช้ตัวสุ่มที่ส่งเข้า (ไม่เรียก `Math.random`) · และ `tests/repo.test.js` ครอบ `cancelPairing` (เหลือเอกสาร 0 — ข้อ 6, R-8) · ส่วนที่ต้องดู Firestore Rules จริง (R-1…R-5, R-8) ทดสอบด้วย Emulator
+
 ## 6. โมเดลข้อมูล
 
 ### 6.1 โมเดล logical (ไม่ระบุเทคโนโลยี) — เอนทิตี, ฟิลด์, ความสัมพันธ์
