@@ -54,10 +54,10 @@ Definition: only the caregiver can add or edit medicines. A medicine has a name 
 ## ความคืบหน้า
 
 - [x] Issue ถูกสร้างและ assign (#12, #13)
-- [ ] ตรรกะ + เทสต์ผ่าน (`npm test`) — ✅ `logic/schedule.js` + `tests/schedule.test.js` 16 เทสต์ (5 พ.ย. 2569) · ⬜ `logic/labelDraft.js` (#13)
+- [x] ตรรกะ + เทสต์ผ่าน (`npm test`) — ✅ `logic/schedule.js` + `tests/schedule.test.js` 16 เทสต์ (5 พ.ย. 2569) · ✅ `logic/labelDraft.js` + `tests/labelDraft.test.js` 18 เทสต์ (6 พ.ย. 2569, #13)
 - [ ] หน้าจอเชื่อมกับ logic
 - [ ] ทดสอบบนมือถือจริง (MT ที่เกี่ยวข้อง)
-- [x] `docs/TRACEABILITY.md` อัปเดตแล้ว (ส่วน `schedule.js`)
+- [x] `docs/TRACEABILITY.md` อัปเดตแล้ว (ส่วน `schedule.js` และ `labelDraft.js`)
 - [ ] บันทึกการใช้ AI แล้ว
 
 **ลิงก์ PR / Issue:** (เติมที่นี่)
