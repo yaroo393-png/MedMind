@@ -27,6 +27,8 @@ for l in FR-01 FR-02 FR-03 FR-04 FR-05 FR-09 docs test bug design ai-log; do gh 
 | Final — ส่งงาน | Final Report, Demo Slides, AI-Use Statement, README |
 
 ## 4. Issue ชุดแรกที่แนะนำ
+> ร่าง Issue ฉบับเต็มของ Sprint 1 อยู่ที่ [`docs/issues/sprint-1/`](issues/sprint-1/) · Issue จริงบน GitHub คือ #7–#17
+
 | # | Issue | ผู้รับผิดชอบ | Milestone | Label |
 |---|---|---|---|---|
 | 1 | ตรวจ architecture.md และตัดสินใจรายการ §11 | Takkan | 0 | design |
@@ -40,7 +42,7 @@ for l in FR-01 FR-02 FR-03 FR-04 FR-05 FR-09 docs test bug design ai-log; do gh 
 | 9 | หน้าหลักผู้สูงอายุ S-02 + ยืนยันออฟไลน์ | Nichanan | 1 | FR-04 |
 | 10 | `logic/status.js` + เทสต์ TC-05.1–9 + A5-T04, T05, T07 | Suchitra | 1 | FR-05 |
 | 11 | หน้าสถานะรายวัน C-07 + แจ้งเตือน C-08 | Suchitra | 1 | FR-05 |
-| 12 | แผนทดสอบมือ MT-01…MT-13 (เติมผล) | Suchitra | Final | test |
+| 12 | แผนทดสอบมือ MT-01…MT-16 (เติมผล) | Suchitra | Final | test |
 | 13 | `logic/schedule.js` + `logic/labelDraft.js` + เทสต์ TC-02.x | Yar | 1 | FR-02 |
 | 14 | `services/redact.js` (วาดกรอบปิด, ลบ metadata) | Yar | 2 | FR-02 |
 | 15 | `services/aiLabel.js` + หน้า C-03…C-05 | Yar | 2 | FR-02 |

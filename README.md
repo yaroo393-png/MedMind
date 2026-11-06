@@ -78,7 +78,7 @@ docs/
 ├── 02-design/
 │   ├── architecture.md          # สถาปัตยกรรม, ADR 1–8 (รวม Demo mode), โมดูล+สัญญา, ERD, sequence/state
 │   ├── design-system.md         # tokens (ตรวจ contrast แล้ว), คอมโพเนนต์, Screen Map (หน้าจอ ↔ FR)
-│   ├── firestore-rules-draft.md # ร่าง Security Rules + เทสต์ R-1…R-8 (ยังไม่ทดสอบ)
+│   ├── firestore-rules-draft.md # ร่าง Security Rules + เทสต์ R-1…R-14 (ยังไม่ทดสอบ)
 │   ├── diagrams/                # use-case-diagram.png
 │   └── prototypes/              # ต้นแบบ M3 (README + tokens.css + 2569-11-04/: index.html, app.html, demo.html, js/, css/, NOTES.md)
 ├── 05-report/
