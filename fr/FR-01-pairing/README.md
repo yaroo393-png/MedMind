@@ -48,11 +48,11 @@ Definition: the invite code (QR + 6 digits) works once and expires after 10 minu
 
 ## ความคืบหน้า
 
-- [ ] Issue ถูกสร้างและ assign
-- [ ] ตรรกะ + เทสต์ผ่าน (`npm test`)
+- [x] Issue ถูกสร้างและ assign (#8, #9 · สัญญา DL-20)
+- [x] ตรรกะ + เทสต์ผ่าน (`npm test`) — `logic/pairing.js` + เมธอดจับคู่ใน `localRepo` · `tests/pairing.test.js` (10), `tests/repoPairing.test.js` (7) (6 พ.ย. 2569)
 - [ ] หน้าจอเชื่อมกับ logic
 - [ ] ทดสอบบนมือถือจริง (MT ที่เกี่ยวข้อง)
-- [ ] `docs/TRACEABILITY.md` อัปเดตแล้ว
+- [x] `docs/TRACEABILITY.md` อัปเดตแล้ว (ส่วน logic / `localRepo` — หน้าจอและ Rules ยังไม่ทำ)
 - [ ] บันทึกการใช้ AI แล้ว
 
 **ลิงก์ PR / Issue:** #9 E-2 — `core/clock.js` + `core/repo.js` (`localRepo`) + `tests/clock.test.js`, `tests/repo.test.js` (6 พ.ย. 2569) · `firestoreRepo` และ `logic/pairing.js` ยังไม่ทำ

@@ -356,7 +356,7 @@ erDiagram
 | `markAlertSeen({ mealId, kind })` / `getSeen(mealId)` | → `{ created }` / array ของชนิด (ส่งเป็น `seen` ของ `alertFor`) | สร้างได้ครั้งเดียว · `kind` ∈ `not_confirmed`, `confirmed_late` (BR-13) |
 | `watch(fn)` | → ฟังก์ชันเลิกฟัง | แจ้งเมื่อข้อมูลเปลี่ยนจริงเท่านั้น (แทน listener ของ Firestore) |
 
-ยังไม่อยู่ในสัญญานี้ (ทำใน Increment 2): จับคู่/ยกเลิกจับคู่ (FR-01: `createPairing`, `createInviteCode`, `recordConsent`, `joinWithCode`, `cancelPairing`) และคิวออฟไลน์ (FR-04 ข้อ 7 — Firestore ทำให้เอง)
+เมธอดจับคู่ (FR-01) อยู่ใน §5.5 — `localRepo` ทำแล้ว 6 พ.ย. (`createLocalRepo` รับ `randomInt` สำหรับเทสต์ ค่าเริ่มต้นใช้ `crypto` · `seed.pairing` = เริ่มจากคู่ที่จับแล้ว สำหรับ Demo) · ยังไม่อยู่ในสัญญานี้: คิวออฟไลน์ (FR-04 ข้อ 7 — Firestore ทำให้เอง)
 
 ## 7. พฤติกรรม
 

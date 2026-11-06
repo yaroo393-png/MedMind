@@ -4,10 +4,19 @@
 //       จำลองกฎที่มีผลต่อ AC: Dose ซ้ำไม่ทับ (R-7, BR-12) · status ตรง confirmStatus (R-10) · serverReceivedAt มาจากที่เก็บ (R-9)
 //       แจ้งเห็นแล้ว (alertSeen) สร้างได้ครั้งเดียว (BR-13)
 import { doseId, buildDose } from '../logic/confirm.js';
+import { makeInvite, joinCheck } from '../logic/pairing.js';
 
 const MEAL_KEYS = ['breakfast', 'lunch', 'dinner', 'bedtime'];
 const ALERT_KINDS = ['not_confirmed', 'confirmed_late'];
 const copy = (value) => structuredClone(value);
+
+// สุ่มจำนวนเต็ม 0…n−1 ด้วย crypto (ไม่ใช่ Math.random) · ตัดช่วงที่ทำให้เอียง (rejection sampling) — ใช้สร้างรหัสเชิญ (DL-20)
+function cryptoRandomInt(n) {
+  const limit = Math.floor(0x100000000 / n) * n;
+  const buf = new Uint32Array(1);
+  do { globalThis.crypto.getRandomValues(buf); } while (buf[0] >= limit);
+  return buf[0] % n;
+}
 
 // ตรวจเวลามื้อ { breakfast, lunch, dinner, bedtime } เป็น 'HH:MM' ครบ 4 ช่อง (BR-06)
 function assertMealTimes(mealTimes) {
@@ -18,21 +27,80 @@ function assertMealTimes(mealTimes) {
 
 /**
  * สร้างที่เก็บข้อมูลในหน่วยความจำ (ไม่แตะ Firebase)
- * @param {{ clock: { now(): number }, seed?: { mealTimes?: object, medicines?: object[] } }} options
+ * @param {{ clock: { now(): number }, seed?: { mealTimes?: object, medicines?: object[], pairing?: object }, randomInt?: (n: number) => number }} options
  *   clock = นาฬิกาจาก core/clock.js (ใช้เติม serverReceivedAt) · seed = ข้อมูลตั้งต้น เช่น จาก core/demoData.js
+ *   seed.pairing = คู่ที่จับแล้ว { seniorId, caregiverId, consentAt } (สถานการณ์ Demo) · randomInt = ตัวสุ่มสำหรับเทสต์ (ค่าเริ่มต้นใช้ crypto)
  */
-export function createLocalRepo({ clock, seed = {} } = {}) {
+export function createLocalRepo({ clock, seed = {}, randomInt = cryptoRandomInt } = {}) {
   if (typeof clock?.now !== 'function') throw new TypeError('ต้องส่ง clock ที่มี now()');
 
-  const state = { mealTimes: null, medicines: new Map(), doses: new Map(), notYet: new Map(), seen: new Map() };
+  const state = { pair: null, invite: null, mealTimes: null, medicines: new Map(), doses: new Map(), notYet: new Map(), seen: new Map() };
   const listeners = new Set();
   let nextMedicineNo = 1;
   const notify = () => listeners.forEach((fn) => fn());
 
   if (seed.mealTimes) { assertMealTimes(seed.mealTimes); state.mealTimes = copy(seed.mealTimes); }
   for (const medicine of seed.medicines ?? []) state.medicines.set(medicine.id, copy(medicine));
+  if (seed.pairing) state.pair = { seniorId: seed.pairing.seniorId, caregiverId: seed.pairing.caregiverId ?? null, consentAt: seed.pairing.consentAt ?? null };
+
+  // รหัสใหม่ของคู่ปัจจุบัน — รหัสเดิมถูกแทนที่จึงใช้ไม่ได้อีก (BR-01) · consented / hasCaregiver = สำเนาเพื่อบอกเหตุผล (DL-20)
+  const newInvite = () => ({ ...makeInvite({ now: clock.now(), randomInt }), usedBy: null,
+    consented: Boolean(state.pair?.consentAt), hasCaregiver: Boolean(state.pair?.caregiverId) });
+  const requirePair = () => { if (!state.pair) throw new Error('ยังไม่มีคู่ — เรียก createPairing ก่อน'); };
 
   return {
+    /** FR-01 ข้อ 1: ผู้สูงอายุเปิดแอปครั้งแรก — สร้างคู่และรหัสเชิญ (ยังไม่ยินยอม ยังไม่มีผู้ดูแล) */
+    async createPairing({ seniorId }) {
+      if (typeof seniorId !== 'string' || !seniorId) throw new TypeError('ต้องมี seniorId');
+      state.pair = { seniorId, caregiverId: null, consentAt: null };
+      state.invite = newInvite();
+      notify();
+      return { pair: copy(state.pair), invite: copy(state.invite) };
+    },
+    /** BR-01: กด "สร้างรหัสใหม่" — รหัสเดิมใช้ไม่ได้อีก */
+    async createInviteCode() {
+      requirePair();
+      state.invite = newInvite();
+      notify();
+      return copy(state.invite);
+    },
+    /** BR-02: ผู้สูงอายุกดยินยอม — ตั้ง consentAt และสำเนา consented ในรหัสพร้อมกัน */
+    async recordConsent() {
+      requirePair();
+      if (state.pair.consentAt) return;
+      state.pair.consentAt = clock.now();
+      if (state.invite) state.invite.consented = true;
+      notify();
+    },
+    /** FR-01 ข้อ 2–5: ผู้ดูแลจับคู่ด้วยรหัส → { ok: true } | { ok: false, reason } (ตัดสินด้วย joinCheck เหมือน Rules) */
+    async joinWithCode({ code, caregiverId }) {
+      if (typeof caregiverId !== 'string' || !caregiverId) throw new TypeError('ต้องมี caregiverId');
+      const result = joinCheck({ now: clock.now(), invite: state.invite, enteredCode: code });
+      if (!result.ok) return result;
+      state.pair.caregiverId = caregiverId;                       // สำเร็จ: ตั้งผู้ดูแลและใช้รหัสพร้อมกัน (batch เดียว)
+      Object.assign(state.invite, { usedAt: clock.now(), usedBy: caregiverId, hasCaregiver: true });
+      notify();
+      return result;
+    },
+    /** @returns {Promise<{ pair: object, invite: object|null }|null>} */
+    async getPairing() {
+      return state.pair ? { pair: copy(state.pair), invite: state.invite ? copy(state.invite) : null } : null;
+    },
+    /**
+     * FR-01 ข้อ 6 · BR-17 · NFR-10: ยกเลิกจับคู่ — ลบยา ประวัติ การแจ้ง เวลามื้อ และรหัสทั้งหมด
+     * แล้วสร้างคู่ใหม่ให้ผู้สูงอายุคนเดิมพร้อมรหัสใหม่ (ผู้สูงอายุเห็น QR ใหม่) · การยืนยัน 2 ขั้นเป็นหน้าที่ของหน้าจอ
+     */
+    async cancelPairing() {
+      requirePair();
+      const { seniorId } = state.pair;
+      state.mealTimes = null;
+      for (const store of [state.medicines, state.doses, state.notYet, state.seen]) store.clear();
+      state.pair = { seniorId, caregiverId: null, consentAt: null };
+      state.invite = newInvite();
+      notify();
+      return { pair: copy(state.pair), invite: copy(state.invite) };
+    },
+
     /** FR-02 BR-06: ตั้งเวลามื้อ 4 ช่อง */
     async setMealTimes(mealTimes) {
       assertMealTimes(mealTimes);
