@@ -14,8 +14,8 @@
 | M2 Design | 🟡 Draft (includes Demo mode, ADR-8, ADR-9) — [`architecture.md`](docs/02-design/architecture.md), [`design-system.md`](docs/02-design/design-system.md), [`firestore-rules-draft.md`](docs/02-design/firestore-rules-draft.md) · waiting for the team to review and decide §11 (documents in Thai) |
 | Traceability (Golden Thread) | 🟡 Structure ready — [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) · Code/Test columns are filled in as code is written |
 | M3 prototype (`docs/02-design/prototypes/`) | 🟡 First draft, **built from scratch** (covers FR-01–05 + unhappy paths + two-phone demo mode — opens without a server) — [`2569-11-04/index.html`](docs/02-design/prototypes/2569-11-04/index.html) · [`NOTES.md`](docs/02-design/prototypes/2569-11-04/NOTES.md) · awaiting the owner's review and a test on real phones (MT-08, MT-16) |
-| System (web app) | ⬜ Not started — Increment 1: FR-03–05 · Increment 2: FR-01–02 |
-| Automated tests | ⬜ Only the repository-structure tests exist (`tests/repo-structure.test.js`) · FR tests are added together with the code |
+| System (web app) `public/` | 🟡 The **logic and core parts are done and tested** (`public/js/logic/`, `public/js/core/` — check with `npm test`) · **the real system's screens and HTML pages are not built yet** (`public/js/features/` is empty, no `public/*.html`) — reviewers can see everything working in the **prototype** above |
+| Automated tests | 🟡 Tests exist for `logic/`, `core/` and the prototype (run `npm test`) · screen tests of the real system and the Security Rules in the Emulator do not exist yet |
 | Project plan (Week 10) | 🟡 Sprints 0–3, risks, rotating roles, retrospective — [`docs/PROJECT-PLAN.md`](docs/PROJECT-PLAN.md) |
 | Final Report / AI-Use Statement / Demo | 🟡 Skeletons — [`docs/05-report/`](docs/05-report/), [`docs/06-presentation/`](docs/06-presentation/) |
 
@@ -84,7 +84,7 @@ docs/
 ├── PROJECT-PLAN.md              # sprints, velocity, risks, rotating roles, retrospective
 └── GITHUB-SETUP.md              # labels, milestones, ruleset, first issues
 fr/FR-01…FR-05/README.md          # each member's work (evidence of individual contribution)
-public/                           # web app: index.html (role choice) · senior.html · caregiver.html · demo.html (reviewers) · css/ · js/{core,logic,services,features}/
+public/                           # the real web app (planned: index/senior/caregiver/demo .html) — **today only** js/core/ and js/logic/ exist · css/ and js/{services,features}/ are empty
 tests/                            # node --test
 scripts/check-secrets.js          # secrets / forbidden-file check
 .github/                          # CI, PR template, issue template
@@ -92,7 +92,19 @@ README.md (Thai) · README.en.md (English) · CLAUDE.md · RULES.md
 ```
 
 ## 🚀 How to run
-**There is no system to open yet** (see the status above) — this section is updated when Increment 1 is done.
+
+### ① Open the clickable prototype (for the M3 reviewer) — nothing to install, no server
+1. Get the code: on GitHub press **Code → Download ZIP** and unzip (or `git clone https://github.com/yaroo393-png/MedMind.git`)
+2. **Double-click** a file to open it in the browser:
+   - [`docs/02-design/prototypes/2569-11-04/demo.html`](docs/02-design/prototypes/2569-11-04/demo.html) — **the older adult's and the caregiver's screens side by side** on the same data, with a simulated clock (pick a "scenario" such as `07:00 — ถึงเวลาเตือน 2 มื้อพร้อมกัน` (the prototype labels are in Thai), buttons +5 minutes / next reminder time / exactly T+15, and a "set simulated time" box down to the millisecond) — walks through FR-01–05, happy and wrong paths, in one browser
+   - [`docs/02-design/prototypes/2569-11-04/app.html`](docs/02-design/prototypes/2569-11-04/app.html) — one screen, switch roles
+   - [`docs/02-design/prototypes/2569-11-04/index.html`](docs/02-design/prototypes/2569-11-04/index.html) — **the table of contents**: a table of all 43 acceptance criteria saying which screen shows each (wrong paths are marked ❌)
+3. Every page has a **"Covers: FR-xx"** bar saying which FR/BR it answers · all data is made up and nothing leaves the machine
+4. Details, how to try it and its limits: [`NOTES.md`](docs/02-design/prototypes/2569-11-04/NOTES.md) · manual test list: [`TEST-CHECKLIST.md`](docs/02-design/prototypes/2569-11-04/TEST-CHECKLIST.md)
+
+> The prototype is a mock (its time rules are rewritten inside it) — the real rules live in `public/js/logic/` and are proven by the automated tests (② below).
+
+### ② Automated tests of the real code
 
 Node.js 22 or later is required (on Windows PowerShell use `npm.cmd` instead of `npm`):
 ```bash
@@ -101,11 +113,12 @@ cd MedMind
 npm test              # automated tests (no npm install needed)
 npm run check         # tests + secrets check — run before every push
 ```
-Open the site locally (once pages exist): point a static server at the `public/` folder, for example Live Server in VS Code (do not open the HTML with `file://` because ES modules are used) · live demo: [ added after deployment ]
+### ③ The real system in `public/` (not finished)
+When the real HTML pages exist: point a static server at the `public/` folder, for example Live Server in VS Code (do not open with `file://` because ES modules are used) — **there are no pages to open yet** · live demo on the web: [ not yet — added after deployment ]
 
-**Real use on phones (one device = one role):** the older adult's phone opens the link and chooses "Older adult" (a QR code appears) · the caregiver's phone opens the same link and chooses "Caregiver", or scans the QR code with the phone's camera app → pairing → the caregiver photographs a real label (must be served over HTTPS) — architecture §5.0, ADR-9.
+**Plan for real use on phones (not finished · one device = one role):** the older adult's phone opens the link and chooses "Older adult" (a QR code appears) · the caregiver's phone opens the same link and chooses "Caregiver", or scans the QR code with the phone's camera app → pairing → the caregiver photographs a real label (must be served over HTTPS) — architecture §5.0, ADR-9.
 
-**For reviewers — Demo mode:** open `demo.html` (link: [ added after deployment ]) to see the older adult's and the caregiver's screens side by side with sample data and a simulated clock (buttons: +5 minutes / go to next reminder time). No account, two phones or server needed — every Must FR and the wrong paths can be walked through (architecture ADR-8).
+**Demo mode of the real system (planned, ADR-8):** `public/demo.html` will use the real `logic/` + `localRepo` + a simulated clock — not built yet · until then use the prototype's demo in ① (`demo.html` in the prototype folder).
 
 ## ⚙️ Important limits (from SRS §2.2)
 - Confirming is self-reported, not proof that the medicine was taken · the caregiver message is "Medicine not yet confirmed" (never "not taken").

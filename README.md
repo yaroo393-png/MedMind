@@ -13,8 +13,8 @@
 | M2 Design | 🟡 ฉบับร่าง (รวม Demo mode, ADR-8) — [`architecture.md`](docs/02-design/architecture.md), [`design-system.md`](docs/02-design/design-system.md), [`firestore-rules-draft.md`](docs/02-design/firestore-rules-draft.md) · รอทีมตรวจและตัดสินใจ §11 |
 | Traceability (Golden Thread) | 🟡 โครงพร้อม — [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) · ช่อง Code/Test เติมเมื่อมีโค้ด |
 | ต้นแบบ M3 (`docs/02-design/prototypes/`) | 🟡 ร่างแรก **สร้างใหม่ทั้งชุด** (ครบ FR-01–05 + ทางที่ผิด + โหมดสาธิต 2 จอ — เปิดได้โดยไม่ต้องมี server) — [`2569-11-04/index.html`](docs/02-design/prototypes/2569-11-04/index.html) · [`NOTES.md`](docs/02-design/prototypes/2569-11-04/NOTES.md) · รอเจ้าของงานตรวจ/ทดสอบบนมือถือจริง (MT-08, MT-16) |
-| ระบบ (เว็บแอป) | ⬜ ยังไม่เริ่มเขียน — Increment 1: FR-03–05 · Increment 2: FR-01–02 |
-| เทสต์อัตโนมัติ | ⬜ มีเฉพาะเทสต์โครง repo (`tests/repo-structure.test.js`) · เทสต์ของ FR เพิ่มพร้อมโค้ด |
+| ระบบ (เว็บแอป) `public/` | 🟡 ส่วน **logic และ core เสร็จและมีเทสต์** (`public/js/logic/`, `public/js/core/` — ตรวจด้วย `npm test`) · **หน้าจอและหน้า HTML ของระบบจริงยังไม่ทำ** (`public/js/features/` ว่าง ไม่มี `public/*.html`) — ผู้ตรวจดูการทำงานทั้งหมดได้จาก **ต้นแบบ** ด้านบน |
+| เทสต์อัตโนมัติ | 🟡 มีเทสต์ของ `logic/` `core/` และต้นแบบแล้ว (รัน `npm test`) · เทสต์หน้าจอของระบบจริงและ Security Rules บน Emulator ยังไม่มี |
 | แผนงาน (Week 10) | 🟡 sprint 0–3, ความเสี่ยง, บทบาทหมุนเวียน, retro — [`docs/PROJECT-PLAN.md`](docs/PROJECT-PLAN.md) |
 | Final Report / AI-Use Statement / Demo | 🟡 โครงร่าง — [`docs/05-report/`](docs/05-report/), [`docs/06-presentation/`](docs/06-presentation/) |
 
@@ -91,7 +91,7 @@ docs/
 ├── PROJECT-PLAN.md              # sprint, velocity, ความเสี่ยง, บทบาทหมุนเวียน, retrospective
 └── GITHUB-SETUP.md              # labels, milestones, ruleset, issue ชุดแรก
 fr/FR-01…FR-05/README.md          # งานของแต่ละคน (หลักฐานส่วนร่วมรายคน)
-public/                           # เว็บแอป: index.html (เลือกบทบาท) · senior.html · caregiver.html · demo.html (ผู้ตรวจ) · css/ · js/{core,logic,services,features}/
+public/                           # เว็บแอปจริง (ตามแผน: index/senior/caregiver/demo .html) — **ตอนนี้มีเฉพาะ** js/core/ และ js/logic/ · css/ และ js/{services,features}/ ยังว่าง
 tests/                            # node --test
 scripts/check-secrets.js          # ตรวจความลับ/ไฟล์ต้องห้าม
 .github/                          # CI, PR template, issue template
@@ -99,7 +99,19 @@ README.md (ไทย) · README.en.md (English) · CLAUDE.md · RULES.md
 ```
 
 ## 🚀 วิธีเปิดใช้งาน
-**ตอนนี้ยังไม่มีระบบให้เปิด** (ดูสถานะด้านบน) — ส่วนนี้จะอัปเดตเมื่อ Increment 1 เสร็จ
+
+### ① เปิดต้นแบบที่คลิกเดินได้ (สำหรับผู้ตรวจ M3) — ไม่ต้องติดตั้งอะไร ไม่ต้องมี server
+1. โหลดโค้ด: กด **Code → Download ZIP** บน GitHub แล้วแตกไฟล์ (หรือ `git clone https://github.com/yaroo393-png/MedMind.git`)
+2. เปิดไฟล์ในเบราว์เซอร์ด้วยการ **ดับเบิลคลิก**:
+   - [`docs/02-design/prototypes/2569-11-04/demo.html`](docs/02-design/prototypes/2569-11-04/demo.html) — **จอผู้สูงอายุและจอผู้ดูแลคู่กัน** ใช้ข้อมูลชุดเดียวกัน มีนาฬิกาจำลอง (เลือก "สถานการณ์" เช่น `07:00 — ถึงเวลาเตือน 2 มื้อพร้อมกัน`, ปุ่ม +5 นาที / ไปเวลาเตือนถัดไป / ไป T+15 พอดี, ช่อง "ตั้งเวลาจำลอง" ถึงมิลลิวินาที) — เดินครบ FR-01–05 ทั้งทางถูกและทางผิดในเบราว์เซอร์เดียว
+   - [`docs/02-design/prototypes/2569-11-04/app.html`](docs/02-design/prototypes/2569-11-04/app.html) — จอเดียว สลับบทบาทได้
+   - [`docs/02-design/prototypes/2569-11-04/index.html`](docs/02-design/prototypes/2569-11-04/index.html) — **สารบัญ**: ตารางครอบคลุม acceptance criteria ทั้ง 43 ข้อ บอกว่าข้อไหนดูได้ที่หน้าจอไหน (ทางผิดมีเครื่องหมาย ❌)
+3. ทุกหน้ามีแถบ **"Covers: FR-xx"** บอกว่าหน้านี้ตอบ FR/BR ข้อไหน · ข้อมูลทั้งหมดเป็นข้อมูลสมมติ ไม่ส่งข้อมูลออกนอกเครื่อง
+4. รายละเอียด วิธีลอง และข้อจำกัดของต้นแบบ: [`NOTES.md`](docs/02-design/prototypes/2569-11-04/NOTES.md) · รายการทดสอบด้วยมือ: [`TEST-CHECKLIST.md`](docs/02-design/prototypes/2569-11-04/TEST-CHECKLIST.md)
+
+> ต้นแบบเป็นของจำลอง (กฎเวลาเขียนซ้ำไว้ในต้นแบบ) — กฎจริงอยู่ใน `public/js/logic/` และพิสูจน์ด้วยเทสต์อัตโนมัติ (ข้อ ② ด้านล่าง)
+
+### ② เทสต์อัตโนมัติของโค้ดจริง
 
 ต้องมี Node.js 22 ขึ้นไป (Windows PowerShell ใช้ `npm.cmd` แทน `npm`):
 ```bash
@@ -108,11 +120,12 @@ cd MedMind
 npm test              # เทสต์อัตโนมัติ (ไม่ต้อง npm install)
 npm run check         # test + ตรวจความลับ — รันก่อน push ทุกครั้ง
 ```
-เปิดเว็บในเครื่อง (เมื่อมีหน้าเว็บ): ให้ static server ชี้โฟลเดอร์ `public/` เช่น Live Server ใน VS Code (ไม่เปิดไฟล์ HTML ด้วย `file://` เพราะใช้ ES modules) · ลิงก์ทดลองใช้: [ ใส่หลัง deploy ]
+### ③ ระบบจริงใน `public/` (ยังไม่เสร็จ)
+เมื่อมีหน้า HTML ของระบบจริง: ให้ static server ชี้โฟลเดอร์ `public/` เช่น Live Server ใน VS Code (ไม่เปิดด้วย `file://` เพราะใช้ ES modules) — **ตอนนี้ยังไม่มีหน้าให้เปิด** · ลิงก์ทดลองใช้บนเว็บ: [ ยังไม่มี — ใส่หลัง deploy ]
 
-**ใช้งานจริงบนมือถือ (1 เครื่อง = 1 บทบาท):** มือถือผู้สูงอายุเปิดลิงก์แล้วเลือก "ผู้สูงอายุ" (เห็น QR) · มือถือผู้ดูแลเปิดลิงก์เดียวกันเลือก "ผู้ดูแล" หรือสแกน QR ด้วยแอปกล้องของมือถือ → จับคู่ → ถ่ายฉลากจริงจากมือถือผู้ดูแล (ต้องเปิดผ่าน HTTPS) — architecture §5.0, ADR-9
+**แผนการใช้งานจริงบนมือถือ (ยังไม่เสร็จ · 1 เครื่อง = 1 บทบาท):** มือถือผู้สูงอายุเปิดลิงก์แล้วเลือก "ผู้สูงอายุ" (เห็น QR) · มือถือผู้ดูแลเปิดลิงก์เดียวกันเลือก "ผู้ดูแล" หรือสแกน QR ด้วยแอปกล้องของมือถือ → จับคู่ → ถ่ายฉลากจริงจากมือถือผู้ดูแล (ต้องเปิดผ่าน HTTPS) — architecture §5.0, ADR-9
 
-**สำหรับผู้ตรวจ — Demo mode:** เปิด `demo.html` (ลิงก์: [ ใส่หลัง deploy ]) จะเห็นจอผู้สูงอายุและผู้ดูแลคู่กัน ใช้ข้อมูลตัวอย่างและนาฬิกาจำลอง (ปุ่ม +5 นาที / ไปเวลาเตือนถัดไป) ไม่ต้องมีบัญชี มือถือ 2 เครื่อง หรือ server — เดินครบทุก Must FR และทางผิดได้ (architecture ADR-8)
+**Demo mode ของระบบจริง (ตามแผน ADR-8):** `public/demo.html` จะใช้ `logic/` + `localRepo` + นาฬิกาจำลองจริง — ยังไม่ทำ · ระหว่างนี้ใช้ Demo ของต้นแบบในข้อ ① (`demo.html` ในโฟลเดอร์ต้นแบบ)
 
 ## ⚙️ ข้อจำกัดที่สำคัญ (จาก SRS §2.2)
 - การกดยืนยันเป็นการรายงานด้วยตนเอง ไม่ใช่หลักฐานว่ากินยาจริง · ข้อความถึงผู้ดูแลใช้ "Medicine not yet confirmed" (ไม่ใช้ "not taken")
