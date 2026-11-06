@@ -202,13 +202,14 @@ flowchart TB
   unsupported: null | 'as_needed',                            // BR-07 → หน้าจอแสดง "ยังไม่รองรับยาที่กินเมื่อมีอาการ" ไม่สร้างเวลาเตือน (FR-02 ข้อ 4)
   checks: [ { path: 'name' | 'slots[0].meal' | ..., reason } ] }  // = "โปรดตรวจสอบ" เฉพาะช่อง/slot นั้น (BR-04)
 ```
-`reason` ∈ `missing` (ช่องว่าง/อ่านไม่ออก — ตรวจก่อน) · แล้วจึงใช้เหตุผลของ `validateSlot`/`groupMeals` §5.2 ตามชื่อเดิม: `invalid_meal`, `invalid_timing`, `minutesBefore_required`, `invalid_tablets`, `meal_timing_mismatch`, `duplicate_slot`, `conflicting_tablets`, `invalid_reminder_time` (ไม่คิดกฎซ้ำ — เรียกฟังก์ชันของ `schedule.js`) · ลำดับนี้ทำให้ `meal = null` ได้ `missing` ไม่ใช่ `invalid_meal`
+`reason` ∈ `missing` (ช่องว่าง/อ่านไม่ออก — ตรวจก่อน) · แล้วจึงใช้เหตุผลของ `validateSlot`/`groupMeals` §5.2 ตามชื่อเดิม: `invalid_meal`, `invalid_timing`, `minutesBefore_required`, `invalid_tablets`, `meal_timing_mismatch`, `duplicate_slot`, `conflicting_tablets`, `invalid_reminder_time` (ไม่คิดกฎซ้ำ — เรียกฟังก์ชันของ `schedule.js`) · ร่างที่ไม่มี slot เลย = `{ path: 'slots', reason: 'no_slot' }` · ลำดับนี้ทำให้ `meal = null` ได้ `missing` ไม่ใช่ `invalid_meal`
 
 | ฟังก์ชัน | รับ → คืน | หมายเหตุ |
 |---|---|---|
 | `buildDraft(aiJson, { mealTimes })` | → `Draft` | **ไม่ throw** — JSON ผิดรูป/ไม่ใช่ object → ร่างว่างทั้งหมด + `checks` (FR-02 ข้อ 3) · ไม่เดาค่า · ไม่มีช่องชื่อผู้ป่วย/HN |
 | `applyEdit(draft, path, value, { mealTimes })` | → `Draft` ใหม่ | ค่าที่ผู้ดูแลแก้ชนะค่าจาก AI (ข้อ 2) · คำนวณ `checks` ใหม่ · ไม่แก้ `draft` เดิม |
-| `removeSlot(draft, index)` | → `Draft` ใหม่ | "แก้หรือลบ slot" เพื่อปลดการบล็อกบันทึก (ข้อ 11) |
+| `addSlot(draft, { mealTimes })` | → `Draft` ใหม่ | เพิ่ม slot ว่าง — ฟอร์มกรอกเอง (`buildDraft(null)`, ข้อ 5) และยาที่อ่านได้ไม่ครบ · **เพิ่ม 6 พ.ย. ตอนเขียนโค้ด** (สัญญาเดิมไม่มีทางเพิ่ม slot) |
+| `removeSlot(draft, index, { mealTimes })` | → `Draft` ใหม่ | "แก้หรือลบ slot" เพื่อปลดการบล็อกบันทึก (ข้อ 11) |
 | `canSave(draft)` | → `boolean` | `true` เมื่อ `unsupported = null`, `checks` ว่าง, มี slot ≥ 1 และมีชื่อยา (BR-04, BR-05) |
 | `canSend({ coveredTicked })` | → `boolean` | `false` ถ้ายังไม่ติ๊ก "ปิดชื่อและ HN แล้ว" (ข้อ 8, BR-19) |
 | `toMedicine(draft)` | → `Medicine` (§5.1) | ตัด `checks`/`unsupported` ออก · โยนข้อผิดพลาดถ้า `canSave` เป็น `false` · ส่งต่อให้ `repo.saveMedicine` |
