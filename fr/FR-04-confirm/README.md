@@ -59,6 +59,6 @@ Definition: the older adult confirms on the reminder screen (FR-03) or on their 
 - [x] `docs/TRACEABILITY.md` อัปเดตแล้ว (ส่วน logic — หน้าจอยังไม่ทำ)
 - [ ] บันทึกการใช้ AI แล้ว
 
-**ลิงก์ PR / Issue:** (เติมที่นี่)
+**ลิงก์ PR / Issue:** #15 `logic/confirm.js` (PR #34) · #10 E-3 `core/demoData.js` + `tests/demoData.test.js` (6 พ.ย. 2569) — ข้อมูลตัวอย่างชุดเดียวของทีมสำหรับเทสต์และ Demo mode
 
 **สิ่งที่เรียนรู้ / ปัญหาที่เจอ:** (เติมที่นี่)
