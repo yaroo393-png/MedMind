@@ -52,11 +52,11 @@ Pain this traces to: having to call or send a LINE message for every meal; no si
 
 ## ความคืบหน้า
 
-- [ ] Issue ถูกสร้างและ assign
-- [ ] ตรรกะ + เทสต์ผ่าน (`npm test`)
+- [x] Issue ถูกสร้างและ assign (#16)
+- [x] ตรรกะ + เทสต์ผ่าน (`npm test`) — `logic/status.js` + `tests/status.test.js` 16 เทสต์ (6 พ.ย. 2569)
 - [ ] หน้าจอเชื่อมกับ logic
 - [ ] ทดสอบบนมือถือจริง (MT ที่เกี่ยวข้อง)
-- [ ] `docs/TRACEABILITY.md` อัปเดตแล้ว
+- [x] `docs/TRACEABILITY.md` อัปเดตแล้ว (ส่วน logic — หน้าจอยังไม่ทำ)
 - [ ] บันทึกการใช้ AI แล้ว
 
 **ลิงก์ PR / Issue:** (เติมที่นี่)

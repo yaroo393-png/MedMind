@@ -172,8 +172,8 @@ flowchart TB
 | `nextMealStartFor(meals, meal)` | `logic/mealTimeline.js` | Rossatorn | รายการมื้อ + มื้อนี้ → เวลาเตือนแรกของมื้ออื่นที่เริ่มหลัง T+15 (ms) หรือ `null` | BR-15, BR-16, BR-21 |
 | `mealState(...)` | `logic/mealTimeline.js` | Rossatorn | ตาม §5.1 | FR-03, BR-08, BR-18, BR-20, BR-21 |
 | `doseId`, `confirmStatus`, `buildDose({ meal, confirmedAt })` | `logic/confirm.js` | Nichanan | `buildDose` → `{ scheduledTime, confirmedAt, status }` (ไม่มี `serverReceivedAt` — ชั้นข้อมูลเติม) | FR-04, BR-10, BR-12, BR-20 |
-| `alertFor({ now, meal, dose, notYet, seen })` | `logic/status.js` | Suchitra | → `null` / `{ kind: 'not_confirmed' }` / `{ kind: 'confirmed_late', confirmedAt }` · ต่อยอดจาก `mealState` ไม่คำนวณเวลาซ้ำ · `seen` = ชนิดที่แสดงแล้วของมื้อนี้ | FR-05, BR-11, BR-13, BR-20 |
-| `dailyStatus({ now, meals, doses })` | `logic/status.js` | Suchitra | → `[{ mealId, reminderTime, label, confirmedAt? }]` · `label` ∈ `taken`, `taken_late`, `not_confirmed`, `not_due` (หน้าจอแปลงเป็นข้อความ) | FR-05, BR-14 |
+| `alertFor({ now, meal, dose, notYet, seen })` | `logic/status.js` | Suchitra | → `null` / `{ kind: 'not_confirmed' }` / `{ kind: 'confirmed_late', confirmedAt }` · ต่อยอดจาก `mealState` ไม่คำนวณเวลาซ้ำ · `seen` = ชนิดที่แสดงแล้วของมื้อนี้ (array เช่น `['not_confirmed']` — ใช้ใน `logic/status.js` — ทีมยืนยัน 6 พ.ย.) | FR-05, BR-11, BR-13, BR-20 |
+| `dailyStatus({ now, meals, doses })` | `logic/status.js` | Suchitra | → `[{ mealId, reminderTime, label, confirmedAt? }]` · `label` ∈ `taken`, `taken_late`, `not_confirmed`, `not_due` (หน้าจอแปลงเป็นข้อความ) · `doses` = object ใช้ `doseId` เป็นคีย์ (ตรงกับ id เอกสาร `doses/{doseId}` — ทีมยืนยัน 6 พ.ย.) | FR-05, BR-14 |
 
 หลักที่ใช้: อินเทอร์เฟซเล็กและคนเรียกพึ่งแค่ลายเซ็น (M3) · ตรรกะไม่วาดหน้าจอ จึงคืน "ชนิด/label" ไม่คืนข้อความ (M3) · หนึ่งฟังก์ชันทำเรื่องเดียวและตั้งชื่อค่าคงที่ (สัปดาห์ 6) · เทสต์ที่ขอบ (สัปดาห์ 7) — เคส C-T01…C-T05 และ A5-T01…T07 ใน `docs/TRACEABILITY.md`
 
