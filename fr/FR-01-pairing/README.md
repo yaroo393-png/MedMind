@@ -55,6 +55,6 @@ Definition: the invite code (QR + 6 digits) works once and expires after 10 minu
 - [ ] `docs/TRACEABILITY.md` อัปเดตแล้ว
 - [ ] บันทึกการใช้ AI แล้ว
 
-**ลิงก์ PR / Issue:** (เติมที่นี่)
+**ลิงก์ PR / Issue:** #9 E-2 — `core/clock.js` + `core/repo.js` (`localRepo`) + `tests/clock.test.js`, `tests/repo.test.js` (6 พ.ย. 2569) · `firestoreRepo` และ `logic/pairing.js` ยังไม่ทำ
 
 **สิ่งที่เรียนรู้ / ปัญหาที่เจอ:** (เติมที่นี่)

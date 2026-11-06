@@ -269,6 +269,22 @@ erDiagram
 
 **Unpair (BR-17 / NFR-10):** ลบ `pairs/{pairId}` พร้อมทุกเอกสารใน sub-collection (batch) และ invite ที่เกี่ยวข้อง · หลังลบ กฎจะปฏิเสธทุกคำขอเพราะหา pair ไม่เจอ · ต้องมีเทสต์นับเอกสารที่เหลือ = 0
 
+
+### 6.3 สัญญาของที่เก็บข้อมูล (`core/repo.js`) — `localRepo` ทำแล้ว 6 พ.ย. · `firestoreRepo` ต้องมีเมธอดชื่อและรูปเดียวกัน
+ทุกเมธอดคืน Promise · คืนสำเนาเสมอ · `logic/` และ `features/` ไม่ import repo ตรง — รับผ่านพารามิเตอร์ (Issue #9) · สร้างด้วย `createLocalRepo({ clock, seed })` (`clock` จาก `core/clock.js`: `createClock()` = นาฬิกาจริง, `createClock({ start })` = นาฬิกาจำลองสำหรับเทสต์/Demo mode)
+
+| เมธอด | รับ → คืน | กฎที่จำลอง (ต้องตรงกับ Rules) |
+|---|---|---|
+| `setMealTimes(mealTimes)` / `getMealTimes()` | `{ breakfast, lunch, dinner, bedtime }` เป็น `'HH:MM'` ครบ 4 ช่อง → `void` / ค่าหรือ `null` | รูปแบบผิดไม่บันทึก (BR-06) |
+| `saveMedicine(medicine)` / `listMedicines()` / `deleteMedicine(id)` | ยา (ไม่มี `id` = ยาใหม่) → `id` / รายการยา / `boolean` | ต้องมีชื่อและ slot ≥ 1 (ตรวจละเอียดด้วย `validateSlot` ที่หน้าร่างก่อนเรียก) |
+| `confirmMeal({ meal, confirmedAt })` | → `{ doseId, dose, created }` · `dose = buildDose(...) + serverReceivedAt` | ซ้ำไม่ทับ ถือว่าสำเร็จ (R-7, BR-12) · `status` = `confirmStatus` (R-10) · `serverReceivedAt` มาจากที่เก็บ (R-9) |
+| `getDoses()` | → `{ [doseId]: Dose }` (รูปที่ `dailyStatus` รับ) | — |
+| `reportNotYet({ meal, at })` / `getNotYet(meal)` | → `{ created, at }` / เวลา ms หรือ `null` (ส่งเป็น `notYet` ของ `alertFor`) | เก็บครั้งแรกเท่านั้น (BR-11) |
+| `markAlertSeen({ mealId, kind })` / `getSeen(mealId)` | → `{ created }` / array ของชนิด (ส่งเป็น `seen` ของ `alertFor`) | สร้างได้ครั้งเดียว · `kind` ∈ `not_confirmed`, `confirmed_late` (BR-13) |
+| `watch(fn)` | → ฟังก์ชันเลิกฟัง | แจ้งเมื่อข้อมูลเปลี่ยนจริงเท่านั้น (แทน listener ของ Firestore) |
+
+ยังไม่อยู่ในสัญญานี้ (ทำใน Increment 2): จับคู่/ยกเลิกจับคู่ (FR-01: `createPairing`, `createInviteCode`, `recordConsent`, `joinWithCode`, `cancelPairing`) และคิวออฟไลน์ (FR-04 ข้อ 7 — Firestore ทำให้เอง)
+
 ## 7. พฤติกรรม
 
 ### 7.1 FR-01 จับคู่ (ลำดับตาม AC 1–6: QR แสดงก่อนยินยอม แต่จับคู่ได้หลังยินยอมเท่านั้น)
