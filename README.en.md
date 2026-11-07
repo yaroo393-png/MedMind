@@ -3,9 +3,11 @@
 # MedMind — medication reminders and medication status for the caregivers of older adults
 
 > **Introduction to Software Engineering (15031001) — academic year 2026** · School of Applied Digital Technology, Mae Fah Luang University
-> **Team:** MedMind · **Repository:** https://github.com/yaroo393-png/MedMind · **Live demo:** [https://yaroo393-png.github.io/MedMind/demo.html](https://yaroo393-png.github.io/MedMind/demo.html)
-
-> **Real use (one link):** [https://yaroo393-png.github.io/MedMind/](https://yaroo393-png.github.io/MedMind/) → pick older adult or caregiver (the phone remembers the role · re-pick with `?choose=1`), or scan the QR from the older adult's phone · try without real data: [demo.html](https://yaroo393-png.github.io/MedMind/demo.html) · publish the Security Rules first, see [`docs/FIREBASE-SETUP.md`](docs/FIREBASE-SETUP.md)
+>
+> **Real app:** https://yaroo393-png.github.io/MedMind/
+>
+> **Demo mode:** https://yaroo393-png.github.io/MedMind/demo.html
+>
 > *The Thai README is the primary version. If the two differ, the Thai one is edited first and this page is updated to match.*
 
 ## Current status

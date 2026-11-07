@@ -3,9 +3,10 @@
 # MedMind — ระบบเตือนกินยาและแจ้งสถานะให้ผู้ดูแลผู้สูงอายุ
 
 > **Intro to Software Engineering (15031001) — ปีการศึกษา 2569** · คณะ/สาขา: School of Applied Digital Technology, Mae Fah Luang University
-> **ทีม:** MedMind · **Repository:** https://github.com/yaroo393-png/MedMind · **ลิงก์ทดลองใช้:** [https://yaroo393-png.github.io/MedMind/](https://yaroo393-png.github.io/MedMind/) · [โหมดสาธิต](https://yaroo393-png.github.io/MedMind/demo.html)
-
-> **ใช้งานจริง (ลิงก์เดียว):** [https://yaroo393-png.github.io/MedMind/](https://yaroo393-png.github.io/MedMind/) → เลือกว่าเป็นผู้สูงอายุหรือผู้ดูแล (เครื่องจำบทบาทไว้ · เลือกใหม่ที่ `?choose=1` · ติดตั้งลงหน้าจอหลักได้แบบ PWA) หรือสแกน QR จากเครื่องผู้สูงอายุ · ลองไม่ใช้ข้อมูลจริง: [demo.html](https://yaroo393-png.github.io/MedMind/demo.html) · ต้องวาง Security Rules ก่อน ดู [`docs/FIREBASE-SETUP.md`](docs/FIREBASE-SETUP.md)
+>
+> **ใช้งานจริง:** https://yaroo393-png.github.io/MedMind/
+>
+> **โหมดสาธิต:** https://yaroo393-png.github.io/MedMind/demo.html
 
 ## สถานะปัจจุบัน
 | ส่วน | สถานะ |
