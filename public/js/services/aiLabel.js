@@ -3,8 +3,10 @@
 // AI แค่ "ร่าง" — ผลถูกตรวจชนิดทุกช่องด้วย logic/labelDraft.js (buildDraft) และผู้ดูแลตรวจก่อนบันทึกทุกครั้ง · AI ไม่ตัดสินเวลาเตือนและไม่ให้คำแนะนำยา
 // ส่วนที่ทดสอบด้วย node ได้: PROMPT, responseSchema, parseAiText, classifyError, createAiLabel (ใส่ model ปลอมได้)
 
-/** ชื่อโมเดลของ Gemini Developer API (แพ็กฟรี) — ถ้าคอนโซลแจ้งว่าเลิกใช้ ให้เปลี่ยนที่นี่ที่เดียว */
-export const AI_MODEL = 'gemini-2.5-flash';
+/** ชื่อโมเดลของ Gemini Developer API (แพ็กฟรี) — Google เลิกให้บริการโมเดลเก่าเป็นระยะ (gemini-2.5-flash ถูกถอน ต.ค. 2569 → 404)
+ *  ลองตามลำดับ: ตัวแรกที่ไม่ใช่ 404 ถูกจำไว้ใช้ต่อ · ถ้าชื่อใหม่ออกอีก เพิ่มไว้หน้าสุดของรายการนี้ที่เดียว */
+export const AI_MODELS = ['gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-3.1-flash-lite', 'gemini-2.5-flash-lite', 'gemini-2.5-flash'];
+export const AI_MODEL = AI_MODELS[0];
 export const AI_REASONS = ['offline', 'service_down', 'quota', 'unreadable'];
 
 /** รหัส/ข้อความจริงของข้อผิดพลาด (สั้น ๆ) ไว้แสดงให้ผู้ดูแล/ทีมแจ้งสาเหตุ — ไม่มีข้อมูลผู้ป่วย (เราไม่ส่งชื่อ/HN ไปอยู่แล้ว) */
@@ -91,31 +93,44 @@ const toBase64 = async (blob) => {
  * @param {{ getModel: () => Promise<{ generateContent(parts: any[]): Promise<{ response: { text(): string } }> }>, isOnline?: () => boolean }} deps
  *   getModel = คืน GenerativeModel ของ Firebase AI Logic (หรือของปลอมในเทสต์)
  */
-export function createAiLabel({ getModel, isOnline = () => true }) {
+export function createAiLabel({ getModel, isOnline = () => true, models = [undefined] }) {
+  let good = null;   // ชื่อโมเดลที่ใช้ได้ (จำไว้ ไม่ลองซ้ำ)
+  const notFound = (error) => /\b404\b|not found|is not found for api version|no longer available|has been retired/i.test(`${error?.code ?? ''} ${error?.status ?? ''} ${error?.message ?? ''}`);
   return {
     /** รูปที่ปิดแล้ว (Blob JPEG) → aiJson · ไม่ส่งอะไรถ้าออฟไลน์ */
     async requestDraft(redactedImage) {
       if (!isOnline()) throw new AiUnavailableError('offline');
-      try {
-        const model = await getModel();
-        const result = await model.generateContent([PROMPT, { inlineData: { data: await toBase64(redactedImage), mimeType: redactedImage.type || 'image/jpeg' } }]);
-        return parseAiText(result.response.text());
-      } catch (error) {
-        throw error instanceof AiUnavailableError ? error : new AiUnavailableError(classifyError(error, { online: isOnline() }), error);
+      const data = await toBase64(redactedImage);
+      const parts = [PROMPT, { inlineData: { data, mimeType: redactedImage.type || 'image/jpeg' } }];
+      const order = good ? [good] : models;
+      let lastError;
+      for (const name of order) {
+        try {
+          const model = await getModel(name);
+          const result = await model.generateContent(parts);
+          good = name;
+          return parseAiText(result.response.text());
+        } catch (error) {
+          if (error instanceof AiUnavailableError) throw error;
+          lastError = error;
+          if (!notFound(error)) throw new AiUnavailableError(classifyError(error, { online: isOnline() }), error);   // ไม่ใช่ "ไม่พบโมเดล" → ไม่ลองตัวถัดไป
+        }
       }
+      throw new AiUnavailableError(classifyError(lastError, { online: isOnline() }), lastError);   // ทุกชื่อ 404
     },
   };
 }
 
 /** สร้างตัวอ่านฉลากจริงจากการเชื่อม Firebase (core/firebase.js) — โหลด SDK ของ AI เมื่อใช้ครั้งแรกเท่านั้น */
-export function aiLabelFromFirebase(fb, { model = AI_MODEL, isOnline } = {}) {
-  let cached = null;
-  const getModel = async () => {
-    if (cached) return cached;
+export function aiLabelFromFirebase(fb, { models = AI_MODELS, isOnline } = {}) {
+  const cache = new Map();
+  const getModel = async (name) => {
+    if (cache.has(name)) return cache.get(name);
     const ai = await import(`${fb.sdkBase}firebase-ai.js`);
     const instance = ai.getAI(fb.app, { backend: new ai.GoogleAIBackend() });
-    cached = ai.getGenerativeModel(instance, { model, generationConfig: { responseMimeType: 'application/json', responseSchema: responseSchema(ai.Schema) } });
-    return cached;
+    const model = ai.getGenerativeModel(instance, { model: name, generationConfig: { responseMimeType: 'application/json', responseSchema: responseSchema(ai.Schema) } });
+    cache.set(name, model);
+    return model;
   };
-  return createAiLabel({ getModel, isOnline });
+  return createAiLabel({ getModel, isOnline, models });
 }
