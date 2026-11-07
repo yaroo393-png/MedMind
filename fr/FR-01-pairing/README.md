@@ -21,12 +21,12 @@ Definition: the invite code (QR + 6 digits) works once and expires after 10 minu
 
 | # | AC | เทสต์ | สถานะ | PR |
 |---|---|---|---|---|
-| 1 | Given the older adult opens the app for the first time, when the start screen appears, then it shows a QR code and an invite code without any sign-up or typing, and before consenting the older adult sees what data will be shared, why, and that they can cancel at any time. | **TC-01.1** — MT-01 (ดูหน้าจอ) | ⬜ | |
-| 2 | Wrong path. Given the older adult has not tapped consent, when a caregiver tries to pair, then pairing fails and the caregiver is told it is waiting for consent. | **TC-01.2** — R-2 · pairing.test | ⬜ | |
-| 3 | Given the older adult has consented, when the caregiver scans or enters a valid code, then both screens show that they are connected. | **TC-01.3** — R-5 | ⬜ | |
-| 4 | Wrong path. Given a code that is wrong, older than 10 minutes, or already used, when the caregiver enters it, then it is rejected with a clear message and no connection is made. | **TC-01.4** — R-3 · pairing.test (checkInvite) | ⬜ | |
-| 5 | Wrong path. Given the older adult is already paired with a caregiver, when a second caregiver scans or enters the code, then it is rejected with “This older adult already has a caregiver” and no connection is made. | **TC-01.5** — R-4 | ⬜ | |
-| 6 | Wrong path. Given a paired older adult and caregiver, when either of them unpairs and confirms, then the caregiver immediately can no longer see the older adult's data, the pair's medicines and confirmation history are deleted, and the older adult sees a new QR code. | **TC-01.6** — R-8 · pairing.test | ⬜ | |
+| 1 | Given the older adult opens the app for the first time, when the start screen appears, then it shows a QR code and an invite code without any sign-up or typing, and before consenting the older adult sees what data will be shared, why, and that they can cancel at any time. | **TC-01.1** — MT-01 (ดูหน้าจอ) | 🟡 logic ผ่าน — รอหน้าจอ/อุปกรณ์ |  |
+| 2 | Wrong path. Given the older adult has not tapped consent, when a caregiver tries to pair, then pairing fails and the caregiver is told it is waiting for consent. | **TC-01.2** — R-2 · pairing.test | 🟡 logic ผ่าน — รอหน้าจอ/อุปกรณ์ |  |
+| 3 | Given the older adult has consented, when the caregiver scans or enters a valid code, then both screens show that they are connected. | **TC-01.3** — R-5 | 🟡 logic ผ่าน — รอหน้าจอ/อุปกรณ์ |  |
+| 4 | Wrong path. Given a code that is wrong, older than 10 minutes, or already used, when the caregiver enters it, then it is rejected with a clear message and no connection is made. | **TC-01.4** — R-3 · pairing.test (checkInvite) | 🟡 logic ผ่าน — รอหน้าจอ/อุปกรณ์ |  |
+| 5 | Wrong path. Given the older adult is already paired with a caregiver, when a second caregiver scans or enters the code, then it is rejected with “This older adult already has a caregiver” and no connection is made. | **TC-01.5** — R-4 | 🟡 logic ผ่าน — รอหน้าจอ/อุปกรณ์ |  |
+| 6 | Wrong path. Given a paired older adult and caregiver, when either of them unpairs and confirms, then the caregiver immediately can no longer see the older adult's data, the pair's medicines and confirmation history are deleted, and the older adult sees a new QR code. | **TC-01.6** — R-8 · pairing.test | 🟡 logic ผ่าน — รอหน้าจอ/อุปกรณ์ |  |
 
 ## ไฟล์ที่ต้องเขียน
 
@@ -55,6 +55,6 @@ Definition: the invite code (QR + 6 digits) works once and expires after 10 minu
 - [x] `docs/TRACEABILITY.md` อัปเดตแล้ว (ส่วน logic / `localRepo` — หน้าจอและ Rules ยังไม่ทำ)
 - [ ] บันทึกการใช้ AI แล้ว
 
-**ลิงก์ PR / Issue:** #9 E-2 — `core/clock.js` + `core/repo.js` (`localRepo`) + `tests/clock.test.js`, `tests/repo.test.js` (6 พ.ย. 2569) · `firestoreRepo` และ `logic/pairing.js` ยังไม่ทำ
+**ลิงก์ PR / Issue:** #9 E-2 — `core/clock.js` + `core/repo.js` (`localRepo`) + `tests/clock.test.js`, `tests/repo.test.js` (6 พ.ย. 2569) · PR #43 `logic/pairing.js` + จับคู่ใน `localRepo` + `tests/pairing.test.js`, `tests/repoPairing.test.js` (6 พ.ย. 2569) · `firestoreRepo` ยังไม่ทำ (DL-24)
 
 **สิ่งที่เรียนรู้ / ปัญหาที่เจอ:** (เติมที่นี่)

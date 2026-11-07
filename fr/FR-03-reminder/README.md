@@ -21,12 +21,12 @@ Definition — reminder timeline, shared with FR-04 and FR-05 (T = the meal's re
 
 | # | AC | เทสต์ | สถานะ | PR |
 |---|---|---|---|---|
-| 1 | Given an 08:00 meal with two medicines, MedMind open on the older adult's phone and the page tapped at least once since it was opened, when it is 08:00, then a reminder sound plays and both medicines (name, tablets for this meal, warnings, contraindications) are shown on one screen with “Taken” / “Not yet” buttons and no medicine photos. | **TC-03.1** — mealTimeline.test · MT-04 (เสียง) | ⬜ | |
-| 2 | Wrong path. Given the meal is not confirmed, when it is 08:05 and then 08:10, then repeat reminders 1 and 2 are given, each with sound. | **TC-03.2** — mealTimeline.test (รอบ 1, 2) | ⬜ | |
-| 3 | Given the meal is confirmed, when the next repeat-reminder time arrives, then no reminder is given. | **TC-03.3** — mealTimeline.test (ยืนยันแล้วไม่เตือน) | ⬜ | |
-| 4 | Wrong path. Given meal A at 06:45 (15 minutes before breakfast) is not confirmed and meal B is at 07:00, when it is 07:00, then the reminder screen shows both meals in time order under separate headings with separate buttons and one sound, and the caregiver is alerted about meal A at 07:00, on meal A's own timeline. | **TC-03.4** — mealTimeline.test (มื้อซ้อนกัน BR-16) | ⬜ | |
-| 5 | Wrong path. Given the page was closed at 08:00 and the meal is not confirmed, when the older adult opens MedMind at 08:07, then the reminder screen shows the meal at once, the 08:00 and 08:05 rounds are not replayed, and the 08:10 round still happens. | **TC-03.5** — mealTimeline.test (เปิดหน้ากลับ BR-18) | ⬜ | |
-| 6 | Given medicine A has slots at breakfast and at dinner, medicine B has a slot at breakfast, and medicine C has a slot at lunch, when the meals are worked out, then the breakfast meal holds A and B under one reminder, the lunch meal holds C, the dinner meal holds A only, and no meal holds the same slot twice. | **TC-03.6** — schedule.test (groupMeals) — A1-T02, A1-T03, A1-T06 (รวม/แยกมื้อ ไม่ซ้ำ) | ⬜ | |
+| 1 | Given an 08:00 meal with two medicines, MedMind open on the older adult's phone and the page tapped at least once since it was opened, when it is 08:00, then a reminder sound plays and both medicines (name, tablets for this meal, warnings, contraindications) are shown on one screen with “Taken” / “Not yet” buttons and no medicine photos. | **TC-03.1** — mealTimeline.test · MT-04 (เสียง) | 🟡 logic ผ่าน — รอหน้าจอ/อุปกรณ์ |  |
+| 2 | Wrong path. Given the meal is not confirmed, when it is 08:05 and then 08:10, then repeat reminders 1 and 2 are given, each with sound. | **TC-03.2** — mealTimeline.test (รอบ 1, 2) | 🟡 logic ผ่าน — รอหน้าจอ/อุปกรณ์ |  |
+| 3 | Given the meal is confirmed, when the next repeat-reminder time arrives, then no reminder is given. | **TC-03.3** — mealTimeline.test (ยืนยันแล้วไม่เตือน) | 🟡 logic ผ่าน — รอหน้าจอ/อุปกรณ์ |  |
+| 4 | Wrong path. Given meal A at 06:45 (15 minutes before breakfast) is not confirmed and meal B is at 07:00, when it is 07:00, then the reminder screen shows both meals in time order under separate headings with separate buttons and one sound, and the caregiver is alerted about meal A at 07:00, on meal A's own timeline. | **TC-03.4** — mealTimeline.test (มื้อซ้อนกัน BR-16) | 🟡 logic ผ่าน — รอหน้าจอ/อุปกรณ์ |  |
+| 5 | Wrong path. Given the page was closed at 08:00 and the meal is not confirmed, when the older adult opens MedMind at 08:07, then the reminder screen shows the meal at once, the 08:00 and 08:05 rounds are not replayed, and the 08:10 round still happens. | **TC-03.5** — mealTimeline.test (เปิดหน้ากลับ BR-18) | 🟡 logic ผ่าน — รอหน้าจอ/อุปกรณ์ |  |
+| 6 | Given medicine A has slots at breakfast and at dinner, medicine B has a slot at breakfast, and medicine C has a slot at lunch, when the meals are worked out, then the breakfast meal holds A and B under one reminder, the lunch meal holds C, the dinner meal holds A only, and no meal holds the same slot twice. | **TC-03.6** — schedule.test (groupMeals) — A1-T02, A1-T03, A1-T06 (รวม/แยกมื้อ ไม่ซ้ำ) | ✅ logic ผ่าน |  |
 
 ## ไฟล์ที่ต้องเขียน
 
@@ -55,6 +55,6 @@ Definition — reminder timeline, shared with FR-04 and FR-05 (T = the meal's re
 - [x] `docs/TRACEABILITY.md` อัปเดตแล้ว (ส่วน logic — หน้าจอยังไม่ทำ)
 - [ ] บันทึกการใช้ AI แล้ว
 
-**ลิงก์ PR / Issue:** (เติมที่นี่)
+**ลิงก์ PR / Issue:** PR #35 `logic/mealTimeline.js` + `tests/mealTimeline.test.js` (5 พ.ย. 2569) · PR #34 `logic/time.js` + `tests/time.test.js` (commit ใต้บัญชี PM — ดู Final Report §7) · Issue #14
 
 **สิ่งที่เรียนรู้ / ปัญหาที่เจอ:** (เติมที่นี่)
