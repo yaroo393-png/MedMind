@@ -17,6 +17,8 @@
 
 > **สถานะ 7 พ.ย. (หลังเขียนหน้าจอจริง):** `public/demo.html` (Demo mode) เดินครบ FR-01–05 · `npm test` ผ่าน 328 · ยังไม่ทำ: Firebase จริง (DL-24), `senior.html`/`caregiver.html`, AI อ่านฉลากจริง, ทดสอบมือถือ, ลิงก์ Pages (workflow `pages.yml` พร้อม รอเปิด Pages ใน Settings) · แผนส่งต่องานทั้งหมดอยู่ใน [`HANDOFF.md`](HANDOFF.md)
 
+> **สถานะ 7 พ.ย. (ค่ำ):** PR #48 (หน้าจอจริง Demo mode) และ #49 (Firebase จริง + AI อ่านฉลาก) merge แล้ว · `npm test` 345 ผ่าน · `emulator-tests/` 31 ผ่าน · ลิงก์ GitHub Pages เปิดบนมือถือได้ (ผู้ใช้ยืนยัน) · **ยังไม่ทำ:** ทดสอบบนมือถือจริง 2 เครื่องกับ Firebase จริง (TEST-CHECKLIST ส่วน G), เรียก Gemini จริง (MT-09), heuristic/think-aloud (MT-14/07), ปิด PR #42, วาง Rules ในคอนโซล · ตาราง velocity ให้ PM เติมจากบอร์ดจริง
+
 **ทุก sprint:** เริ่มด้วย sprint planning (เลือกงานจาก backlog + ประมาณขนาด) · ประชุมสั้น 10 นาที/วัน (ทำอะไรไปแล้ว / จะทำอะไร / ติดอะไร) · จบด้วย demo + retrospective
 **Definition of Done (งานหนึ่งชิ้น):** logic + เทสต์ผ่าน · หน้าจอมีป้าย Covers · PR ผ่านการรีวิว 1 คน + CI ผ่าน · อัปเดต TRACEABILITY · บันทึก AI log (ถ้าใช้) — "เกือบเสร็จ" นับเป็น 0
 
@@ -31,7 +33,7 @@
 | # | ความเสี่ยง | โอกาส / ผลกระทบ | วิธีลด | เจ้าของ | สถานะ |
 |---|---|---|---|---|---|
 | R1 | **เวลาน้อย** (~9 วันสำหรับ 5 FR + Firebase + AI) | สูง / สูง | ทำวงจรหลัก (FR-03–05) + Demo mode ก่อน · ตัด FR-09 และของ Could ก่อน · แตกงานเล็ก ติดตามบนบอร์ดทุกวัน | Yar Oo | เปิด |
-| R2 | ทีมไม่เคยใช้ Firebase / Security Rules | สูง / สูง | ใช้ logic ล้วน + `localRepo` ทำงานได้ก่อนต่อ Firebase (ADR-4, ADR-8) · ทดสอบ Rules ใน Emulator ก่อน deploy | Takkan | เปิด |
+| R2 | ทีมไม่เคยใช้ Firebase / Security Rules | สูง / สูง | ใช้ logic ล้วน + `localRepo` ทำงานได้ก่อนต่อ Firebase (ADR-4, ADR-8) · ทดสอบ Rules ใน Emulator ก่อน deploy | Takkan | ลดแล้ว: Firebase + Rules ทำเสร็จและทดสอบกับ Emulator (7 พ.ย.) · เหลือทดสอบมือถือจริง |
 | R3 | AI อ่านฉลากไทยไม่แม่นพอ / โควตา free tier หมด | กลาง / กลาง | ทางสำรองกรอกเอง (AC 5) · ทดสอบ 20 ฉลากเร็ว (MT-09) · ร่างฉลากตัวอย่างใน Demo mode | Yar Oo | เปิด |
 | R4 | ข้อมูลส่วนตัวหลุดไปกับรูป (ชื่อ/HN) | ต่ำ / สูง | BR-19 + ติ๊กยืนยัน + MT-13 · ห้ามใช้ฉลากจริงที่ยังเห็นชื่อ | Yar Oo | เปิด |
 | R5 | ผู้ตรวจเปิดระบบจริงเองไม่ได้ (ต้องใช้ 2 มือถือ) | สูง / สูง | Demo mode (ADR-8) + README บอกวิธีเปิด + MT-15 | Nichanan | ลดแล้ว: `public/demo.html` เปิดได้ในเบราว์เซอร์เดียว · เหลือลิงก์ Pages |

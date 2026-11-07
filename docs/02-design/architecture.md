@@ -276,7 +276,7 @@ export const actions = {
 ```
 - `phone.js` รวม `screens`/`actions` ของทุก FR แล้ววาดลง DOM · ปุ่มทุกปุ่มใช้ `data-act` และต้องมีตัวจัดการ (`tests/publicPages.test.js` ตรวจ)
 - ทุกหน้าจอมี `covers` ที่ชี้ FR (กติกา M3) · ค่าที่มาจากผู้ใช้/AI ผ่าน `esc()` (RULES §3) · `logic/` ไม่ถูกเขียนซ้ำในหน้าจอ
-- ใช้กับ `senior.html` / `caregiver.html` ได้เหมือน `demo.html` ต่างแค่ repo ที่ส่งเข้า (`firestoreRepo`) — ยังไม่สร้าง (DL-24)
+- ใช้กับ `senior.html` / `caregiver.html` เหมือน `demo.html` ต่างแค่ repo (`firestoreRepo` ผ่าน `features/realShell.js`) และนาฬิกาจริง — ทำแล้ว 7 พ.ย. (DL-27)
 
 ## 6. โมเดลข้อมูล
 
@@ -396,7 +396,7 @@ sequenceDiagram
   participant FS as Firestore
   Note over S,FS: FR-01 · BR-01, BR-02, BR-17 · NFR-04, NFR-05
   S->>FS: เปิดแอปครั้งแรก สร้าง pair และ invite (รหัส 6 หลัก หมดอายุ 10 นาที)
-  S-->>C: แสดง QR (ลิงก์ caregiver.html?code=รหัส) และรหัส พร้อมข้อความว่าจะแชร์อะไร ทำไม ยกเลิกได้
+  S-->>C: แสดง QR (ลิงก์ index.html?code=รหัส → เข้าหน้าผู้ดูแล) และรหัส พร้อมข้อความว่าจะแชร์อะไร ทำไม ยกเลิกได้
   C->>C: สแกน QR ด้วยแอปกล้องของมือถือ เปิดหน้า caregiver พร้อมรหัส (หรือกรอกรหัสเอง)
   C->>FS: ส่งรหัส (batch: ตั้ง caregiverUid และ usedAt)
   FS-->>C: Rules ปฏิเสธถ้ายังไม่ยินยอม รหัสผิด หมดอายุ ใช้แล้ว หรือมีผู้ดูแลแล้ว

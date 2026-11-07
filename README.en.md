@@ -3,7 +3,9 @@
 # MedMind — medication reminders and medication status for the caregivers of older adults
 
 > **Introduction to Software Engineering (15031001) — academic year 2026** · School of Applied Digital Technology, Mae Fah Luang University
-> **Team:** MedMind · **Repository:** https://github.com/yaroo393-png/MedMind · **Live demo:** [ not yet — added after deployment ]
+> **Team:** MedMind · **Repository:** https://github.com/yaroo393-png/MedMind · **Live demo:** [https://yaroo393-png.github.io/MedMind/demo.html](https://yaroo393-png.github.io/MedMind/demo.html)
+
+> **Real use (one link):** [https://yaroo393-png.github.io/MedMind/](https://yaroo393-png.github.io/MedMind/) → pick older adult or caregiver (the phone remembers the role · re-pick with `?choose=1`), or scan the QR from the older adult's phone · try without real data: [demo.html](https://yaroo393-png.github.io/MedMind/demo.html) · publish the Security Rules first, see [`docs/FIREBASE-SETUP.md`](docs/FIREBASE-SETUP.md)
 > *The Thai README is the primary version. If the two differ, the Thai one is edited first and this page is updated to match.*
 
 ## Current status
@@ -120,11 +122,11 @@ cd public
 python -m http.server 8000      # or: npx serve public · or Live Server in VS Code
 ```
 Then open `http://localhost:8000/demo.html` — the older adult's and the caregiver's screens side by side, with sample data and a simulated clock (down to the millisecond) · choose a "scenario" in the top bar or open one directly, e.g. `demo.html?preset=reminding` (scenarios: `fresh`, `sample`, `reminding`, `round2`, `notconfirmed`, `late`, `offline`, `syncdelay`)
-It walks through FR-01–05, both the normal and the wrong paths · live demo on the web: [ not yet — added after deployment ]
+It walks through FR-01–05, both the normal and the wrong paths · live demo on the web: [https://yaroo393-png.github.io/MedMind/demo.html](https://yaroo393-png.github.io/MedMind/demo.html)
 
 ### ④ Real use on two phones (Firebase)
 - The older adult's phone opens `senior.html` → consents → shows a QR code + 6-digit code · the caregiver scans the QR with the camera app (opens `caregiver.html` with the code filled in) → connect
-- Web link: `https://yaroo393-png.github.io/MedMind/` (after GitHub Pages is on) · the Security Rules must be published in the console first — see [`docs/FIREBASE-SETUP.md`](docs/FIREBASE-SETUP.md)
+- Web link: `https://yaroo393-png.github.io/MedMind/`  · the Security Rules must be published in the console first — see [`docs/FIREBASE-SETUP.md`](docs/FIREBASE-SETUP.md)
 - **Cover the name, HN, QR and barcode on every label before pressing "Send to AI"** (BR-19) · reminders work only while MedMind is open
 
 ## ⚙️ Important limits (from SRS §2.2)

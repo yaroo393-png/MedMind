@@ -3,7 +3,9 @@
 # MedMind — ระบบเตือนกินยาและแจ้งสถานะให้ผู้ดูแลผู้สูงอายุ
 
 > **Intro to Software Engineering (15031001) — ปีการศึกษา 2569** · คณะ/สาขา: School of Applied Digital Technology, Mae Fah Luang University
-> **ทีม:** MedMind · **Repository:** https://github.com/yaroo393-png/MedMind · **ลิงก์ทดลองใช้:** [ ยังไม่มี — ใส่หลัง deploy ]
+> **ทีม:** MedMind · **Repository:** https://github.com/yaroo393-png/MedMind · **ลิงก์ทดลองใช้:** [https://yaroo393-png.github.io/MedMind/](https://yaroo393-png.github.io/MedMind/) · [โหมดสาธิต](https://yaroo393-png.github.io/MedMind/demo.html)
+
+> **ใช้งานจริง (ลิงก์เดียว):** [https://yaroo393-png.github.io/MedMind/](https://yaroo393-png.github.io/MedMind/) → เลือกว่าเป็นผู้สูงอายุหรือผู้ดูแล (เครื่องจำบทบาทไว้ · เลือกใหม่ที่ `?choose=1` · ติดตั้งลงหน้าจอหลักได้แบบ PWA) หรือสแกน QR จากเครื่องผู้สูงอายุ · ลองไม่ใช้ข้อมูลจริง: [demo.html](https://yaroo393-png.github.io/MedMind/demo.html) · ต้องวาง Security Rules ก่อน ดู [`docs/FIREBASE-SETUP.md`](docs/FIREBASE-SETUP.md)
 
 ## สถานะปัจจุบัน
 | ส่วน | สถานะ |
@@ -127,11 +129,11 @@ cd public
 python -m http.server 8000      # หรือ: npx serve public · หรือ Live Server ใน VS Code
 ```
 แล้วเปิด `http://localhost:8000/demo.html` — จอผู้สูงอายุกับจอผู้ดูแลคู่กัน ใช้ข้อมูลตัวอย่างและนาฬิกาจำลอง (ละเอียดถึงมิลลิวินาที) · เลือก "สถานการณ์" ที่แถบด้านบน หรือเปิดตรง ๆ เช่น `demo.html?preset=reminding` (สถานการณ์: `fresh`, `sample`, `reminding`, `round2`, `notconfirmed`, `late`, `offline`, `syncdelay`)
-เดินครบ FR-01–05 ทั้งทางปกติและทางผิด · ลิงก์ทดลองใช้บนเว็บ: [ ยังไม่มี — ใส่หลัง deploy ]
+เดินครบ FR-01–05 ทั้งทางปกติและทางผิด · ลิงก์ทดลองใช้บนเว็บ: [https://yaroo393-png.github.io/MedMind/demo.html](https://yaroo393-png.github.io/MedMind/demo.html)
 
 ### ④ ใช้งานจริงบนมือถือ 2 เครื่อง (Firebase)
 - เครื่องผู้สูงอายุเปิด `senior.html` → กดยินยอม → แสดง QR + รหัส 6 หลัก · เครื่องผู้ดูแลสแกน QR ด้วยแอปกล้อง (เปิด `caregiver.html` พร้อมเติมรหัส) → เชื่อมต่อ
-- ลิงก์บนเว็บ: `https://yaroo393-png.github.io/MedMind/` (หลังเปิด GitHub Pages) · ต้องวาง Security Rules ในคอนโซลก่อน — ดู [`docs/FIREBASE-SETUP.md`](docs/FIREBASE-SETUP.md)
+- ลิงก์บนเว็บ: `https://yaroo393-png.github.io/MedMind/` · ต้องวาง Security Rules ในคอนโซลก่อน — ดู [`docs/FIREBASE-SETUP.md`](docs/FIREBASE-SETUP.md)
 - **ฉลากที่ใช้ต้องปิดชื่อ HN QR และบาร์โค้ดก่อนกด "ส่งให้ AI" ทุกครั้ง** (BR-19) · เตือนได้เฉพาะตอนเปิดหน้า MedMind ไว้
 
 ## ⚙️ ข้อจำกัดที่สำคัญ (จาก SRS §2.2)

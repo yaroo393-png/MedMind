@@ -58,30 +58,27 @@
 
 ---
 
-## 3. สถานะจริง ณ 7 พ.ย. (หลักฐานใน repo)
+## 3. สถานะจริง ณ 7 พ.ย. ค่ำ (หลักฐานบน `main` หลัง PR #49)
 
 | ส่วน | สถานะ | หลักฐาน |
 |---|---|---|
 | M1 Charter, M2 SRS v1.5 (9 FR, 21 BR, 14 NFR, 43 AC) | ✅ | `docs/00-charter/`, `docs/01-requirements/` |
-| Design (architecture, design-system, Rules draft) | ✅ ร่างครบ · สัญญาโมดูลตกลงแล้ว DL-18–DL-20, DL-26 (รูปแบบ `features/` — รอสมาชิกรับทราบใน PR) | `docs/02-design/` |
-| ต้นแบบคลิกได้ M3 (ไฟล์แยกใน `docs/`) | ✅ | `docs/02-design/prototypes/2569-11-04/` |
-| `public/js/logic/` 7 โมดูล · `public/js/core/` (`clock`, `repo`, `demoData`, `offlineQueue`) | ✅ มีเทสต์ทุกฟังก์ชัน | `tests/*.test.js` |
-| **หน้าจอจริงใน `public/` + `public/demo.html` (Demo mode FR-01–05)** | ✅ ทำแล้ว 7 พ.ย. — ต่อกับ `logic/` + `core/` จริง · มีเทสต์ระดับ AC 109 ข้อ · เปิดใน Chromium จริงแล้วเดินทุก FR | `public/js/features/*`, `tests/*View.test.js`, `tests/publicPages.test.js` |
-| เทสต์อัตโนมัติ | ✅ 328 ผ่าน | `npm test` · CI `.github/workflows/ci.yml` |
-| AI log / AI-Use Statement / Final Report | 🟡 มีครบ ช่อง [ ] = ยังไม่มีผลจริง · **โค้ดหน้าจอชุด 7 พ.ย. ยังไม่มีสมาชิกตรวจ** | `docs/AI_USAGE_LOG.md`, `docs/05-report/` |
-| **ลิงก์ที่เปิดบนมือถือได้ (Pages/Hosting)** | ⬜ | README และปกรายงานยังเป็น "[ ลิงก์ ]" |
-| ทดสอบบนมือถือจริง / MT-07, MT-14 / `TEST-CHECKLIST.md` | ⬜ ช่องผลว่างทุกแถว | `docs/02-design/prototypes/2569-11-04/TEST-CHECKLIST.md` |
-| สไลด์จริง | ⬜ มีแต่โครงเรื่อง | `docs/06-presentation/demo-slides.md` |
-| `public/senior.html`, `public/caregiver.html` (มือถือ 2 เครื่อง) | ⬜ ต้องมี `firestoreRepo` ก่อน | — |
-| `core/firebase.js`, `firestoreRepo`, `firestore.rules` + เทสต์ Emulator | ⬜ เลื่อน (DL-24) | Issue #8, #9 ขั้น B |
-| `services/redact.js`, `services/aiLabel.js` (AI อ่านฉลากจริง) | ⬜ — "AI" ใน demo เป็นตัวจำลองจาก `demoData` | FR-02 AC5, AC9 เป็น 🟡 |
-| FR-04 AC7 "ภายใน 10 วินาที" บน Firestore จริง | ⬜ (คิวออฟไลน์ใน Demo ✅) | MT-05 |
+| Design + สัญญาโมดูล (DL-18–20, DL-26–28) | ✅ | `docs/02-design/`, `decision-log.md` |
+| ต้นแบบคลิกได้ M3 + Demo mode `public/demo.html` (FR-01–05 ทางถูก+ทางผิด) | ✅ | PR #29, #48 |
+| ระบบจริงบน Firebase: `senior.html`, `caregiver.html`, `firestoreRepo`, `firestore.rules`, QR จริง, AI อ่านฉลาก (redact + Gemini) | ✅ เขียนและทดสอบกับ Emulator/เบราว์เซอร์แล้ว · **ยังไม่ทดสอบบนมือถือจริง ยังไม่เคยเรียก Gemini จริง** | PR #49 · `emulator-tests/` 31 เทสต์ |
+| เทสต์อัตโนมัติ | ✅ `npm test` 345 · `emulator-tests` 31 | CI งาน `check` + `emulator` |
+| ลิงก์ GitHub Pages | ✅ เปิดบนมือถือได้ (PM ยืนยัน) | README, ปกรายงาน |
+| รายงาน / AI-Use Statement / สไลด์ / สคริปต์เดโม / ชุดซ้อมสอบ | ✅ เขียนแล้ว (ช่อง [ ] = ผลจริงที่ยังไม่มี) | `docs/05-report/`, `docs/06-presentation/` |
+| โค้ดชุด 7 พ.ย. ได้รับการตรวจโดยสมาชิก | ⬜ ยังไม่มีใครตรวจ — **ต้องตรวจก่อนสอบปากเปล่า** | `ai-use-statement.md` ข้อ 6 |
+| ทดสอบมือถือจริง (ส่วน G) / MT-07 / MT-14 / MT-09 | ⬜ ช่องผลว่าง | `TEST-CHECKLIST.md` |
+| วาง `firestore.rules` ในคอนโซล Firebase | ⬜ ต้องทำก่อนใช้งานจริง | `docs/FIREBASE-SETUP.md` ข้อ 2 |
+| ปิด PR #42 (ซ้ำกับ #37) | ⬜ | GitHub |
 
 ---
 
 ## 4. ผลตรวจ: สิ่งที่ผิด/ไม่ตรงบน `main` ตอนนี้ (แก้ก่อน 9 พ.ย. — งาน P0)
 
-> **อัปเดต:** PR `feat/real-screens` แก้แล้ว F1, F2, F3, F4 (ชื่อ/ลิงก์/จำนวน commit/หมายเหตุ PR #34 ใน Final Report §7), F7 (README) · ที่เหลือ (F5 ช่อง [ ] ของผลจริง, F6, F8–F12) ต้องทำเอง
+> **สถานะ F1–F12 ณ 7 พ.ย. ค่ำ:** ✅ แก้แล้ว F1, F2, F3, F4 (รายงาน §7), F7 (README), F11 (สไลด์), F12 (ความเสี่ยง R5/R2) · 🟡 F5 (ช่อง [ ] ของรายงานเหลือเฉพาะผลที่ยังไม่มีจริง) · ⬜ F6 (velocity ใน PROJECT-PLAN — PM เติมจากบอร์ด), F8 (ปิด PR #42 — Close ไม่ใช่ Merge), F9 (ตรวจ Issue #8, #9, #11 บน GitHub ว่าปิดหรือยัง แล้วคอมเมนต์สถานะ), F10 (ผู้ตรวจเติมชื่อ/วันที่ในแถว AI log หลังตรวจโค้ดจริง)
 
 | # | ไฟล์ | ปัญหา | แก้เป็น | ใครแก้ |
 |---|---|---|---|---|
