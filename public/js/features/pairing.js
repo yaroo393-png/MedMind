@@ -57,7 +57,8 @@ export const screens = {
     const { snap, ui } = model;
     let body;
     if (snap.pairState === 'connected') {
-      body = '<h1>เชื่อมต่อแล้ว</h1><div class="card ok-box"><p>ได้รับข้อมูลหลังผู้สูงอายุยินยอมแล้ว</p></div>' + btn('primary', 'ไปหน้าสถานะ', 'go', { to: 'cg-status' }) +
+      body = '<h1>เชื่อมต่อแล้ว</h1><div class="card ok-box"><p>ได้รับข้อมูลหลังผู้สูงอายุยินยอมแล้ว</p></div>' +
+        (snap.mealTimes ? btn('primary', 'ไปหน้าสถานะ', 'go', { to: 'cg-status' }) : btn('primary', 'ขั้นต่อไป: ตั้งเวลามื้อ', 'go', { to: 'cg-meals' }) + btn('ghost', 'ไปหน้าสถานะ', 'go', { to: 'cg-status' })) +
         (model.real ? '' : `<div class="card"><p class="hint">ทดสอบ: ผู้ดูแลคนที่สองใช้รหัสเดิม (FR-01 ข้อ 5)</p>${btn('ghost', 'ลองเชื่อมต่อด้วยรหัสเดิม', 'join-second')}</div>`) +
         (ui.error ? `<p class="error" role="alert">${esc(ui.error)}</p>` : '');
     } else {
@@ -75,7 +76,8 @@ export const screens = {
   // C-09 — ตั้งค่าการแสดงผล + ยกเลิกจับคู่ 2 ขั้น
   'cg-settings'(model) {
     const { snap } = model;
-    return { title: 'ตั้งค่า', covers: 'FR-01, BR-17 (ยกเลิกจับคู่ 2 ขั้น)', overlay: unpairDialog(model, 'caregiver'), body: '<h1>ตั้งค่า</h1>' + prefsCard(model.pref) +
+    return { title: 'ตั้งค่า', covers: 'FR-01, BR-17 (ยกเลิกจับคู่ 2 ขั้น)', overlay: unpairDialog(model, 'caregiver'), body: '<h1>ตั้งค่า</h1>' +
+      (snap.pairState === 'connected' ? `<div class="card"><h2>เวลามื้อ</h2><p>${snap.mealTimes ? 'ตั้งแล้ว — แก้ได้' : 'ยังไม่ได้ตั้ง'}</p>${btn('ghost', 'ตั้งเวลามื้อ', 'go', { to: 'cg-meals' })}</div>` : '') + prefsCard(model.pref) +
       `<div class="card"><h2>จับคู่</h2><p>${snap.pairState === 'connected' ? 'เชื่อมต่อกับผู้สูงอายุแล้ว' : 'ยังไม่ได้จับคู่'}</p>` +
       (snap.pairState === 'connected' ? btn('notyet', 'ยกเลิกจับคู่', 'unpair-ask') : '') + '</div>' };
   },

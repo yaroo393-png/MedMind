@@ -26,7 +26,8 @@ export const screens = {
     if (alerts.length) {
       body += `<div class="banner" role="alert"><strong>ยังไม่ยืนยันการกินยา</strong><p>${alerts.map((a) => `มื้อ ${esc(a.reminderTime)}`).join(', ')}</p>${btn('ghost', `${icon('bell')}ดูแจ้งเตือน`, 'go', { to: 'cg-alerts' })}</div>`;
     }
-    if (!rows.length) body += `<div class="card empty">${mascot('greeting', 96)}<h2 class="h-card">วันนี้ไม่มีมื้อยา</h2></div>`; // ข้อ 4
+    if (!rows.length && !snap.mealTimes) body += `<div class="card st-none">${mascot('encourage', 84)}<h2 class="h-card">เริ่มตั้งค่ากันก่อน</h2><p>ขั้นที่ 1 ตั้งเวลามื้อ · ขั้นที่ 2 เพิ่มยาจากฉลาก</p>${btn('primary', 'ตั้งเวลามื้อ', 'go', { to: 'cg-meals' })}</div>`;
+    else if (!rows.length) body += `<div class="card empty">${mascot('greeting', 96)}<h2 class="h-card">วันนี้ไม่มีมื้อยา</h2>${snap.medicines.length ? '' : btn('primary', 'เพิ่มยาจากฉลาก', 'start-add')}</div>`; // ข้อ 4
     else body += `<div class="sec-head"><h2>ทุกมื้อวันนี้</h2><span class="count">${rows.length} มื้อ</span></div>`;
     for (const r of rows) {
       const label = statusLabel(r.label, r.confirmedAt);
