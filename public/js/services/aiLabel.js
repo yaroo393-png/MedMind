@@ -7,12 +7,20 @@
 export const AI_MODEL = 'gemini-2.5-flash';
 export const AI_REASONS = ['offline', 'service_down', 'quota', 'unreadable'];
 
+/** รหัส/ข้อความจริงของข้อผิดพลาด (สั้น ๆ) ไว้แสดงให้ผู้ดูแล/ทีมแจ้งสาเหตุ — ไม่มีข้อมูลผู้ป่วย (เราไม่ส่งชื่อ/HN ไปอยู่แล้ว) */
+export function errorDetail(error) {
+  const cause = error?.cause ?? error;
+  const raw = `${cause?.code ?? ''} ${cause?.status ?? ''} ${cause?.message ?? ''}`.replace(/\s+/g, ' ').trim();
+  return raw.slice(0, 160);
+}
+
 export class AiUnavailableError extends Error {
   constructor(reason, cause) {
     super(`AI ใช้ไม่ได้: ${reason}`);
     this.name = 'AiUnavailableError';
     this.reason = AI_REASONS.includes(reason) ? reason : 'service_down';
     this.cause = cause;
+    this.detail = cause ? errorDetail(cause) : '';   // รหัส/ข้อความจริง ไว้บอกทีมว่าพังเพราะอะไร (App Check, สิทธิ์, โควตา ฯลฯ)
   }
 }
 
@@ -65,8 +73,9 @@ export function classifyError(error, { online = true } = {}) {
   if (error instanceof AiUnavailableError) return error.reason;
   if (!online) return 'offline';
   const text = `${error?.code ?? ''} ${error?.status ?? ''} ${error?.message ?? ''}`.toLowerCase();
-  if (/429|resource[_ ]?exhausted|quota|rate/.test(text)) return 'quota';
-  if (/network|fetch|offline|failed to fetch/.test(text)) return 'offline';
+  // ใช้ขอบคำ (\b) — เดิมคำว่า "rate" ไปตรงกับ "generateContent" ทำให้ทุกข้อผิดพลาดถูกแจ้งว่า "โควตาหมด"
+  if (/\b429\b|resource[_ ]?exhausted|\bquota\b|rate[_ -]?limit|too many requests/.test(text)) return 'quota';
+  if (/failed to fetch|networkerror|network request failed|\boffline\b|err_internet_disconnected/.test(text)) return 'offline';
   if (/safety|blocked|no candidates|empty/.test(text)) return 'unreadable';
   return 'service_down';
 }
