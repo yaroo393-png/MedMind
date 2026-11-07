@@ -141,14 +141,23 @@ export class Phone {
     const closedNote = this.role === 'caregiver'
       ? '<h1>หน้า MedMind ของผู้ดูแลถูกปิดอยู่</h1><p>ระบบแจ้งเตือนเฉพาะตอนเปิดหน้าเว็บ (ข้อจำกัดของเว็บแอป) เอาติ๊ก "ผู้ดูแลปิดหน้า MedMind" ออกเพื่อดูแจ้งเตือนที่ค้างอยู่ (BR-18)</p>'
       : '<h1>หน้า MedMind ของผู้สูงอายุถูกปิดอยู่</h1><p>ระบบเตือนเฉพาะตอนเปิดหน้าเว็บ ไม่มีเสียงและไม่มีรอบเตือนจนกว่าจะเปิดหน้า เอาติ๊ก "ผู้สูงอายุปิดหน้า MedMind" ออก แล้วหน้าเตือนจะแสดงมื้อทันที รอบที่ผ่านไปแล้วไม่เล่นซ้ำ (FR-03 ข้อ 5, BR-18)</p>';
-    this.view.innerHTML = `<div class="phone-inner${open ? '' : ' is-closed'}">` +
+    const html = `<div class="phone-inner${open ? '' : ' is-closed'}">` +
       `<header class="appbar"${inert}><span class="role-chip">${this.role === 'senior' ? 'ผู้สูงอายุ' : 'ผู้ดูแล'}</span><span class="appbar-title">${esc(scr.title)}</span><span class="appbar-time">${fmtHM(snap.now)}</span></header>` +
       `<p class="covers"${inert}>Covers: ${esc(scr.covers)}</p>` +
       `<main class="screen"${inert}>${open ? scr.body : `<div class="closed-note">${mascot('concern', 96)}${closedNote}</div>`}</main>` +
       (showTabs && open ? this.tabs(snap, inert) : '') + (scr.overlay ?? '') + '</div>';
-    this.restoreFocus(key, routeChanged, Boolean(scr.overlay));
+    // แอปจริงวาดใหม่ทุกวินาที: ถ้าหน้าตาเหมือนเดิมไม่ต้องแตะ DOM (ไม่กระพริบ ไม่ทิ้งสิ่งที่กำลังพิมพ์)
+    // ถ้าเปลี่ยนแต่ยังหน้าเดิม ให้คงตำแหน่งเลื่อนไว้ — เดิมเด้งกลับบนสุดทุกวินาที กดปุ่มด้านล่างไม่ได้
+    if (html !== this.lastHtml || routeChanged) {
+      const keepScroll = routeChanged ? 0 : (this.view.querySelector('.screen')?.scrollTop ?? 0);
+      this.view.innerHTML = html;
+      this.lastHtml = html;
+      const screen = this.view.querySelector('.screen');
+      if (screen && keepScroll) screen.scrollTop = keepScroll;
+      this.restoreFocus(key, routeChanged, Boolean(scr.overlay));
+      attachRedact(this.view.querySelector('[data-redact]'), (r) => this.run('add-rect', r));   // C-04 ใช้งานจริง
+    }
     this.lastRoute = this.route;
-    attachRedact(this.view.querySelector('[data-redact]'), (r) => this.run('add-rect', r));   // C-04 ใช้งานจริง
 
     // เสียงเตือน: ดังครั้งเดียวเมื่อมีรอบเตือนใหม่ (หลายมื้อพร้อมกันก็ครั้งเดียว — BR-16) · เปิดหน้ากลับไม่เล่นรอบที่ผ่านไปแล้ว (BR-18)
     if (this.role === 'senior') {

@@ -33,7 +33,8 @@ a { color: var(--primary); }
 .clockbar select { min-height: var(--tap-min); border: 2px solid var(--text-muted); border-radius: var(--radius); background: var(--bg); padding: 0 var(--space-1); }
 .note { color: var(--text-muted); }
 .demo-banner { background: var(--warn-bg); color: var(--warn-text); padding: var(--space-1) var(--space-2); border-radius: 999px; font-weight: bold; margin-bottom: var(--space-1); display: inline-block; }
-.phones { display: flex; flex-wrap: wrap; gap: var(--space-4); justify-content: center; }
+.phones { display: flex; flex-wrap: nowrap; gap: var(--space-3); justify-content: safe center; overflow-x: auto; padding-bottom: var(--space-1); } /* ผู้สูงอายุ | ผู้ดูแล อยู่ข้างกันเสมอ (จอแคบเลื่อนซ้าย-ขวาได้) */
+.phone-wrap { flex: none; }
 .phone-wrap { display: flex; flex-direction: column; align-items: center; gap: var(--space-1); }
 .phone-wrap > h2 { font-size: var(--fs-body); color: var(--accent); margin: 0; background: var(--bg); padding: 0 var(--space-2); border-radius: 999px; box-shadow: var(--shadow); }
 .rolebar { display: flex; gap: var(--space-1); justify-content: center; margin-bottom: var(--space-1); }
@@ -215,7 +216,12 @@ h1:focus-visible, h2:focus-visible { outline: 3px solid var(--text); outline-off
 
 /* หน้าใช้งานจริงบนมือถือ (senior.html / caregiver.html): เต็มจอ ไม่มีกรอบเครื่อง */
 body.real { background: var(--bg); }
-body.real .phone { width: 100%; max-width: 640px; height: 100vh; height: 100dvh; margin: 0 auto; border: 0; border-radius: 0; box-shadow: none; }
+/* แอปจริงพอดีจอมือถือเสมอ: ยึดขอบจอด้วย position: fixed (100vh บนมือถือสูงกว่าจอที่เห็น แถบเมนูล่างตกขอบ) · เลื่อนเฉพาะเนื้อหา .screen */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body.real { overflow: hidden; }
+body.real .phone { position: fixed; top: 0; bottom: 0; left: 0; right: 0; width: auto; max-width: 640px; height: auto; margin: 0 auto; border: 0; border-radius: 0; box-shadow: none; }
+body.real .screen { overflow-x: hidden; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+body.real .tabs { padding-bottom: max(6px, env(safe-area-inset-bottom)); }
 body.real .phone-inner { border-radius: 0; padding-top: env(safe-area-inset-top); }
 .qr-real { display: block; width: min(240px, 70vw); aspect-ratio: 1; margin: 0 auto var(--space-1); border-radius: var(--radius); box-shadow: var(--shadow); }
 
