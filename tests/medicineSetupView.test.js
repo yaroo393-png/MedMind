@@ -166,3 +166,67 @@ test('FR-02 ข้อ 3/11 (กันบันทึกพลาด): สั่�
   assert.equal((await ctx.repo.listMedicines()).length, before);
   assert.equal(caregiver.route, 'cg-draft', 'ยังอยู่หน้าตรวจร่าง');
 });
+
+// ---------- ใช้งานจริง (model.real): รูปจริง + แถบปิด + AI จริง (ที่นี่ใช้ของปลอมแทนกล้อง/AI) ----------
+async function realPair(aiReply) {
+  const { ctx, caregiver } = await makePair('sample');
+  ctx.name = 'real';
+  const released = [];
+  const sent = [];
+  const env = {
+    photo: { async load() { return { url: 'blob:fake', width: 400, height: 300 }; }, release: (p) => released.push(p.url), async redact(_p, rects) { sent.push(rects); return new Blob(['x'], { type: 'image/jpeg' }); } },
+    ai: { async requestDraft() { if (aiReply instanceof Error) throw aiReply; return aiReply; } },
+  };
+  return { ctx, caregiver, env, released, sent };
+}
+
+test('ใช้งานจริง C-03/C-04: ถ่ายรูป → ปิดแถบ → ต้องมีแถบอย่างน้อย 1 แถบ + ติ๊ก จึงส่งได้ · ส่งเฉพาะภาพที่ปิดแล้ว · ทิ้งรูปต้นฉบับ (ข้อ 8, 9)', async () => {
+  const { caregiver, env, released, sent } = await realPair({ name: 'ยาจริง', instructionText: null, warnings: null, contraindications: null, asNeeded: false, slots: [{ meal: 'breakfast', timing: 'after_meal', minutesBefore: null, tabletsPerDose: 1 }] });
+  caregiver.extraEnv = env;
+  const photoView = await caregiver.view('cg-photo', { real: true });
+  assert.match(photoView.body, /type="file" accept="image\/\*" capture="environment"/);
+  await caregiver.act('set-photo', { file: {} });
+  assert.equal(caregiver.route, 'cg-cover');
+  let v = await caregiver.view('cg-cover', { real: true });
+  assert.match(v.body, /data-redact="1"/);
+  assert.match(v.body, /data-act="send-ai" disabled/);
+  await caregiver.act('set-tick', { checked: true });
+  assert.match((await caregiver.view('cg-cover', { real: true })).body, /data-act="send-ai" disabled/, 'ติ๊กแล้วแต่ยังไม่มีแถบปิด = ยังส่งไม่ได้');
+  await caregiver.act('add-rect', { x: 0.2, y: 0.3, w: 0.5, h: 0.1 });
+  v = await caregiver.view('cg-cover', { real: true });
+  assert.match(v.body, /class="redact-box" style="left:20%;top:30%;width:50%;height:10%"/);
+  assert.doesNotMatch(v.body, /data-act="send-ai" disabled/);
+  await caregiver.act('send-ai');
+  assert.deepEqual(sent, [[{ x: 0.2, y: 0.3, w: 0.5, h: 0.1 }]]);
+  assert.deepEqual(released, ['blob:fake']);
+  assert.equal(caregiver.ui.photo, null);
+  assert.equal(caregiver.route, 'cg-draft');
+  assert.equal(caregiver.ui.draft.name, 'ยาจริง');
+});
+
+test('ใช้งานจริง ข้อ 5: AI ใช้ไม่ได้ (โควตาหมด) → บอกเหตุผลและเปิดฟอร์มกรอกเอง ไม่มีอะไรถูกบันทึก', async () => {
+  const { ctx, caregiver, env } = await realPair(Object.assign(new Error('quota'), { reason: 'quota' }));
+  caregiver.extraEnv = env;
+  const before = (await ctx.repo.listMedicines()).length;
+  await caregiver.act('set-photo', { file: {} });
+  await caregiver.act('cover-top');
+  await caregiver.act('set-tick', { checked: true });
+  await caregiver.act('send-ai');
+  assert.equal(caregiver.route, 'cg-draft');
+  assert.match(caregiver.ui.manualReason, /โควตา AI ของวันนี้หมดแล้ว/);
+  assert.equal((await ctx.repo.listMedicines()).length, before);
+});
+
+test('ใช้งานจริง: ลบแถบล่าสุด / ล้างทั้งหมด / ยกเลิกทิ้งรูปต้นฉบับ', async () => {
+  const { caregiver, env, released } = await realPair({});
+  caregiver.extraEnv = env;
+  await caregiver.act('set-photo', { file: {} });
+  await caregiver.act('cover-top'); await caregiver.act('add-rect', { x: 0, y: 0.5, w: 0.2, h: 0.2 });
+  await caregiver.act('undo-rect');
+  assert.equal(caregiver.ui.rects.length, 1);
+  await caregiver.act('clear-rects');
+  assert.equal(caregiver.ui.rects.length, 0);
+  await caregiver.act('cancel-draft');
+  assert.deepEqual(released, ['blob:fake']);
+  assert.equal(caregiver.ui.photo, null);
+});
