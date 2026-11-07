@@ -312,3 +312,17 @@ h1, h2, h3, .h-card, .hero-big, .appbar-title, .brand, .entry-title { font-famil
 .splash .bubble { margin: var(--space-3) 0 0; }
 .entry-brand { justify-content: flex-start; margin: 0 0 var(--space-2); }
 .roles .role-card { margin-top: var(--space-2); min-height: 0; padding: var(--space-3) var(--space-2); }
+
+/* เพิ่มยาจากฉลาก: ปุ่มถ่ายรูป/เลือกรูปชัดเจน (input file ซ่อนไว้ในปุ่ม) · ขั้นตอนตั้งค่าครั้งแรก */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.btn-file { position: relative; }
+.btn-file:focus-within { outline: 3px solid var(--text); outline-offset: 2px; }
+.viewfinder { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-1); height: 140px; margin-bottom: var(--space-2); border-radius: var(--radius-lg); background: var(--text); color: var(--bg); text-align: center; padding: var(--space-2); }
+.viewfinder .ico { width: 56px; height: 56px; }
+.viewfinder::before { content: ""; position: absolute; inset: 16px; border: 4px dashed var(--accent-soft); border-radius: var(--radius); }
+.step-pill { display: inline-block; padding: 4px var(--space-2); border-radius: 999px; background: var(--wait-bg); color: var(--wait-text); font-weight: bold; }
+.meal-times .h-card .ico, .card .h-card .ico { margin-right: var(--space-1); }
+.meal-times .card-head .btn { width: auto; min-height: var(--tap-min); }
+/* ข้อความแจ้ง (toast) อยู่ใต้แถบหัว ไม่บังปุ่มด้านล่าง — ค้าง 10 วินาทีตาม WCAG แต่ต้องกดปุ่มล่างได้เสมอ */
+.toast-region { top: 64px; bottom: auto; }
+body.real .toast-region { top: calc(64px + env(safe-area-inset-top)); }

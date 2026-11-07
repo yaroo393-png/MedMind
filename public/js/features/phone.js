@@ -177,7 +177,8 @@ export class Phone {
     return `<nav${inert} class="tabs" aria-label="เมนู">` + items.map(([to, label, n, ico]) => {
       const on = this.route === to || (to === 'cg-meds' && /^cg-(meals|photo|cover|ai|draft)$/.test(this.route));
       return `<button type="button" class="tab${on ? ' is-on' : ''}" data-act="go" data-to="${to}" aria-label="${esc(label + (n ? ` (${n} รายการ)` : ''))}" title="${esc(label)}"${on ? ' aria-current="page"' : ''}>` +
-        icon(ico) + (this.role === 'senior' ? `<span class="tab-label">${esc(label)}</span>` : '') + (n ? `<span class="badge" aria-hidden="true">${n}</span>` : '') + '</button>';
+        icon(ico) + `<span class="tab-label">${esc(label)}</span>` +   // ทั้งสองบทบาทมีชื่อใต้ไอคอน (แคนวาส 7 พ.ย.)
+         (n ? `<span class="badge" aria-hidden="true">${n}</span>` : '') + '</button>';
     }).join('') + '</nav>';
   }
 

@@ -1,7 +1,7 @@
 // FR-02 เพิ่มยาจากฉลาก: C-02 ตั้งเวลามื้อ · C-03 ถ่ายรูปฉลาก · C-04 ปิดชื่อ/HN · C-05 AI อ่าน/ตรวจร่าง/กรอกเอง · C-06 รายการยา
 // เจ้าของ: Yar Oo (FR-02) · BR-04–BR-07, BR-19 · NFR-06, NFR-09, NFR-14 · ตัดสินด้วย logic/labelDraft.js และ logic/schedule.js เท่านั้น
 // Demo mode: "AI" เป็นตัวจำลอง ร่างมาจาก core/demoData.js (ฉลากสมมติ) · ใช้งานจริง (model.real): ถ่ายรูปจริง → ปิดแถบดำ (services/redact.js) → Gemini ผ่าน env.ai (services/aiLabel.js)
-import { esc, btn, hero, flag } from './ui.js';
+import { esc, btn, hero, flag, icon, mascot } from './ui.js';
 import { buildDraft, applyEdit, addSlot, removeSlot, canSave, canSend, toMedicine } from '../logic/labelDraft.js';
 import { reminderTime } from '../logic/schedule.js';
 import { labelDrafts } from '../core/demoData.js';
@@ -77,17 +77,21 @@ export const screens = {
   'cg-meals'(model) {
     const times = model.ui.times ?? model.snap.mealTimes ?? DEFAULT_TIMES;
     const rows = MEAL_KEYS.map((k) => `<label class="field"><span>มื้อ${esc(MEAL_NAMES[k])}</span><input type="time" data-time="${k}" value="${esc(times[k])}"></label>`).join('');
-    return { title: 'ตั้งเวลามื้อ', covers: 'FR-02, BR-06', body: '<h1>เวลามื้ออาหาร</h1><p class="lead">เวลาเตือนของยาคำนวณจากฉลากเท่านั้น ไม่เดา</p>' +
-      rows + btn('primary', 'บันทึกเวลามื้อ', 'save-meals') + btn('ghost', 'เพิ่มยาจากฉลาก', 'start-add') };
+    const first = !model.snap.mealTimes;
+    return { title: 'ตั้งเวลามื้อ', covers: 'FR-02, BR-06', body: (first ? '<p class="step-pill">ขั้นที่ 1 จาก 2 · ตั้งเวลามื้อ → เพิ่มยา</p>' : '') +
+      `<div class="hero-row">${mascot('encourage', 84)}<div><h1>เวลามื้ออาหาร</h1><p class="lead">ตั้งตามเวลากินข้าวจริงของพ่อแม่ · เวลาเตือนคำนวณจากฉลากและเวลานี้ ไม่เดา</p></div></div>` +
+      `<section class="card">${rows}</section>` + btn('primary', first ? 'บันทึก แล้วไปเพิ่มยา' : 'บันทึกเวลามื้อ', 'save-meals') + (first ? '' : btn('ghost', 'เพิ่มยาจากฉลาก', 'start-add')) };
   },
 
   // C-03 — ถ่ายรูปฉลาก (ตอนนี้เลือกฉลากสมมติแทนการถ่ายจริง)
   'cg-photo'(model) {
     if (model.real) {   // ใช้งานจริง: ถ่าย/เลือกรูปฉลากจากมือถือผู้ดูแล — รูปอยู่ในเครื่องจนกว่าจะปิดชื่อ/HN และติ๊กยืนยัน
       return { title: 'ถ่ายรูปฉลาก', covers: 'FR-02, BR-19', body: hero('camera', 'ถ่ายรูปฉลากยา', 'ถ่ายเฉพาะฉลาก ให้ตัวหนังสือชัด แสงพอ') +
-        '<div class="card warn"><strong>ยังไม่มีอะไรถูกส่ง</strong><p>ขั้นต่อไปให้ปิดชื่อ HN และบาร์โค้ดก่อน แล้วจึงส่งให้ AI อ่าน</p></div>' +
         (model.snap.mealTimes ? '' : '<div class="card warn" role="alert"><p>ยังไม่ได้ตั้งเวลามื้อ — ตั้งก่อน ไม่เช่นนั้นระบบคำนวณเวลาเตือนไม่ได้</p>' + btn('ghost', 'ตั้งเวลามื้อ', 'go', { to: 'cg-meals' }) + '</div>') +
-        '<label class="field"><span>ถ่ายรูป หรือเลือกรูปฉลาก</span><input type="file" accept="image/*" capture="environment" data-field="photo"></label>' +
+        `<div class="viewfinder" aria-hidden="true">${icon('camera')}<span>ให้ฉลากอยู่ในกรอบ ตัวหนังสือชัด</span></div>` +
+        `<label class="btn btn-primary btn-file">${icon('camera')}ถ่ายรูปฉลาก<input class="sr-only" type="file" accept="image/*" capture="environment" data-field="photo"></label>` +
+        `<label class="btn btn-ghost btn-file">${icon('image')}เลือกรูปจากเครื่อง<input class="sr-only" type="file" accept="image/*" data-field="photo"></label>` +
+        '<div class="card warn"><strong>ยังไม่มีอะไรถูกส่ง</strong><p>ขั้นต่อไปให้ปิดชื่อ HN และบาร์โค้ดก่อน แล้วจึงส่งให้ AI อ่าน</p></div>' +
         (model.ui.photoError ? `<p class="error" role="alert">${esc(model.ui.photoError)}</p>` : '') +
         btn('ghost', 'กรอกเองโดยไม่ถ่ายรูป', 'manual-entry') };
     }
@@ -99,7 +103,7 @@ export const screens = {
       (model.snap.mealTimes ? '' : '<div class="card warn" role="alert"><p>ยังไม่ได้ตั้งเวลามื้อ — ตั้งก่อน ไม่เช่นนั้นระบบคำนวณเวลาเตือนไม่ได้</p>' + btn('ghost', 'ตั้งเวลามื้อ', 'go', { to: 'cg-meals' }) + '</div>') +
       `<label class="field"><span>ฉลากตัวอย่างที่ AI จะ "อ่าน" (จำลอง ไม่ได้เรียก AI จริง)</span><select data-field="sample">${opts}</select></label>` +
       `<label class="field"><span>จำลองปัญหาของบริการ AI (FR-02 ข้อ 5)</span><select data-field="aiproblem"><option value=""${model.flags.aiProblem ? '' : ' selected'}>ไม่มีปัญหา</option>${problems}</select></label>` +
-      btn('primary', 'ถ่ายรูป (ตัวอย่าง)', 'go', { to: 'cg-cover' }) };
+      btn('primary', `${icon('camera')}ถ่ายรูป (ตัวอย่าง)`, 'go', { to: 'cg-cover' }) };
   },
 
   // C-04 — ปิดชื่อ/HN/บาร์โค้ด + ติ๊กยืนยัน · ไม่ติ๊ก = ปุ่มส่งปิด ไม่มีอะไรถูกส่ง (ข้อ 8, 9, BR-19)
@@ -151,7 +155,11 @@ export const screens = {
   // C-06 — รายการยา (เฉพาะผู้ดูแลแก้ได้ BR-03)
   'cg-meds'(model) {
     const { snap } = model;
-    let body = '<h1>รายการยา</h1>';
+    const mt = snap.mealTimes;
+    let body = '<h1>รายการยา</h1>' + (mt
+      ? `<section class="card meal-times"><div class="card-head"><h2 class="h-card">${icon('clock')}เวลามื้อ</h2>${btn('ghost', 'แก้', 'go', { to: 'cg-meals' }).replace('class="btn btn-ghost"', 'class="btn btn-ghost btn-small"')}</div>` +
+        `<p>${['breakfast', 'lunch', 'dinner', 'bedtime'].map((k) => `${esc(MEAL_NAMES[k])} ${esc(mt[k])}`).join(' · ')}</p></section>`
+      : `<section class="card st-none"><h2 class="h-card">${icon('clock')}ยังไม่ได้ตั้งเวลามื้อ</h2><p>ตั้งก่อนเพิ่มยา ระบบจึงคำนวณเวลาเตือนได้</p>${btn('primary', 'ตั้งเวลามื้อ', 'go', { to: 'cg-meals' })}</section>`);
     if (!snap.medicines.length) body += '<div class="card empty"><strong>ยังไม่มียา</strong></div>';
     for (const m of snap.medicines) {
       body += `<section class="card"><h2 class="h-card">${esc(m.name)}</h2><ul class="plain">` + m.slots.map((s) => {
@@ -159,7 +167,7 @@ export const screens = {
         return `<li>${esc(MEAL_NAMES[s.meal])} · ${esc(TIMING_NAMES[s.timing])}${s.timing === 'before_meal' ? ` ${esc(s.minutesBefore)} นาที` : ''} · ${esc(s.tabletsPerDose)} เม็ด${t ? ` → เตือน ${esc(t)}` : ''}</li>`;
       }).join('') + `</ul>${btn('ghost', 'ลบยา', 'del-med', { id: m.id })}</section>`;
     }
-    body += btn('primary', 'เพิ่มยาจากฉลาก', 'start-add') + btn('ghost', 'ตั้งเวลามื้อ', 'go', { to: 'cg-meals' });
+    body += btn('primary', `${icon('camera')}เพิ่มยาจากฉลาก`, 'start-add') + btn('ghost', '+ กรอกเอง', 'manual-entry');
     return { title: 'ยา', covers: 'FR-02, BR-03 (เฉพาะผู้ดูแลแก้ยาได้)', body };
   },
 };
@@ -213,6 +221,8 @@ export const actions = {
     try {
       await env.repo.setMealTimes(times);
       env.toast('บันทึกเวลามื้อแล้ว — เวลาเตือนคำนวณจากฉลากเท่านั้น');
+      env.ui.times = null;
+      env.go('cg-meds');   // ขั้นต่อไป: เพิ่มยา
     } catch { env.toast('เวลามื้อต้องกรอกครบ 4 ช่อง'); }
   },
   'set-time'(env, d) { env.ui.times = { ...(env.ui.times ?? env.snap.mealTimes ?? DEFAULT_TIMES), [d.time]: d.value }; },
