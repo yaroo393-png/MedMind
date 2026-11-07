@@ -29,7 +29,8 @@ export const screens = {
     if (!rows.length) body += `<div class="card empty">${mascot('greeting', 96)}<h2 class="h-card">วันนี้ไม่มีมื้อยา</h2></div>`; // ข้อ 4
     else body += `<div class="sec-head"><h2>ทุกมื้อวันนี้</h2><span class="count">${rows.length} มื้อ</span></div>`;
     for (const r of rows) {
-      body += `<section class="card"><div class="card-head"><h3 class="h-card">มื้อ ${esc(r.reminderTime)}</h3>${chip(statusLabel(r.label, r.confirmedAt))}</div>` +
+      const label = statusLabel(r.label, r.confirmedAt);
+      body += `<section class="card st-${label.kind}"><div class="card-head"><h3 class="h-card">มื้อ ${esc(r.reminderTime)}</h3>${chip(label)}</div>` +
         `<p class="hint">${medSummary(byId.get(r.mealId))}</p></section>`;
     }
     body += '<p class="disclaimer">การกดยืนยันเป็นการรายงานด้วยตนเอง ไม่ใช่หลักฐานว่ากินยาจริง</p>';

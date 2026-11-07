@@ -55,6 +55,7 @@ Pain this traces to: having to call or send a LINE message for every meal; no si
 - [x] Issue ถูกสร้างและ assign (#16)
 - [x] ตรรกะ + เทสต์ผ่าน (`npm test`) — `logic/status.js` + `tests/status.test.js` 16 เทสต์ (6 พ.ย. 2569)
 - [x] หน้าจอเชื่อมกับ logic — `features/caregiverStatus.js`, `features/alerts.js` + `tests/caregiverStatusView.test.js` (10), `tests/alerts.test.js` (5) เปิดได้ที่ `public/demo.html` (7 พ.ย. 2569)
+- [x] ใช้งานจริงบน Firebase (`caregiver.html`) ใช้หน้าสถานะ/แจ้งเตือนชุดเดียวกับ Demo mode (7 พ.ย. 2569) · **ยังไม่ทดสอบบนมือถือจริง** (MT-06, MT-11)
 - [ ] ทดสอบบนมือถือจริง (MT ที่เกี่ยวข้อง)
 - [x] `docs/TRACEABILITY.md` อัปเดตแล้ว (ส่วน logic + หน้าจอใน public/ — MT บนมือถือยังไม่ทำ)
 - [ ] บันทึกการใช้ AI แล้ว

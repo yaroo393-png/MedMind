@@ -241,3 +241,15 @@ export function qrSvg(text, { label = 'QR สำหรับให้ผู้�
   return `<svg class="qr-real" viewBox="0 0 ${full} ${full}" role="img" aria-label="${safeLabel}" shape-rendering="crispEdges">` +
     `<rect width="${full}" height="${full}" style="fill:var(--qr-light)"/><path d="${path}" style="fill:var(--qr-dark)"/></svg>`;
 }
+
+/**
+ * ถอดรหัสเชิญ 6 หลักจากข้อความที่สแกนได้ — ลิงก์เชิญ (…?code=123456) หรือรหัสล้วน · ไม่ใช่ → null (FR-01 ข้อ 1–3)
+ * @param {string} text
+ * @returns {string|null}
+ */
+export function inviteCodeFromScan(text) {
+  const t = String(text ?? '').trim();
+  if (/^\d{6}$/.test(t)) return t;
+  const m = /[?&]code=(\d{6})(?!\d)/.exec(t);
+  return m ? m[1] : null;
+}

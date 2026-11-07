@@ -12,7 +12,7 @@ export function esc(text) {
 const ICON_PATHS = {
   home: '<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
   bell: '<path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
-  gear: '<g transform="translate(12 12) scale(1.42) translate(-12.7 -11.05)"><g fill="none" stroke="currentColor" stroke-width="1.27" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8.2a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6Z"/><path d="m19.4 13.5 1.1.9-1.5 2.6-1.4-.5a7.9 7.9 0 0 1-1.6.9l-.3 1.5h-3l-.3-1.5a7.9 7.9 0 0 1-1.6-.9l-1.4.5-1.5-2.6 1.1-.9a7.2 7.2 0 0 1 0-1.9l-1.1-.9 1.5-2.6 1.4.5a7.9 7.9 0 0 1 1.6-.9l.3-1.5h3l.3 1.5a7.9 7.9 0 0 1 1.6.9l1.4-.5 1.5 2.6-1.1.9a7.2 7.2 0 0 1 0 1.9Z" transform="translate(-1.5 -1.5)"/></g></g>',
+  gear: '<path d="M8.57 4.33 L9.17 1.37 L14.83 1.37 L15.43 4.33 L16.20 4.73 L16.93 5.20 L19.79 4.24 L22.62 9.13 L20.35 11.13 L20.40 12.00 L20.35 12.87 L22.62 14.87 L19.79 19.76 L16.93 18.80 L16.20 19.27 L15.43 19.67 L14.83 22.63 L9.17 22.63 L8.57 19.67 L7.80 19.27 L7.07 18.80 L4.21 19.76 L1.38 14.87 L3.65 12.87 L3.60 12.00 L3.65 11.13 L1.38 9.13 L4.21 4.24 L7.07 5.20 L7.80 4.73Z M12 8.6a3.4 3.4 0 1 0 0 6.8a3.4 3.4 0 1 0 0-6.8Z" fill="currentColor" fill-rule="evenodd" stroke="none"/>',   // เฟืองทึบ 6 ฟัน (ตามแบบที่ทีมเลือก 7 พ.ย.)
   pill: '<path d="M10.5 20.5a5 5 0 0 1-7-7l7-7a5 5 0 0 1 7 7z"/><path d="M8.5 8.5l7 7"/>',
   status: '<path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/>',
   clock: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M5 3L2 6M22 6l-3-3"/>',
@@ -92,7 +92,8 @@ export function medList(meal) {
 /** การ์ดมื้อ: หัวมื้อ + ป้ายสถานะ + ยาทั้งมื้อ (meal มาจาก model.js) */
 export function mealCard(meal, extra = '') {
   const label = statusLabel(meal.st.state, meal.dose?.confirmedAt);
-  return `<section class="card"><div class="card-head"><h2 class="h-card">มื้อ ${esc(meal.reminderTime)}</h2>${chip(label)}</div>` + medList(meal) +
+  const evening = Number(String(meal.reminderTime).slice(0, 2)) >= 17 ? ' st-evening' : '';   // มื้อเย็นที่ยังไม่ถึงเวลา = ม่วงอ่อน (ธีม 7 พ.ย.)
+  return `<section class="card st-${label.kind}${evening}"><div class="card-head"><h2 class="h-card">มื้อ ${esc(meal.reminderTime)}</h2>${chip(label)}</div>` + medList(meal) +
     (meal.pending ? '<p class="hint">รอส่งให้ผู้ดูแล — จะส่งเมื่อกลับมาออนไลน์</p>' : '') + extra + '</section>';
 }
 

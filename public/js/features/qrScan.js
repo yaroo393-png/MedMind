@@ -1,0 +1,62 @@
+// ผู้ดูแลสแกน QR ด้วยกล้องในแอป (FR-01 ข้อ 1, 3) — ส่วนที่แตะ DOM/กล้อง · เรียกจาก phone.js เมื่อกด "สแกน QR ด้วยกล้อง"
+// ภาพจากกล้องอยู่ในเครื่อง ไม่ถูกส่งหรือบันทึกที่ไหน · อ่านด้วย jsQR (vendor/jsqr.js โหลดตอนกดสแกนเท่านั้น) · ไม่อนุญาตกล้อง → พิมพ์รหัส 6 หลักแทน (SRS §3)
+const FRAME_MS = 150;     // อ่านทุก ~0.15 วินาที พอสำหรับ QR และไม่กินแบต
+const MAX_SIDE = 640;     // ย่อภาพก่อนอ่านให้เร็ว
+
+const REASONS = {
+  denied: 'ไม่ได้รับอนุญาตให้ใช้กล้อง — พิมพ์รหัส 6 หลักแทนได้',
+  unsupported: 'เครื่องนี้เปิดกล้องในหน้านี้ไม่ได้ — ใช้แอปกล้องสแกน หรือพิมพ์รหัส 6 หลักแทน',
+  nocamera: 'ไม่พบกล้อง — พิมพ์รหัส 6 หลักแทนได้',
+};
+
+/**
+ * เปิดหน้ากล้องสแกน · onText(text) คืน true เมื่อใช้ข้อความนั้นได้ (แล้วปิดกล้อง) · false = สแกนต่อ · onFail(message) เมื่อเปิดกล้องไม่ได้
+ * @returns {() => void} ฟังก์ชันปิดกล้อง
+ */
+export function openScanner({ onText, onFail }) {
+  const doc = globalThis.document, nav = globalThis.navigator;
+  if (!nav?.mediaDevices?.getUserMedia) { onFail(REASONS.unsupported); return () => {}; }
+  const box = doc.createElement('div');
+  box.className = 'scan-overlay';
+  box.setAttribute('role', 'dialog');
+  box.setAttribute('aria-label', 'สแกน QR ด้วยกล้อง');
+  box.innerHTML = '<video class="scan-video" playsinline muted></video><div class="scan-frame" aria-hidden="true"></div>' +
+    '<p class="scan-hint" role="status">เล็งกล้องไปที่ QR บนเครื่องผู้สูงอายุ</p><button type="button" class="btn btn-primary scan-close">ยกเลิก</button>';
+  doc.body.appendChild(box);
+  const video = box.querySelector('video');
+  let stream = null, timer = 0, closed = false;
+  const stop = () => {
+    if (closed) return;
+    closed = true; globalThis.clearTimeout(timer);
+    stream?.getTracks().forEach((t) => t.stop());
+    box.remove();
+  };
+  box.querySelector('.scan-close').addEventListener('click', stop);
+  (async () => {
+    let jsQR;
+    try {
+      stream = await nav.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false });
+    } catch (e) {
+      stop(); onFail(e?.name === 'NotFoundError' ? REASONS.nocamera : REASONS.denied); return;
+    }
+    if (closed) { stream.getTracks().forEach((t) => t.stop()); return; }
+    video.srcObject = stream;
+    await video.play().catch(() => {});
+    ({ default: jsQR } = await import('../vendor/jsqr.js'));
+    const canvas = doc.createElement('canvas'), g = canvas.getContext('2d', { willReadFrequently: true });
+    const tick = () => {
+      if (closed) return;
+      if (video.videoWidth) {
+        const k = Math.min(1, MAX_SIDE / Math.max(video.videoWidth, video.videoHeight));
+        canvas.width = Math.round(video.videoWidth * k); canvas.height = Math.round(video.videoHeight * k);
+        g.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const img = g.getImageData(0, 0, canvas.width, canvas.height);
+        const hit = jsQR(img.data, img.width, img.height, { inversionAttempts: 'dontInvert' });
+        if (hit?.data && onText(hit.data)) { stop(); return; }
+      }
+      timer = globalThis.setTimeout(tick, FRAME_MS);
+    };
+    tick();
+  })();
+  return stop;
+}

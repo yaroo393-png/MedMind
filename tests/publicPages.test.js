@@ -13,7 +13,7 @@ const read = (f) => readFileSync(root + f, 'utf8');
 const walk = (d) => readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(`${d}${e.name}/`) : [`${d}${e.name}`]));
 const files = walk(root).map((f) => f.slice(root.length));
 const featureFiles = files.filter((f) => f.startsWith('js/features/') && f.endsWith('.js'));
-const codeFiles = files.filter((f) => /\.(js|html|css)$/.test(f));
+const codeFiles = files.filter((f) => /\.(js|html|css)$/.test(f) && !f.startsWith('js/vendor/'));   // vendor/ = ไลบรารีภายนอกที่ไม่แก้ (jsQR · Apache-2.0)
 
 test('มีไฟล์หน้าเว็บและไฟล์สไตล์ครบ', () => {
   for (const f of ['index.html', 'demo.html', 'css/tokens.css', 'css/app.css', 'fonts/OFL.txt', 'fonts/Sarabun-Regular.ttf', 'fonts/Sarabun-SemiBold.ttf', 'fonts/Sarabun-Bold.ttf',
@@ -69,8 +69,10 @@ test('ทุกปุ่ม (data-act) ที่หน้าจอสร้า�
 });
 
 test('M3: ใช้ token เท่านั้น ไม่มีสี #hex ลอยนอก tokens.css', () => {
+  assert.equal(/--fresh:\s*#8DBA62/i.test(read('css/tokens.css')), true, 'theme-color ใน HTML ต้องตรงกับ --fresh');
   for (const f of codeFiles.filter((x) => x !== 'css/tokens.css')) {
-    const bad = read(f).match(/#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?\b/g);
+    // ยกเว้น <meta name="theme-color"> (ใส่ var() ไม่ได้ — ต้องตรงกับ --fresh ใน tokens.css)
+    const bad = read(f).replace(/<meta name="theme-color"[^>]*>/g, '').match(/#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?\b/g);
     assert.equal(bad, null, `public/${f} มีสีลอย ${bad}`);
   }
 });
@@ -81,9 +83,15 @@ test('ADR-8 / NFR-09: Demo mode ไม่ต้องมี server — ไม่
     if (f === 'js/core/firebase.js') {
       for (const m of s.matchAll(/https?:\/\/[^\s'"`]+/g)) assert.match(m[0], /^https:\/\/www\.gstatic\.com\/firebasejs\/|^http:\/\/127\.0\.0\.1:9099$/, `firebase.js อ้าง ${m[0]}`);
     } else {
-      assert.doesNotMatch(s, /\bfetch\(|XMLHttpRequest|WebSocket|sendBeacon|https?:\/\//, `public/${f} อ้างเครือข่าย`);
+      // sw.js (PWA) เรียก self.fetch เฉพาะไฟล์ของเว็บเอง (same-origin) เพื่อแคชสำรอง — ตรวจด้านล่างว่าไม่ยุ่งกับโดเมนอื่น
+      const body = f === 'sw.js' ? s.replace('self.fetch(req)', '') : s;
+      assert.doesNotMatch(body, /\bfetch\(|XMLHttpRequest|WebSocket|sendBeacon|https?:\/\//, `public/${f} อ้างเครือข่าย`);
+      if (f === 'sw.js') assert.match(s, /origin !== self\.location\.origin\) return/, 'sw.js ต้องไม่แคช/ยุ่งกับคำขอข้ามโดเมน');
     }
-    assert.doesNotMatch(s, /localStorage|sessionStorage|indexedDB|document\.cookie/, `public/${f} เก็บข้อมูลลงเบราว์เซอร์เอง (ใช้ที่เก็บของแอปเท่านั้น)`);
+    // ข้อยกเว้นเดียว: จำ "บทบาท" ของเครื่อง (คีย์ mm-role = senior|caregiver ไม่ใช่ข้อมูลส่วนตัว) ให้เปิดลิงก์เดียวแล้วเข้าหน้าเดิม
+    const allowRoleMemory = f === 'index.html' || f === 'js/features/realShell.js';
+    const stripped = allowRoleMemory ? s.replace(/localStorage\??\.(?:get|set)Item\(([^)]*)\)/g, (m, a) => { assert.match(a, /KEY|'mm-role'/, `${f} เก็บอย่างอื่นนอกบทบาท: ${m}`); return ''; }) : s;
+    assert.doesNotMatch(stripped, /localStorage|sessionStorage|indexedDB|document\.cookie/, `public/${f} เก็บข้อมูลลงเบราว์เซอร์เอง (ใช้ที่เก็บของแอปเท่านั้น)`);
   }
 });
 
@@ -103,9 +111,9 @@ test('ADR-8: demo.html และไฟล์ที่มัน import ทั้�
   for (const bad of ['js/core/firebase.js', 'js/core/firestoreRepo.js', 'js/features/realShell.js', 'js/services/aiLabel.js']) assert.equal(seen.has(bad), false, `demo.html ดึง ${bad}`);
 });
 
-test('สถาปัตยกรรม: เฉพาะ phone.js, demoShell.js, realShell.js และ redactTool.js แตะ DOM · logic/ และ core/ ไม่แตะ DOM · Date.now() อยู่ที่ clock.js ที่เดียว', () => {
+test('สถาปัตยกรรม: เฉพาะ phone.js, demoShell.js, realShell.js, redactTool.js และ qrScan.js แตะ DOM · logic/ และ core/ ไม่แตะ DOM · Date.now() อยู่ที่ clock.js ที่เดียว', () => {
   const domWords = /\b(document|window|localStorage|innerHTML|addEventListener)\b/;
-  for (const f of featureFiles.filter((x) => !/phone\.js$|demoShell\.js$|realShell\.js$|redactTool\.js$/.test(x))) {
+  for (const f of featureFiles.filter((x) => !/phone\.js$|demoShell\.js$|realShell\.js$|redactTool\.js$|qrScan\.js$/.test(x))) {
     assert.doesNotMatch(read(f).replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, ''), domWords, `public/${f} แตะ DOM`);
   }
   for (const f of files.filter((x) => /^js\/(logic|core)\//.test(x) && x.endsWith('.js'))) {
@@ -116,7 +124,8 @@ test('สถาปัตยกรรม: เฉพาะ phone.js, demoShell.js,
 });
 
 test('RULES §3: ข้อมูลทดสอบทั้งหมดสมมติ — ไม่มีไฟล์รูปใน public/ และข้อความที่ผู้ใช้เห็นไม่ใช้ "ไม่ได้กิน" (BR-14)', () => {
-  assert.deepEqual(files.filter((f) => /\.(png|jpe?g|heic|webp|gif)$/i.test(f)), []);
+  // อนุญาตเฉพาะไอคอนแอป (PWA) ที่วาดจากมาสคอต ไม่ใช่รูปถ่าย/รูปฉลาก
+  assert.deepEqual(files.filter((f) => /\.(png|jpe?g|heic|webp|gif)$/i.test(f) && !/^img\/(icon-[a-z0-9-]+|apple-touch-icon)\.png$/.test(f)), []);
   for (const f of codeFiles) {
     for (const m of read(f).matchAll(/ไม่ได้กิน|not taken/gi)) {
       assert.match(read(f).slice(Math.max(0, m.index - 24), m.index), /คำว่า\s*[“"]?\s*$/, `public/${f} ใช้คำต้องห้ามในข้อความจริง`);
@@ -161,6 +170,13 @@ test('NFR-03: ความคมชัดของสีหลัก ≥ 4.5 : 1
     assert.match(a, /^#[0-9a-fA-F]{6}$/, fg); assert.match(b, /^#[0-9a-fA-F]{6}$/, bg);
     assert.ok(contrast(a, b) >= 4.5, `${fg} บน ${bg} = ${contrast(a, b).toFixed(2)} < 4.5`);
   }
+});
+
+test('NFR-03: ธีมน่ารัก — ตัวอักษรบนพื้นสีสถานะ (ยืนยันแล้ว/ยังไม่ยืนยัน/รอเวลา/มื้อเย็น/แจ้งเตือน) ≥ 4.5 : 1 · ขอบช่องกรอก ≥ 3 : 1', () => {
+  const pairs = [['ok-text', 'ok-bg'], ['no-text', 'no-bg'], ['wait-text', 'wait-bg'], ['eve-text', 'eve-bg'], ['text-muted', 'ok-bg'], ['text-muted', 'no-bg'], ['text-muted', 'wait-bg'],
+    ['text-muted', 'eve-bg'], ['text', 'late-bg'], ['alert-text', 'alert-bg'], ['ok-text', 'bg'], ['no-text', 'bg'], ['wait-text', 'bg'], ['text-muted', 'bg-grad-1']];
+  for (const [fg, bg] of pairs) assert.ok(contrast(tok(fg), tok(bg)) >= 4.5, `${fg} บน ${bg} = ${contrast(tok(fg), tok(bg)).toFixed(2)} < 4.5`);
+  assert.ok(contrast(tok('field-line'), tok('bg')) >= 3, 'ขอบช่องกรอกต้อง ≥ 3:1 (WCAG 1.4.11)');
 });
 
 test('WCAG 2.4.3/4.1.2: กล่องยืนยันเป็น aria-modal ส่วนอื่น inert Tab วนในกล่อง · ข้อความสถานะอยู่ใน live region ค้าง ≥ 10 วินาที มีปุ่มปิด', () => {
