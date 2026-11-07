@@ -2,35 +2,69 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MedMind — ระบบเตือนกินยา</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#8DBA62">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="MedMind">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="img/icon-192.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<title>MedMind — ดูแลมื้อยาอย่างอุ่นใจ</title>
 <link rel="stylesheet" href="css/tokens.css">
 <link rel="stylesheet" href="css/app.css">
 </head>
-<body>
-<div class="page">
-  <header class="pagebar">
-    <h1>MedMind — ระบบเตือนกินยาและแจ้งสถานะให้ผู้ดูแลผู้สูงอายุ</h1>
-    <p class="covers">Covers: FR-01 (S-00 เลือกบทบาท) · FR-01–FR-05</p>
-    <p class="lead">เตือนทุกมื้อยา และบอกผู้ดูแลว่าผู้สูงอายุยืนยันแล้วหรือยัง — ไม่ต้องสมัคร ไม่ต้องมีรหัสผ่าน</p>
-  </header>
-  <main class="card">
-    <h2 class="h-card">ใช้เครื่องนี้เป็นใคร (S-00)</h2>
-    <p class="lead">ไม่ต้องสมัคร ไม่ต้องมีรหัสผ่าน — 1 เครื่อง = 1 บทบาท</p>
-    <p><a class="btn btn-taken" href="senior.html">ผู้สูงอายุ — รับการเตือนกินยา</a></p>
-    <p><a class="btn btn-primary" href="caregiver.html">ผู้ดูแล / ลูกหลาน — ดูสถานะและเพิ่มยา</a></p>
-    <p class="hint">ถ้าตั้งค่าให้พ่อแม่ ให้เปิด "ผู้สูงอายุ" บนมือถือของท่าน แล้วสแกน QR ด้วยมือถือของคุณ</p>
-    <h2 class="h-card">ลองโดยไม่ใช้ข้อมูลจริง</h2>
-    <p><a class="btn btn-ghost" href="demo.html">โหมดสาธิต (ผู้สูงอายุ + ผู้ดูแล ในเบราว์เซอร์เดียว)</a></p>
-    <p class="hint">โหมดสาธิตใช้ข้อมูลตัวอย่างและนาฬิกาจำลอง ไม่ส่งข้อมูลออกจากเครื่อง</p>
-    <h2 class="h-card">ความเป็นส่วนตัว</h2>
-    <ul class="plain">
-      <li>ไม่เก็บชื่อ HN เลขบัตร ที่อยู่ วันเกิด เบอร์โทร และไม่เก็บรูปฉลาก</li>
-      <li>ก่อนส่งรูปฉลากให้ AI อ่าน ต้องปิดชื่อ HN QR และบาร์โค้ดทุกครั้ง — AI แค่ร่าง ผู้ดูแลตรวจทุกช่องก่อนบันทึก</li>
-      <li>เตือนได้เฉพาะตอนเปิดหน้า MedMind ไว้ (ข้อจำกัดของเว็บแอป)</li>
-    </ul>
-    <p class="disclaimer">ไม่ใช่คำแนะนำทางการแพทย์ · การกดยืนยันเป็นการรายงานด้วยตนเอง</p>
-  </main>
-</div>
+<body class="entry-body">
+<!-- Covers: FR-01 (S-00 เลือกบทบาท) · ทางเข้าเดียวของแอปจริง: หน้าแรก → เลือกบทบาท → จำไว้ในเครื่อง (1 เครื่อง = 1 บทบาท — ADR-9) · ติดตั้งลงหน้าจอหลักได้ (PWA) -->
+<main class="entry-screen splash" id="splash" hidden>
+  <div class="splash-body">
+    <h1 class="entry-title">MedMind</h1>
+    <p class="entry-sub">ดูแลมื้อยาอย่างอุ่นใจ</p>
+    <p class="bubble">วันนี้ เราค่อย ๆ ไปด้วยกันนะ</p>
+    <img class="mascot-big" src="img/mascot.svg" alt="" width="220" height="220">
+  </div>
+  <div class="splash-foot">
+    <button class="btn btn-primary" type="button" id="start">เริ่มใช้งาน ›</button>
+    <p class="fine">MedMind ไม่ใช่คำแนะนำทางการแพทย์</p>
+  </div>
+</main>
+<main class="entry-screen roles" id="roles" hidden>
+  <p class="brand entry-brand">MedMind</p>
+  <div class="roles-head">
+    <h1 id="roles-title" tabindex="-1">คุณใช้ MedMind ในฐานะใคร?</h1>
+    <img src="img/mascot.svg" alt="" width="92" height="92">
+  </div>
+  <a class="role-card" href="senior.html" data-role="senior">
+    <span class="role-ico senior"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg></span>
+    <span class="role-text"><strong>ผู้สูงอายุ</strong><span>ดูมื้อยา รับการเตือน และกดกินแล้ว</span></span>
+    <span class="role-go"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span>
+  </a>
+  <a class="role-card" href="caregiver.html" data-role="caregiver">
+    <span class="role-ico care"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg></span>
+    <span class="role-text"><strong>ลูกหลาน / ผู้ดูแล</strong><span>เพิ่มยาและติดตามการยืนยันมื้อยา</span></span>
+    <span class="role-go"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span>
+  </a>
+  <p class="fine"><a href="demo.html">ลองโหมดสาธิต (ข้อมูลตัวอย่าง)</a></p>
+</main>
+<noscript><p>ต้องเปิด JavaScript เพื่อใช้ MedMind</p></noscript>
+<script type="module">
+  // เปิดลิงก์เดียว: เคยเลือกบทบาทแล้ว → เข้าหน้านั้นเลย · ลิงก์จาก QR (?code=…) → ผู้ดูแล · ?choose=1 → เลือกบทบาทใหม่
+  const KEY = 'mm-role';
+  const q = new URLSearchParams(location.search);
+  const get = () => { try { return localStorage.getItem(KEY); } catch { return null; } };
+  const set = (r) => { try { localStorage.setItem(KEY, r); } catch { /* ไม่เป็นไร */ } };
+  const PAGE = { senior: 'senior.html', caregiver: 'caregiver.html' };
+  const show = (id) => { document.getElementById(id).hidden = false; };
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => { /* ใช้ได้ปกติแม้ไม่มี */ });
+  if (/^\d{6}$/.test(q.get('code') ?? '')) { set('caregiver'); location.replace(`caregiver.html?code=${q.get('code')}`); }
+  else if (PAGE[get()] && !q.has('choose')) location.replace(PAGE[get()]);
+  else {
+    for (const a of document.querySelectorAll('[data-role]')) a.addEventListener('click', () => set(a.dataset.role));
+    document.getElementById('start').addEventListener('click', () => {
+      document.getElementById('splash').hidden = true; show('roles'); document.getElementById('roles-title').focus();
+    });
+    if (q.has('choose')) show('roles'); else show('splash');
+  }
+</script>
 </body>
 </html>

@@ -11,6 +11,8 @@ import * as home from './home.js';
 import * as reminder from './reminder.js';
 import * as status from './caregiverStatus.js';
 import { attachRedact } from './redactTool.js';
+import { openScanner } from './qrScan.js';
+import { inviteCodeFromScan } from './qr.js';
 
 const FEATURES = [pairing, medicine, home, reminder, status];
 export const SCREENS = Object.assign({}, ...FEATURES.map((f) => f.screens));
@@ -188,6 +190,14 @@ export class Phone {
       if (i < 0 || i >= SIZE_ORDER.length) this.toast(i < 0 ? 'เล็กที่สุดแล้ว (ปกติ)' : 'ใหญ่ที่สุดแล้ว');
       else { this.pref.size = SIZE_ORDER[i]; this.toast(`ขนาดตัวอักษร: ${SIZE_NAMES[SIZE_ORDER[i]]}`); }
     } else if (act === 'set-theme') { this.pref.theme = data.v; this.toast(`โหมดสี: ${data.v === 'dark' ? 'มืด' : 'สว่าง'}`); }
+    else if (act === 'scan-qr') {   // FR-01 ข้อ 1, 3: ผู้ดูแลสแกน QR ด้วยกล้องในแอป → ได้รหัสแล้วเชื่อมต่อให้เลย
+      this.stopScan?.();
+      this.stopScan = openScanner({
+        onText: (text) => { const code = inviteCodeFromScan(text); if (!code) return false; this.ui.codeInput = code; this.run('join'); return true; },
+        onFail: (msg) => this.toast(msg),
+      });
+      return;
+    }
     else if (act === 'toast-close') { clearTimeout(this.toastTimer); this.live.innerHTML = ''; }
     else if (ACTIONS[act]) await ACTIONS[act](env, data);
     this.ctx.refresh();

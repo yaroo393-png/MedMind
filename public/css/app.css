@@ -5,6 +5,8 @@
 @font-face { font-family: "Sarabun"; font-weight: 400; font-style: normal; font-display: swap; src: url("../fonts/Sarabun-Regular.ttf") format("truetype"); }
 @font-face { font-family: "Sarabun"; font-weight: 600; font-style: normal; font-display: swap; src: url("../fonts/Sarabun-SemiBold.ttf") format("truetype"); }
 @font-face { font-family: "Sarabun"; font-weight: 700; font-style: normal; font-display: swap; src: url("../fonts/Sarabun-Bold.ttf") format("truetype"); }
+@font-face { font-family: "Mali"; font-weight: 600; font-style: normal; font-display: swap; src: url("../fonts/Mali-SemiBold.ttf") format("truetype"); } /* Mali (SIL OFL 1.1 — fonts/OFL-Mali.txt) หัวข้อแบบน่ารัก */
+@font-face { font-family: "Mali"; font-weight: 700; font-style: normal; font-display: swap; src: url("../fonts/Mali-Bold.ttf") format("truetype"); }
 * { box-sizing: border-box; }
 html { font-family: var(--font); }
 body { margin: 0; min-height: 100vh; background: linear-gradient(160deg, var(--bg-grad-1), var(--bg-grad-2)); color: var(--text); font-size: var(--fs-body); line-height: 1.5; }
@@ -222,3 +224,85 @@ body.real .phone-inner { border-radius: 0; padding-top: env(safe-area-inset-top)
 .redact-stage img { display: block; width: 100%; height: auto; pointer-events: none; }
 .redact-box, .redact-preview { position: absolute; background: var(--qr-dark); }
 .redact-preview { opacity: 0.7; outline: 2px dashed var(--accent-soft); }
+
+/* ---------- หน้าใช้งานจริง: ไม่แสดงป้าย Covers (ป้ายไว้ให้ผู้ตรวจดูใน Demo mode) · หน้าเลือกบทบาท ---------- */
+body.real .covers { display: none; }
+/* ---------- ทางเข้า (index.html): หน้าแรก + เลือกบทบาท ตามต้นแบบ ---------- */
+.entry-body { background: var(--bg-grad-1); }
+.entry-screen { max-width: 480px; min-height: 100vh; min-height: 100dvh; margin: 0 auto; padding: calc(var(--space-3) + env(safe-area-inset-top)) var(--space-3) calc(var(--space-3) + env(safe-area-inset-bottom)); display: flex; flex-direction: column; }
+.entry-screen[hidden] { display: none; }
+.splash { background: var(--fresh); color: var(--text); text-align: center; max-width: none; }
+.splash-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; max-width: 480px; margin: 0 auto; }
+.splash-foot { width: 100%; max-width: 480px; margin: 0 auto; }
+.splash .lead, .splash .fine { color: var(--text); }
+.mascot-big { width: min(220px, 60vw); height: auto; margin-bottom: var(--space-3); }
+.fine { color: var(--text-muted); text-align: center; font-size: var(--fs-body); }
+.roles .brand { color: var(--primary); font-weight: bold; margin: 0 0 var(--space-3); }
+.roles h1 { margin-bottom: var(--space-1); }
+.role-card { display: block; text-decoration: none; color: var(--text); background: var(--bg); border: 2px solid var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow); padding: var(--space-3); margin: var(--space-2) 0 0; min-height: 120px; }
+.role-card strong { display: block; font-size: var(--fs-h2); margin-bottom: var(--space-1); }
+.role-card span { color: var(--text-muted); }
+.role-card:active, .role-card:focus-visible { border-color: var(--primary); }
+.roles .fine { margin-top: var(--space-3); }
+
+/* ---------- สแกน QR ด้วยกล้อง (FR-01) ---------- */
+.scan-overlay { position: fixed; inset: 0; z-index: 50; background: var(--text); display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: var(--space-2); padding: var(--space-3) var(--space-2) calc(var(--space-3) + env(safe-area-inset-bottom)); }
+.scan-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.scan-frame { position: absolute; top: 22%; left: 50%; width: min(70vw, 300px); aspect-ratio: 1; transform: translateX(-50%); border: 4px solid var(--accent-soft); border-radius: var(--radius-lg); box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.35); }
+.scan-hint { position: relative; margin: 0; padding: var(--space-1) var(--space-2); border-radius: 999px; background: var(--bg); color: var(--text); font-weight: bold; text-align: center; }
+.scan-close { position: relative; max-width: 480px; }
+
+/* ---------- ธีมน่ารัก (7 พ.ย. 2569 · แคนวาส "MedMind แอปจริง — หน้าตา") ----------
+ * พื้นครีม การ์ดขาวมีขอบ + เงาแข็งแบบสติกเกอร์ · หัวข้อฟอนต์ Mali · สีตามสถานะของมื้อ (ยืนยันแล้ว เขียว / ยังไม่ยืนยัน แดง / รอเวลา เหลือง / มื้อเย็น ม่วง)
+ * สีมาจาก token เท่านั้น — คู่ตัวอักษร/พื้นตรวจ contrast ใน tests/publicPages.test.js */
+h1, h2, h3, .h-card, .hero-big, .appbar-title, .brand, .entry-title { font-family: var(--font-head); }
+.phone-inner { background: var(--bg-grad-1); }
+.appbar { background: var(--bg-grad-1); color: var(--text); border-bottom: 2px solid var(--line); }
+.appbar-title { font-size: var(--fs-h2); }
+.card, .alert-card, .greet, .role-card, .slot, .modal-box, .journey, .label-mock { border: 2px solid var(--line); box-shadow: var(--shadow); }
+.icon-circle { border: 2px solid var(--line); }
+.meds li { background: var(--bg); border: 1px solid var(--line); }
+.field input, .field select { border-color: var(--field-line); background: var(--bg); }
+.card.st-taken, .card.st-late { background: var(--ok-bg); border-color: var(--ok-line); }
+.card.st-notyet { background: var(--no-bg); border-color: var(--no-line); }
+.card.st-none { background: var(--wait-bg); border-color: var(--wait-line); }
+.card.st-none.st-evening { background: var(--eve-bg); border-color: var(--eve-line); }
+.chip { background: var(--bg); }
+.chip-taken, .chip-late { border-color: var(--ok-line); color: var(--ok-text); background: var(--bg); }
+.chip-notyet { border-color: var(--no-line); color: var(--no-text); }
+.chip-none { border-color: var(--wait-line); color: var(--wait-text); }
+.banner { background: var(--alert-bg); color: var(--alert-text); border: 2px solid var(--no-line); }
+.alert-card { background: var(--alert-bg); color: var(--alert-text); border-color: var(--no-line); }
+.alert-card .hint { color: var(--alert-text); }
+.alert-card.alert-ok { background: var(--late-bg); color: var(--text); border-color: var(--wait-line); }
+.alert-card.alert-ok .hint { color: var(--text); }
+.alert-ico { background: var(--bg); }
+.hero-card { border: 2px solid var(--ok-line); box-shadow: var(--shadow); }
+.tabs { border-top: 2px solid var(--line); border-radius: var(--radius-lg) var(--radius-lg) 0 0; box-shadow: none; }
+.tab.is-on { background: var(--accent-soft); color: var(--primary); }
+.round-pill { background: var(--wait-bg); color: var(--wait-text); }
+.btn-primary, .btn-taken { box-shadow: 0 4px 0 var(--ok-line); }
+
+/* ทางเข้า: หน้าแรก (เนินเขียว + น้องเมล็ดพีช) และเลือกบทบาท ตามแคนวาส */
+.entry-body { background: var(--bg-grad-1); }
+.splash { position: relative; overflow: hidden; background: var(--bg-grad-1); }
+.splash::before { content: ""; position: absolute; left: -20%; right: -20%; bottom: -18%; height: 48%; border-radius: 50%; background: var(--accent-soft); }
+.splash > * { position: relative; }
+.entry-title { margin: 0; font-size: 44px; font-weight: 700; color: var(--primary); }
+.entry-sub { margin: 0; font-family: var(--font-head); font-size: var(--fs-h2); color: var(--text-muted); }
+.bubble { display: inline-block; padding: var(--space-1) var(--space-2); border-radius: 20px; background: var(--bg); border: 2px solid var(--line); box-shadow: var(--shadow); color: var(--text); }
+.roles .role-card { display: flex; align-items: center; gap: var(--space-2); }
+.role-ico { display: flex; align-items: center; justify-content: center; flex: none; width: 64px; height: 64px; border-radius: 22px; }
+.role-ico .ico { width: 34px; height: 34px; }
+.role-ico.senior { background: var(--accent-soft); color: var(--primary); }
+.role-ico.care { background: var(--no-bg); color: var(--no-text); }
+.role-text { flex: 1; display: flex; flex-direction: column; }
+.role-text strong { font-family: var(--font-head); font-size: var(--fs-h2); }
+.role-text span { color: var(--text-muted); }
+.role-go .ico { width: 26px; height: 26px; color: var(--primary); }
+.roles-head { display: flex; align-items: flex-end; gap: var(--space-1); }
+.roles-head h1 { flex: 1; }
+.splash-body { gap: var(--space-1); }
+.splash .bubble { margin: var(--space-3) 0 0; }
+.entry-brand { justify-content: flex-start; margin: 0 0 var(--space-2); }
+.roles .role-card { margin-top: var(--space-2); min-height: 0; padding: var(--space-3) var(--space-2); }

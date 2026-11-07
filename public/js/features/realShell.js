@@ -17,6 +17,8 @@ const dateKeyOf = (ms) => { const d = new Date(ms); return `${d.getFullYear()}-$
  * @param {{ role: 'senior'|'caregiver', root: HTMLElement, search?: string, hostname?: string }} options
  */
 export async function bootReal({ role, root, search = '', hostname = '', href = '' }) {
+  try { globalThis.localStorage?.setItem('mm-role', role); } catch { /* จำบทบาทไม่ได้ก็ไม่เป็นไร */ }   // ลิงก์เดียว: เปิดครั้งหน้าเข้าบทบาทนี้เลย (index.html)
+  try { globalThis.navigator?.serviceWorker?.register('sw.js'); } catch { /* ติดตั้งลงหน้าจอหลักไม่ได้ก็ใช้งานได้ปกติ */ }   // PWA: เปลือกแอปเปิดได้แม้ไม่มีเน็ต
   root.innerHTML = '<p class="hint" role="status">กำลังเชื่อมต่อ…</p>';
   // ตัวเลือกสำหรับนักพัฒนา: ใช้ได้เฉพาะ localhost (ทดสอบกับ Emulator) — บนเว็บจริงถูกเมินเสมอ
   const params = new URLSearchParams(search);
@@ -44,7 +46,7 @@ export async function bootReal({ role, root, search = '', hostname = '', href = 
         redact: (p, rects) => redactImage(p.bitmap, rects),
       },
       // ลิงก์ใน QR: เปิดหน้าเครื่องผู้ดูแลพร้อมเติมรหัสให้ (FR-01 ข้อ 1, 3)
-      inviteLink: (code) => (href ? new URL(`caregiver.html?code=${code}`, href).href : `caregiver.html?code=${code}`),
+      inviteLink: (code) => (href ? new URL(`index.html?code=${code}`, href).href : `index.html?code=${code}`),
     };
     phone = new Phone(root, { role, ctx, route: role === 'senior' ? 'senior-home' : 'cg-status' });
     phone.bind(ctx, role === 'senior' ? 'senior-home' : 'cg-status');
@@ -56,7 +58,7 @@ export async function bootReal({ role, root, search = '', hostname = '', href = 
     ctx.refresh();
     return { phone, ctx, repo };
   } catch (error) {
-    root.innerHTML = `<div class="card warn" role="alert"><h1>เชื่อมต่อไม่ได้</h1><p>${esc(error?.message ?? error)}</p><p class="hint">ตรวจอินเทอร์เน็ต แล้วเปิดหน้านี้ใหม่ · หรือใช้ <a href="demo.html">โหมดสาธิต</a></p></div>`;
+    root.innerHTML = `<div class="card warn" role="alert"><h1>เชื่อมต่อไม่ได้</h1><p>${esc(error?.message ?? error)}</p><p class="hint">ตรวจอินเทอร์เน็ต แล้วเปิดหน้านี้ใหม่ · หรือ <a href="index.html?choose=1">เลือกบทบาทใหม่</a> · <a href="demo.html">โหมดสาธิต</a></p></div>`;
     throw error;
   }
 }

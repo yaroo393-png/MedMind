@@ -51,6 +51,7 @@ Definition: the invite code (QR + 6 digits) works once and expires after 10 minu
 - [x] Issue ถูกสร้างและ assign (#8, #9 · สัญญา DL-20)
 - [x] ตรรกะ + เทสต์ผ่าน (`npm test`) — `logic/pairing.js` + เมธอดจับคู่ใน `localRepo` · `tests/pairing.test.js` (10), `tests/repoPairing.test.js` (7) (6 พ.ย. 2569)
 - [x] หน้าจอเชื่อมกับ logic — `features/pairing.js` + `tests/pairingView.test.js` (11) เปิดได้ที่ `public/demo.html` (7 พ.ย. 2569)
+- [x] ผู้ดูแลสแกน QR ด้วยกล้องในแอป (`features/qrScan.js` + `js/vendor/jsqr.js`, `inviteCodeFromScan` ใน `qr.js`) · ทดสอบกับ Emulator ด้วยกล้องจำลอง: สแกน → เชื่อมต่อเอง — ยังไม่ได้ลองกล้องมือถือจริง
 - [x] ใช้งานจริงบน Firebase เขียนแล้ว (7 พ.ย. 2569) — `firestore.rules`, `core/firestoreRepo.js`, QR จริง `features/qr.js` · Rules + repo ผ่าน 31 เทสต์ใน `emulator-tests/` · **ยังไม่ทดสอบบนมือถือจริง** (TEST-CHECKLIST ส่วน G)
 - [ ] ทดสอบบนมือถือจริง (MT ที่เกี่ยวข้อง)
 - [x] `docs/TRACEABILITY.md` อัปเดตแล้ว (ส่วน logic / `localRepo` — หน้าจอและ Rules ยังไม่ทำ)

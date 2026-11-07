@@ -27,7 +27,7 @@ export const screens = {
       body = '<p class="hint">กำลังเตรียมรหัส…</p>';
     } else {
       const left = invite.expiresAt - snap.now;
-      body = hero('link', 'ให้ลูกหลานสแกน หรือบอกรหัสนี้', 'ไม่ต้องสมัคร ไม่ต้องพิมพ์') +
+      body = hero('link', 'ให้ลูกหลานสแกน QR', 'ไม่ต้องสมัคร ไม่ต้องพิมพ์') +
         (model.real && model.ctx?.inviteLink
           ? `<div class="card center">${qrSvg(model.ctx.inviteLink(invite.code))}<p class="hint">ผู้ดูแลสแกนด้วยแอปกล้องของมือถือ แล้วกด "เชื่อมต่อ"</p>`
           : `<div class="card center">${qrGrid(invite.code)}<p class="hint">QR ตัวอย่าง (ระบบจริง = ลิงก์ที่สแกนด้วยแอปกล้อง)</p>`) +
@@ -61,11 +61,12 @@ export const screens = {
         (model.real ? '' : `<div class="card"><p class="hint">ทดสอบ: ผู้ดูแลคนที่สองใช้รหัสเดิม (FR-01 ข้อ 5)</p>${btn('ghost', 'ลองเชื่อมต่อด้วยรหัสเดิม', 'join-second')}</div>`) +
         (ui.error ? `<p class="error" role="alert">${esc(ui.error)}</p>` : '');
     } else {
-      body = hero('link', 'เชื่อมต่อกับพ่อแม่', 'สแกน QR ด้วยแอปกล้องของมือถือ หรือกรอกรหัส 6 หลัก') +
+      body = hero('link', 'เชื่อมต่อกับพ่อแม่', model.real ? 'สแกน QR บนเครื่องผู้สูงอายุ หรือกรอกรหัส 6 หลัก' : 'สแกน QR ด้วยแอปกล้องของมือถือ หรือกรอกรหัส 6 หลัก') +
+        (model.real ? btn('primary', 'สแกน QR ด้วยกล้อง', 'scan-qr') : '') +
         `<label class="field"><span>รหัส 6 หลัก</span><input type="text" inputmode="numeric" maxlength="6" data-live="codeInput" value="${esc(ui.codeInput)}" autocomplete="off"></label>` +
         (ui.error ? `<p class="error" role="alert">${esc(ui.error)}</p>` : '') +
-        btn('primary', 'เชื่อมต่อ', 'join') +
-        (model.real ? '<p class="hint">สแกน QR บนเครื่องผู้สูงอายุด้วยแอปกล้อง หรือพิมพ์รหัส 6 หลักที่แสดงบนเครื่องนั้น</p>'
+        btn(model.real ? 'ghost' : 'primary', 'เชื่อมต่อ', 'join') +
+        (model.real ? '<p class="hint">กดสแกนแล้วอนุญาตกล้อง หรือใช้แอปกล้องของมือถือสแกนก็ได้ · ไม่สะดวกสแกน พิมพ์รหัส 6 หลักที่แสดงบนเครื่องผู้สูงอายุ</p>'
           : btn('ghost', 'เปิดจากลิงก์ QR (เติมรหัสให้)', 'fill-code') + '<p class="hint">ในโหมดสาธิต ปุ่ม "เปิดจากลิงก์ QR" จำลองการสแกน QR บนเครื่องผู้สูงอายุ</p>');
     }
     return { title: 'จับคู่', covers: 'FR-01, BR-01, BR-02 · NFR-05', tabs: snap.pairState === 'connected', body };
