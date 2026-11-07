@@ -31,6 +31,6 @@ npm test
 
 ## 5. ข้อควรรู้
 - **โมเดล AI:** `AI_MODEL` ใน `public/js/services/aiLabel.js` (`gemini-2.5-flash`) — ถ้าคอนโซล AI Logic แจ้งว่าเลิกใช้ ให้เปลี่ยนที่นี่ที่เดียว
-- **App Check:** ยังไม่บังคับ (enforce) — ถ้าเปิดบังคับโดยยังไม่ตั้ง reCAPTCHA แอปจะเรียก AI ไม่ได้ · ความเสี่ยง: คนที่รู้ค่า config ใช้โควตา AI ของเราได้ — ยอมรับได้ในวิชานี้ บันทึกใน DL-28
+- **App Check (ต้องตั้ง — Firebase AI Logic บังคับ):** ลงทะเบียนแอป `medmind-wep` ด้วย reCAPTCHA Enterprise (คีย์สร้างใน Google Cloud โปรเจกต์ `medmind-12eb2` · Website · โดเมน `yaroo393-png.github.io` · ฟรี 10,000 ครั้ง/เดือน ไม่ผูกบัตร) แล้ววาง Site key ใน Firebase → App Check → Apps · โค้ดส่งโทเคนใน `core/firebase.js` (`APP_CHECK_SITE_KEY` เป็นค่าสาธารณะ) · ไม่ตั้ง = คำขอ AI ถูกปฏิเสธ 401 "App Check token is invalid" แอปขึ้น "AI ใช้ไม่ได้" · Firestore/Auth ยัง Unenforced
 - **โควตาฟรี:** Firestore อ่าน 50,000 / เขียน 20,000 ครั้งต่อวัน · แอปอ่านจากสำเนาในเครื่อง (onSnapshot) ไม่ได้อ่านซ้ำทุกวินาที · AI มีโควตาต่อนาที/ต่อวัน — หมดแล้วแอปบอกเหตุผลและเปิดฟอร์มกรอกเอง (FR-02 ข้อ 5)
 - **ยกเลิกจับคู่** ลบยา ประวัติ การแจ้ง และรหัส ของคู่นั้นทั้งหมด (BR-17) — กู้คืนไม่ได้
