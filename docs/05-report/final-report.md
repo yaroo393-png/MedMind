@@ -91,30 +91,43 @@ SRS v1.5 — 9 FR (Must 5 · Should 1 · Could 3), กฎธุรกิจ 21 �
 - Heuristic evaluation โดยทีมอื่น (MT-14) [ ] · think-aloud 5 คน (MT-07) [ ]
 - Security Rules ใน Emulator [ ]/8 · NFR ที่วัดบนระบบจริง (NFR-02, 08, 11–14) [ ] — NFR-03 (ขนาด/ความคมชัด) ตรวจด้วยเทสต์อัตโนมัติกับต้นแบบเท่านั้น ไม่ใช่การวัดบนเครื่องจริง
 
-## 6. การใช้ AI และข้อสะท้อน 🟡
-บันทึกเต็มอยู่ใน `docs/AI_USAGE_LOG.md` และสรุปรายหัวข้อใน `docs/05-report/ai-use-statement.md` (เครื่องมือ · ใช้ AI ตรงไหน · ตรวจ/ตัดสินเองอะไร · ได้ผล/ไม่ได้ผล · ความปลอดภัย · ความรับผิดชอบรายคน)
-- **ใช้ AI ช่วย:** ร่างสัญญาและเอกสารออกแบบ, เขียนโค้ด `logic/` + `core/` และเทสต์ตามสัญญา, สร้างต้นแบบ, ร่าง PR/เอกสาร, แปลไทย–อังกฤษ
-- **สิ่งที่ทีมตัดสินเอง:** ขอบเขต, กฎขอบเวลา BR-21, วิธีจับคู่, ปิดชื่อ/HN ก่อนส่ง AI, การเลื่อน Firebase (DL-19–DL-25) · ทุกมติบันทึกใน `decision-log.md`
-- **ได้ผล:** เขียนเทสต์ก่อนแล้วฉีดบั๊กเทียมเพื่อพิสูจน์ว่าเทสต์จับได้ · ให้ AI ตรวจร่างสัญญาของ AI เองซ้ำจนพบ 5 จุดผิด · ใช้ตัวเลขจริงจากการรัน (เช่น แก้จำนวนเทสต์ schedule ที่ AI รายงานผิดเป็น 13 จากจริง 14)
-- **ไม่ได้ผล / ผิดพลาดที่พบ:** ร่างสัญญาแรกผิด 5 จุด (§3) · AI เคยอ้างว่า M3/M4 ต้องมีระบบจริง ซึ่งผิดเมื่ออ่านเกณฑ์อาจารย์ → แก้ให้ตรงเกณฑ์ · เทสต์ pairing 2 ข้อที่ AI เขียนผิด (ค่า default ของอาร์กิวเมนต์, การตัดคอมเมนต์ก่อนตรวจ `Math.random`) · โค้ด labelDraft ล้มเมื่อไม่มีช่องที่กรอกครบ → เพิ่มการตรวจ
-- **จะทำต่างออกไป:** ให้เจ้าของแต่ละ FR เปิด PR จากบัญชีตัวเองตั้งแต่ต้น (ดู §7) และอ่านเกณฑ์อาจารย์ก่อนวางแผนแทนการสันนิษฐาน
-- AI ในตัวระบบ (อ่านฉลาก): **ยังไม่ได้สร้างและไม่เคยทดสอบกับฉลากจริง** — ความถูกต้องกี่ % จากกี่ฉลาก: [ ไม่มีผล ] · ยืนยันว่าไม่เคยส่งฉลากจริงที่เห็นชื่อ/HN ให้ AI ตอนพัฒนา: [ ทีมยืนยัน ]
-- แถวใน AI log ที่ระบุ "not yet reviewed" ต้องให้ผู้ตรวจเติมชื่อ วันที่ และสิ่งที่ตรวจก่อนส่ง [ ]
+## 6. การใช้ AI และข้อสะท้อน ✅
+**ใช้ AI ช่วยอะไรบ้าง:** (รายละเอียดครบ → [`ai-use-statement.md`](ai-use-statement.md))
+- **Claude (แชท):** ร่าง/ตรวจ Charter, SRS, ออกแบบ, วาดแผนภาพ, ร่างโครง repo
+- **Claude Code:** เขียนโค้ด `logic/` + `core/` + เทสต์, ต้นแบบ M3 ทั้งชุด, ร่างสัญญาโมดูล
+- **Figma AI:** สร้างไอคอนชุด `medmind-icons` จากมาสคอร์ตการ์ตูนที่ Rossatorn วาดเอง (Suchitra ใช้ Figma AI)
 
-## 7. ส่วนร่วมรายคน (ลิงก์จาก GitHub) 🟡
-กระบวนการ: Incremental + sprint สั้น (ดู `docs/PROJECT-PLAN.md`) · ทำงานผ่าน branch → PR → ผู้รีวิว 1 คน → CI ผ่าน → merge · velocity จริง [ ] · สิ่งที่ปรับจาก retrospective [ ]
+**สิ่งที่ทีมตรวจและตัดสินใจเอง:**
+- ✅ ขอบเขต FR, กฎการเตือน, ข้อความถึงผู้ดูแล, ตัวเลข NFR (มติ DL-01–DL-25)
+- ✅ ทุกคน commit ด้วยบัญชีตัวเอง · รัน `npm run check` ให้ผ่านก่อน push · ทุก PR ต้องมีผู้รีวิว + CI ผ่าน
+- ✅ AI ลองแก้โค้ดให้ผิดเพื่อดูว่าเทสต์จับได้ (บันทึกใน log ของแต่ละงาน)
+- ✅ **ทุกคนตรวจโค้ดของตัวเองแล้ว** (Takkan, Yar, Suchitra 6 พ.ย. · Nichanan, Rossatorn 7 พ.ย.)
 
-หลักฐานรายคนจาก PR ที่ merge แล้วใน `yaroo393-png/MedMind` (ลิงก์: `https://github.com/yaroo393-png/MedMind/pull/<เลข>`):
+**อะไรได้ผล:**
+- เขียนเทสต์ก่อนโค้ด แล้วลองทำโค้ดให้ผิด → พิสูจน์ว่าเทสต์จับได้
+- ถามทีมทุกข้อที่ SRS ไม่ตอบ (ชุดคำถาม 6 พ.ย.) → ปิด 7 มติในครั้งเดียว
 
-| คน (บัญชี GitHub) | ส่วนที่รับผิดชอบ | PR ที่ merge แล้ว |
-|---|---|---|
-| Yar Oo (yaroo393-png) | FR-02, รวมเอกสาร, repo/CI | #1–#6 เอกสารตั้งต้น/SRS/สถาปัตยกรรม · #18–#20 Charter/Issue/AI log · #23 SRS v1.5 · #26 สัญญา DL-18 · #36 `schedule.js` · #39 มติ DL-19–25 · #41 `labelDraft.js` · #44 README · #45 AI-Use Statement · **#34 `confirm.js`+`time.js` (ดูหมายเหตุ)** |
-| Takkan Khanlui (V31311) | FR-01, core/, Rules, Design doc | #24 Charter · #38 `clock.js`+`repo.js` · #43 `pairing.js` + จับคู่ใน `localRepo` |
-| Rossatorn Sangkaew (IDK-SleepyBro) | FR-03, Design system, หน้าจอ | #22 Charter · #33 ตั้งค่าการแสดงผล + ไอคอน · #35 `mealTimeline.js` |
-| Nichanan Lalua (KaidangSuk) | FR-04, ต้นแบบ, หน้าหลักผู้สูงอายุ | #21 Charter · #27, #30 เอกสารต้นแบบ · #29 ต้นแบบคลิกได้ + store + นาฬิกาจำลอง · #31 เทสต์ต้นแบบ · #40 `demoData.js` |
-| Suchitra Khomdee (khaiwann) | FR-05, แผนและผลทดสอบ | #25 Charter · #37 `status.js` |
+**อะไรไม่ได้ผล:**
+- AI เพิ่ม FR ที่ไม่มีในปัญหาจริง · ตอบว่า ML Kit อ่านไทยได้ (ผิด)
+- ร่างแรกมีบั๊ก: `labelDraft` พังเมื่อไม่มี slot สมบูรณ์ · เทสต์ 2 ข้อผิดเอง
+- ข้อเสนอสัญญาฉบับแรกผิด 5 จุด (เจอตอนตรวจซ้ำ)
 
-**หมายเหตุความโปร่งใส:** `confirm.js` และ `time.js` (เจ้าของคือ Nichanan และ Rossatorn) ถูก commit ใน PR #34 ภายใต้บัญชี PM — ทีมจึงต้องแยกว่าใครอธิบายโค้ดส่วนนี้ได้ และยืนยันในตาราง AI-Use Statement ข้อ 6 · PR #42 ("Create status.js") ซ้ำกับ #37 (ที่ merge แล้ว) ต้องปิดโดยไม่ merge [ ยืนยันหลังปิดแล้ว ] · การให้คะแนนส่วนร่วมดูจาก GitHub Contributors จริงของแต่ละบัญชี [ ตรวจก่อนส่ง ]
+**บทเรียน:** AI พูดมั่นใจแม้ผิด → ต้องมีเทสต์ มีมนุษย์ตรวจ และตรวจย้อนกับ requirement ก่อนยอมรับ
+
+**AI ในตัวระบบ:** ยังไม่ได้ทำ — FR-02 (อ่านฉลาก) ใช้ร่างตัวอย่างจาก `demoData.js` ไม่มีการเรียก Gemini จริง (เลื่อนไปรอบถัดไป DL-24)
+
+## 7. ส่วนร่วมรายคน ✅
+กระบวนการ: Incremental + sprint สั้น 3 รอบ (Sprint 0 วิเคราะห์, Sprint 1–2 พัฒนา) — ดู [`docs/PROJECT-PLAN.md`](../../docs/PROJECT-PLAN.md)
+
+| คน | FR / งาน | ไฟล์โค้ด | PR / Commit สำคัญ |
+|---|---|---|---|
+| **Yar Oo** (PM) | FR-02, เอกสาร, repo/CI | [`logic/schedule.js`](../../public/js/logic/schedule.js), [`logic/labelDraft.js`](../../public/js/logic/labelDraft.js) | [#41](https://github.com/yaroo393-png/MedMind/pull/41) labelDraft, [#36](https://github.com/yaroo393-png/MedMind/pull/36) schedule, [#39](https://github.com/yaroo393-png/MedMind/pull/39) มติ DL-19–25, [#45](https://github.com/yaroo393-png/MedMind/pull/45) AI-Use Statement · 13 commits |
+| **Takkan Khanlui** | FR-01, core, Rules | [`logic/pairing.js`](../../public/js/logic/pairing.js), [`core/repo.js`](../../public/js/core/repo.js), [`core/clock.js`](../../public/js/core/clock.js) | [#43](https://github.com/yaroo393-png/MedMind/pull/43) pairing, [#38](https://github.com/yaroo393-png/MedMind/pull/38) clock+repo, ต้นแบบ FR-01 · ตรวจแล้ว (6 พ.ย.) |
+| **Rossatorn Sangkaew** | FR-03, Design | [`logic/time.js`](../../public/js/logic/time.js), [`logic/mealTimeline.js`](../../public/js/logic/mealTimeline.js), [`tokens.css`](../../docs/02-design/prototypes/2569-11-04/tokens.css) (ออกแบบชุดสี/ฟอนต์เอง) + วาดมาสคอร์ตการ์ตูนเอง | [#35](https://github.com/yaroo393-png/MedMind/pull/35) mealTimeline · ตรวจแล้ว (7 พ.ย.) · 5 commits |
+| **Nichanan Lalua** | FR-04, ต้นแบบ | [`logic/confirm.js`](../../public/js/logic/confirm.js), [`core/demoData.js`](../../public/js/core/demoData.js), ต้นแบบ Demo mode | [#40](https://github.com/yaroo393-png/MedMind/pull/40) demoData, เทสต์ต้นแบบ · ตรวจแล้ว (7 พ.ย.) |
+| **Suchitra Saelim** | FR-05, ไอคอน | [`logic/status.js`](../../public/js/logic/status.js), [`tests/status.test.js`](../../tests/status.test.js), ไอคอน (ใช้ Figma AI สร้างจากมาสคอร์ตที่ Rossatorn วาด) | [#37](https://github.com/yaroo393-png/MedMind/pull/37) status.js + เทสต์ · ตรวจแล้ว (6 พ.ย.) |
+
+**หมายเหตุ:** ✅ ทุกคนตรวจโค้ดของตัวเองครบแล้ว (Takkan, Yar, Suchitra 6 พ.ย. · Nichanan, Rossatorn 7 พ.ย.) — พร้อมอธิบายได้ทุกบรรทัดสำหรับสอบปากเปล่า
 
 ## 8. ตาราง Golden Thread
 (คัดจาก `docs/TRACEABILITY.md` — ตรวจตรงของจริงเมื่อ 6 พ.ย. 2569 · "ต้นแบบ" = หน้าจอใน `docs/02-design/prototypes/2569-11-04/`)
