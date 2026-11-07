@@ -11,6 +11,9 @@ export const FIREBASE_CONFIG = {
   messagingSenderId: '745006849125',
   appId: '1:745006849125:web:c16ba6935782847528fa8c',
 };
+// App Check (reCAPTCHA Enterprise) — Firebase AI Logic บังคับให้คำขอมีโทเคน App Check (ไม่มี = 401 "App Check token is invalid" → AI ใช้ไม่ได้)
+// Site key เป็นค่าสาธารณะ commit ได้ (ความลับอยู่ฝั่ง Google) · โดเมนที่อนุญาต: yaroo393-png.github.io · ใช้เฉพาะเว็บจริง ไม่ใช้กับ Emulator
+export const APP_CHECK_SITE_KEY = '6LfpGhUuAAAAAC2egmne0Rcl7HV4oh4DMghlWATu';
 
 /**
  * เริ่ม Firebase แล้วล็อกอินแบบนิรนาม (uid เดิมเมื่อเปิดซ้ำบนเครื่องเดิม)
@@ -23,6 +26,13 @@ export async function connectFirebase({ sdkBase = `https://www.gstatic.com/fireb
     import(`${sdkBase}firebase-app.js`), import(`${sdkBase}firebase-auth.js`), import(`${sdkBase}firebase-firestore.js`),
   ]);
   const app = appMod.initializeApp(config);
+  let appCheck = null;
+  if (!emulator && sdkBase.startsWith('https://')) {
+    try {
+      const acMod = await import(`${sdkBase}firebase-app-check.js`);
+      appCheck = acMod.initializeAppCheck(app, { provider: new acMod.ReCaptchaEnterpriseProvider(APP_CHECK_SITE_KEY), isTokenAutoRefreshEnabled: true });
+    } catch (error) { console.warn('App Check เริ่มไม่ได้ — AI อ่านฉลากอาจใช้ไม่ได้ (ส่วนอื่นยังใช้ได้)', error); }
+  }
   const auth = authMod.getAuth(app);
   if (emulator) authMod.connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
   await auth.authStateReady();
@@ -30,5 +40,5 @@ export async function connectFirebase({ sdkBase = `https://www.gstatic.com/fireb
   // เก็บสำเนาในเครื่องแบบถาวร: ออฟไลน์กด "กินแล้ว" ได้และส่งเมื่อกลับออนไลน์ (FR-04 ข้อ 7)
   const db = fsMod.initializeFirestore(app, { localCache: fsMod.persistentLocalCache({ tabManager: fsMod.persistentSingleTabManager() }) });
   if (emulator) fsMod.connectFirestoreEmulator(db, '127.0.0.1', 8080);
-  return { app, auth, db, fs: fsMod, uid: auth.currentUser.uid, sdk: { app: appMod, auth: authMod, firestore: fsMod }, sdkBase };
+  return { app, appCheck, auth, db, fs: fsMod, uid: auth.currentUser.uid, sdk: { app: appMod, auth: authMod, firestore: fsMod }, sdkBase };
 }
