@@ -13,8 +13,8 @@
 | M2 Design | ✅ ร่างครบและสัญญาโมดูลตกลงแล้ว (DL-18–DL-20, DL-26; รวม Demo mode, ADR-8) — [`architecture.md`](docs/02-design/architecture.md), [`design-system.md`](docs/02-design/design-system.md), [`firestore-rules-draft.md`](docs/02-design/firestore-rules-draft.md) · เรื่องที่ยังเปิด: §11 |
 | Traceability (Golden Thread) | 🟡 ครบ 43 AC — ✅ ใน Demo mode เป็นส่วนใหญ่ · ส่วนที่ค้าง (Rules บน Firestore, มือถือจริง, AI จริง) ระบุไว้ในแต่ละแถว — [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) |
 | ต้นแบบ M3 (`docs/02-design/prototypes/`) | ✅ ครบ FR-01–05 + ทางที่ผิด + โหมดสาธิต 2 จอ — เปิดได้โดยไม่ต้องมี server — [`2569-11-04/index.html`](docs/02-design/prototypes/2569-11-04/index.html) · [`NOTES.md`](docs/02-design/prototypes/2569-11-04/NOTES.md) · ยังไม่ได้ทดสอบบนมือถือจริง (MT-08, MT-16) |
-| ระบบ (เว็บแอป) `public/` | 🟡 **Demo mode ของระบบจริงเสร็จ**: หน้าจอ FR-01–05 (`public/js/features/`) ต่อกับ `logic/` + `core/` (`localRepo`, นาฬิกาจำลอง) · เปิด [`public/demo.html`](public/demo.html) ผ่าน static server · **ยังไม่ทำ**: Firebase จริง (`firestoreRepo`, Security Rules), หน้าแยกมือถือ 2 เครื่อง (`senior.html`/`caregiver.html`), AI อ่านฉลากจริง (`aiLabel.js`, `redact.js`) — เลื่อนไปรอบถัดไป (DL-24) |
-| เทสต์อัตโนมัติ | ✅ 328 เทสต์ผ่าน (รัน `npm test`) — `logic/` `core/` หน้าจอทุก FR ระดับ AC และโครงสร้างหน้าเว็บ · ยังไม่มี: Security Rules บน Emulator, เทสต์บนมือถือจริง |
+| ระบบ (เว็บแอป) `public/` | 🟡 **Demo mode** (`demo.html`) เสร็จ · **ใช้งานจริงบน Firebase** (`senior.html` / `caregiver.html`) เขียนเสร็จ: จับคู่ด้วย QR จริง · Firestore + Security Rules · AI อ่านฉลากด้วย Gemini หลังปิดชื่อ/HN — ทดสอบกับ Firebase Emulator และ 2 เบราว์เซอร์แล้ว · **ยังไม่ได้ทดสอบบนมือถือจริงกับโปรเจกต์จริง และยังไม่เคยเรียก Gemini จริง** · ตั้งค่า: [`docs/FIREBASE-SETUP.md`](docs/FIREBASE-SETUP.md) |
+| เทสต์อัตโนมัติ | ✅ `npm test` 345 เทสต์ผ่าน (logic, core, หน้าจอทุก FR ระดับ AC, QR, AI อ่านฉลากด้วยของปลอม, โครงสร้างหน้าเว็บ) · ✅ `emulator-tests/` 31 เทสต์ผ่าน (Security Rules R-1…R-14 + `firestoreRepo` กับ Firebase Emulator — CI งาน `emulator`) · ยังไม่มี: ผลบนมือถือจริง |
 | แผนงาน (Week 10) | 🟡 sprint 0–3, ความเสี่ยง, บทบาทหมุนเวียน, retro — [`docs/PROJECT-PLAN.md`](docs/PROJECT-PLAN.md) |
 | Final Report / AI-Use Statement / Demo | 🟡 Final Report และ AI-Use Statement มีเนื้อหาแล้ว (ช่อง [ ] = ยังไม่มีผลจริง) · สไลด์ยังเป็นโครงเรื่อง — [`docs/05-report/`](docs/05-report/), [`docs/06-presentation/`](docs/06-presentation/) |
 
@@ -129,7 +129,10 @@ python -m http.server 8000      # หรือ: npx serve public · หรือ
 แล้วเปิด `http://localhost:8000/demo.html` — จอผู้สูงอายุกับจอผู้ดูแลคู่กัน ใช้ข้อมูลตัวอย่างและนาฬิกาจำลอง (ละเอียดถึงมิลลิวินาที) · เลือก "สถานการณ์" ที่แถบด้านบน หรือเปิดตรง ๆ เช่น `demo.html?preset=reminding` (สถานการณ์: `fresh`, `sample`, `reminding`, `round2`, `notconfirmed`, `late`, `offline`, `syncdelay`)
 เดินครบ FR-01–05 ทั้งทางปกติและทางผิด · ลิงก์ทดลองใช้บนเว็บ: [ ยังไม่มี — ใส่หลัง deploy ]
 
-**ยังไม่ทำ (เลื่อนไปรอบถัดไป — DL-24):** หน้าแยกมือถือ 2 เครื่อง (`senior.html` / `caregiver.html`, 1 เครื่อง = 1 บทบาท, ADR-9) ที่ใช้ Firebase · อ่านฉลากด้วย Gemini จริง — ตอนนี้ "AI" ในโหมดสาธิตเป็นตัวจำลองจากฉลากสมมติ (`core/demoData.js`) ไม่มีการส่งรูปหรือข้อมูลใด ๆ ออกจากเครื่อง
+### ④ ใช้งานจริงบนมือถือ 2 เครื่อง (Firebase)
+- เครื่องผู้สูงอายุเปิด `senior.html` → กดยินยอม → แสดง QR + รหัส 6 หลัก · เครื่องผู้ดูแลสแกน QR ด้วยแอปกล้อง (เปิด `caregiver.html` พร้อมเติมรหัส) → เชื่อมต่อ
+- ลิงก์บนเว็บ: `https://yaroo393-png.github.io/MedMind/` (หลังเปิด GitHub Pages) · ต้องวาง Security Rules ในคอนโซลก่อน — ดู [`docs/FIREBASE-SETUP.md`](docs/FIREBASE-SETUP.md)
+- **ฉลากที่ใช้ต้องปิดชื่อ HN QR และบาร์โค้ดก่อนกด "ส่งให้ AI" ทุกครั้ง** (BR-19) · เตือนได้เฉพาะตอนเปิดหน้า MedMind ไว้
 
 ## ⚙️ ข้อจำกัดที่สำคัญ (จาก SRS §2.2)
 - การกดยืนยันเป็นการรายงานด้วยตนเอง ไม่ใช่หลักฐานว่ากินยาจริง · ข้อความถึงผู้ดูแลใช้ "Medicine not yet confirmed" (ไม่ใช้ "not taken")

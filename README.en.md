@@ -14,8 +14,8 @@
 | M2 Design | ✅ Complete draft; module contracts agreed (DL-18–DL-20, DL-26; includes Demo mode, ADR-8, ADR-9) — [`architecture.md`](docs/02-design/architecture.md), [`design-system.md`](docs/02-design/design-system.md), [`firestore-rules-draft.md`](docs/02-design/firestore-rules-draft.md) · open items: §11 |
 | Traceability (Golden Thread) | 🟡 All 43 AC covered — mostly ✅ in Demo mode · what is left (Rules on Firestore, real phones, real AI) is stated in each row — [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) |
 | M3 prototype (`docs/02-design/prototypes/`) | ✅ Covers FR-01–05 including wrong paths and a two-screen demo — opens without a server — [`2569-11-04/index.html`](docs/02-design/prototypes/2569-11-04/index.html) · [`NOTES.md`](docs/02-design/prototypes/2569-11-04/NOTES.md) · not yet tested on real phones (MT-08, MT-16) |
-| System (web app) `public/` | 🟡 **Demo mode of the real system is done**: FR-01–05 screens (`public/js/features/`) wired to `logic/` + `core/` (`localRepo`, simulated clock) · open [`public/demo.html`](public/demo.html) through a static server · **not built**: real Firebase (`firestoreRepo`, Security Rules), the two-phone pages (`senior.html`/`caregiver.html`), real AI label reading (`aiLabel.js`, `redact.js`) — postponed to the next increment (DL-24) |
-| Automated tests | ✅ 328 tests pass (run `npm test`) — `logic/`, `core/`, every FR screen at acceptance-criterion level, and the structure of the web pages · missing: Security Rules in the Emulator, tests on real phones |
+| System (web app) `public/` | 🟡 **Demo mode** (`demo.html`) is done · **real use on Firebase** (`senior.html` / `caregiver.html`) is written: pairing with a real QR code · Firestore + Security Rules · Gemini label reading after the name/HN are covered — tested with the Firebase Emulator in two browsers · **not yet tested on real phones with the real project, and Gemini has not been called for real** · setup: [`docs/FIREBASE-SETUP.md`](docs/FIREBASE-SETUP.md) |
+| Automated tests | ✅ `npm test` 345 tests pass (logic, core, every FR screen per acceptance criterion, QR, label reading with a fake AI, page structure) · ✅ `emulator-tests/` 31 tests pass (Security Rules R-1…R-14 + `firestoreRepo` on the Firebase Emulator — CI job `emulator`) · missing: results on real phones |
 | Project plan (Week 10) | 🟡 Sprints 0–3, risks, rotating roles, retrospective — [`docs/PROJECT-PLAN.md`](docs/PROJECT-PLAN.md) |
 | Final Report / AI-Use Statement / Demo | 🟡 Final Report and AI-Use Statement have content (a [ ] = no real result yet) · slides are still an outline — [`docs/05-report/`](docs/05-report/), [`docs/06-presentation/`](docs/06-presentation/) |
 
@@ -122,7 +122,10 @@ python -m http.server 8000      # or: npx serve public · or Live Server in VS C
 Then open `http://localhost:8000/demo.html` — the older adult's and the caregiver's screens side by side, with sample data and a simulated clock (down to the millisecond) · choose a "scenario" in the top bar or open one directly, e.g. `demo.html?preset=reminding` (scenarios: `fresh`, `sample`, `reminding`, `round2`, `notconfirmed`, `late`, `offline`, `syncdelay`)
 It walks through FR-01–05, both the normal and the wrong paths · live demo on the web: [ not yet — added after deployment ]
 
-**Not built (postponed to the next increment — DL-24):** the two-phone pages (`senior.html` / `caregiver.html`, one device = one role, ADR-9) that use Firebase · real label reading with Gemini — the "AI" in the demo is a simulation from made-up labels (`core/demoData.js`); no photo or data leaves the device.
+### ④ Real use on two phones (Firebase)
+- The older adult's phone opens `senior.html` → consents → shows a QR code + 6-digit code · the caregiver scans the QR with the camera app (opens `caregiver.html` with the code filled in) → connect
+- Web link: `https://yaroo393-png.github.io/MedMind/` (after GitHub Pages is on) · the Security Rules must be published in the console first — see [`docs/FIREBASE-SETUP.md`](docs/FIREBASE-SETUP.md)
+- **Cover the name, HN, QR and barcode on every label before pressing "Send to AI"** (BR-19) · reminders work only while MedMind is open
 
 ## ⚙️ Important limits (from SRS §2.2)
 - Confirming is self-reported, not proof that the medicine was taken · the caregiver message is "Medicine not yet confirmed" (never "not taken").

@@ -152,3 +152,8 @@ vite.config.ts.timestamp-*
 .firebase/
 # รูปฉลากยาจริง ห้ามขึ้น repo (PDPA)
 test-labels/
+# เทสต์ Emulator: ติดตั้งแยกในโฟลเดอร์ของมันเอง
+emulator-tests/package-lock.json
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
