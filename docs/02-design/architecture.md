@@ -70,7 +70,14 @@ flowchart TB
 | `logic/confirm.js` | Logic | FR-04, BR-10/11/12/15/20 | สร้างบันทึกยืนยัน (`doseId`, `scheduledTime`, `confirmedAt`), `confirmStatus(scheduledTime, confirmedAt)` → `taken` / `taken_late` (กฎ T+15 ใน §5.1), ตรวจว่ายืนยันได้ไหม | FR-04 |
 | `logic/status.js` | Logic | FR-05, BR-13/14/18/20 | สถานะรายวัน, `alertFor(...)` — แจ้งเตือนที่ต้องแสดง (ครั้งเดียวต่อมื้อ, ไม่แจ้งผิดจากการยืนยันที่มาถึงช้า — §7.4), ข้อความถึงผู้ดูแล | FR-05 |
 | `logic/weeklySummary.js` | Logic | FR-09 (Could) | รวมสถานะ 7 วัน → ข้อมูลสำหรับ prompt (ไม่มีชื่อ/HN/ยา) | ภายหลัง |
-| `features/*.js` | UI | ตามชื่อ | ต่อหน้าจอเข้ากับ logic + data | เจ้าของ FR นั้น |
+| `features/pairing.js` | UI | FR-01 | S-01, S-04, C-01, C-09 — จับคู่ ยินยอม ยกเลิกจับคู่ 2 ขั้น (**ทำแล้ว 7 พ.ย.**) | Takkan |
+| `features/medicineSetup.js` | UI | FR-02 | C-02…C-06 — เวลามื้อ, ถ่าย/ปิดชื่อ, ร่างจาก AI (ตอนนี้จำลองจาก `demoData`), รายการยา (**ทำแล้ว 7 พ.ย.**) | Yar |
+| `features/reminder.js` | UI | FR-03 | S-03 — หน้าเตือน (**ทำแล้ว 7 พ.ย.**) | Rossatorn |
+| `features/home.js` | UI | FR-04 | S-02 + การกด `confirm` / `notyet` (**ทำแล้ว 7 พ.ย.**) | Nichanan |
+| `features/caregiverStatus.js`, `features/alerts.js` | UI | FR-05 | C-07, C-08 + กล่องแจ้งเตือน (`collectAlerts` จด `markAlertSeen`) (**ทำแล้ว 7 พ.ย.**) | Suchitra |
+| `features/ui.js`, `features/format.js`, `features/model.js` | UI | ทุก FR | ชิ้นส่วน HTML กลาง (`esc`, ปุ่ม, การ์ดมื้อ) · ข้อความ/รูปแบบเวลา · `loadSnapshot` อ่าน repo แล้วคำนวณด้วย `logic/` (**ทำแล้ว 7 พ.ย.**) | Rossatorn / Nichanan |
+| `features/phone.js`, `features/demoShell.js`, `features/demoControls.js` | UI | ADR-8, ADR-9 | จอมือถือ 1 เครื่อง (ไฟล์เดียวที่แตะ DOM ร่วมกับ `demoShell.js`) · เปลือก `demo.html` · สถานการณ์/นาฬิกาจำลอง (**ทำแล้ว 7 พ.ย.**) | Nichanan |
+| `core/offlineQueue.js` | Data | FR-04 AC7, 9 | ห่อ repo ของเครื่องผู้สูงอายุใน Demo mode: ออฟไลน์ = จอเปลี่ยนทันที ส่งภายหลังด้วย "เวลาที่กด" เดิม (BR-20) · ของจริงใช้ Firestore offline persistence (**ทำแล้ว 7 พ.ย.**) | Nichanan |
 
 ### 5.0 หน้าเว็บ (entry points) — 1 เครื่อง = 1 บทบาท (ADR-9)
 | ไฟล์ | ใครเปิด | ทำอะไร | ข้อมูล |
@@ -81,6 +88,8 @@ flowchart TB
 | `public/demo.html` | ผู้ตรวจ / นำเสนอบนคอม | จอผู้สูงอายุ + ผู้ดูแลคู่กัน + ปุ่มเลื่อนนาฬิกา (ADR-8) | `localRepo` + ข้อมูลตัวอย่าง |
 
 ทั้ง `senior.html`, `caregiver.html` และ `demo.html` ใช้ `logic/` และ `features/` **ชุดเดียวกัน** ต่างกันแค่ repo ที่ส่งเข้าไปและหน้าจอที่แสดง
+
+**สถานะ 7 พ.ย. 2569:** ทำแล้ว `public/demo.html` (Demo mode เดินครบ FR-01–05) และ `public/index.html` (หน้าแนะนำ + ลิงก์ไป demo — ยังไม่ใช่หน้าเลือกบทบาท S-00 ที่จำบทบาทด้วย `localStorage`) · **ยังไม่ทำ** `senior.html`, `caregiver.html` เพราะต้องมี `firestoreRepo` (DL-24)
 
 **ทดสอบข้ามเครื่องบนมือถือจริง:** deploy ขึ้น Firebase Hosting preview channel (ได้ลิงก์ HTTPS ชั่วคราว) → มือถือ A เปิด `index.html` เลือก "ผู้สูงอายุ" → มือถือ B เลือก "ผู้ดูแล" แล้วสแกน QR บนจอ A ด้วยแอปกล้อง → จับคู่ → B ถ่ายฉลากจริง (ปิดชื่อ/HN ก่อนส่ง) → A ได้รับเตือนตามเวลาที่บันทึก · การเปิดผ่าน IP ในวง Wi-Fi (`http://192.168.x.x`) ไม่ใช่ HTTPS กล้อง/Firebase อาจใช้ไม่ได้
 
@@ -249,6 +258,22 @@ flowchart TB
 | `cancelPairing()` | → `void` | ลบคู่ ยา ประวัติ และรหัสทั้งหมด (BR-17, ข้อ 6) แล้วสร้างรหัสใหม่ให้ผู้สูงอายุ · การยืนยัน 2 ขั้นเป็นหน้าที่ของหน้าจอ |
 
 **ทดสอบ:** `tests/pairing.test.js` (logic ล้วน) ครอบข้อ 2–5 พร้อมขอบเวลา — รหัสอายุ 10:00.000 ยังใช้ได้ · 10:00.001 หมดอายุ · ผู้ดูแลคนที่สองใช้รหัสที่หมดอายุแล้วได้ `already_has_caregiver` · `makeInvite` ใช้ตัวสุ่มที่ส่งเข้า (ไม่เรียก `Math.random`) · และ `tests/repo.test.js` ครอบ `cancelPairing` (เหลือเอกสาร 0 — ข้อ 6, R-8) · ส่วนที่ต้องดู Firestore Rules จริง (R-1…R-5, R-8) ทดสอบด้วย Emulator
+
+### 5.6 รูปแบบโค้ดหน้าจอ `features/` (**ตกลงแล้ว — decision-log DL-26**)
+```js
+// ทุกไฟล์ features/<ชื่อ>.js ส่งออก 2 อย่าง
+export const screens = {
+  'ชื่อ-route'(model) { return { title, covers: 'FR-xx, BR-xx', body, overlay?, tabs? }; }, // ฟังก์ชันล้วน คืนสตริง HTML — ไม่แตะ DOM
+};
+export const actions = {
+  async 'ชื่อ-การกด'(env, data) { /* เรียก env.repo / env.ui เท่านั้น */ },                   // data = data-* ของปุ่ม
+};
+// model = { role, snap, ui, pref, sound, inbox, flags }   snap = loadSnapshot(...) ใน features/model.js
+// env   = { role, repo, clock, ids, flags, ui, snap, inbox, toast, go, later, cancelLater, setFlag, setInbox, unlockSound, onUnpaired }
+```
+- `phone.js` รวม `screens`/`actions` ของทุก FR แล้ววาดลง DOM · ปุ่มทุกปุ่มใช้ `data-act` และต้องมีตัวจัดการ (`tests/publicPages.test.js` ตรวจ)
+- ทุกหน้าจอมี `covers` ที่ชี้ FR (กติกา M3) · ค่าที่มาจากผู้ใช้/AI ผ่าน `esc()` (RULES §3) · `logic/` ไม่ถูกเขียนซ้ำในหน้าจอ
+- ใช้กับ `senior.html` / `caregiver.html` ได้เหมือน `demo.html` ต่างแค่ repo ที่ส่งเข้า (`firestoreRepo`) — ยังไม่สร้าง (DL-24)
 
 ## 6. โมเดลข้อมูล
 

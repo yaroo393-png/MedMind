@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MedMind — ระบบเตือนกินยา</title>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div class="page">
+  <header class="pagebar">
+    <h1>MedMind — ระบบเตือนกินยาและแจ้งสถานะให้ผู้ดูแลผู้สูงอายุ</h1>
+    <p class="covers">Covers: FR-01–FR-05</p>
+    <p class="lead">เตือนทุกมื้อยา และบอกผู้ดูแลว่าผู้สูงอายุยืนยันแล้วหรือยัง — ไม่ต้องสมัคร ไม่ต้องมีรหัสผ่าน</p>
+  </header>
+  <main class="card">
+    <h2 class="h-card">เปิดดูระบบ</h2>
+    <p><a class="btn btn-primary" href="demo.html">เปิดโหมดสาธิต (ผู้สูงอายุ + ผู้ดูแล ในเบราว์เซอร์เดียว)</a></p>
+    <p class="hint">โหมดสาธิตใช้ข้อมูลตัวอย่างและนาฬิกาจำลอง ไม่ส่งข้อมูลออกจากเครื่อง · เดินได้ครบ 5 ฟีเจอร์หลัก ทั้งทางปกติและทางที่ผิด</p>
+    <h2 class="h-card">สถานะตามจริง</h2>
+    <ul class="plain">
+      <li>เครื่องผู้สูงอายุและผู้ดูแลแยกกันบนมือถือ 2 เครื่อง (ใช้ Firebase) — <b>ยังไม่ได้ทำ</b> (เลื่อนไปรอบถัดไป)</li>
+      <li>AI อ่านฉลากจริง (Gemini) — <b>ยังไม่ได้ทำ</b> ตอนนี้ใช้ฉลากสมมติและ "AI จำลอง" ในโหมดสาธิต</li>
+    </ul>
+    <p class="disclaimer">ไม่ใช่คำแนะนำทางการแพทย์ · การกดยืนยันเป็นการรายงานด้วยตนเอง</p>
+  </main>
+</div>
+</body>
+</html>

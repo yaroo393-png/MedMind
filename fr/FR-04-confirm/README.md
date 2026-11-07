@@ -21,16 +21,16 @@ Definition: the older adult confirms on the reminder screen (FR-03) or on their 
 
 | # | AC | เทสต์ | สถานะ | PR |
 |---|---|---|---|---|
-| 1 | Given the 08:00 meal reminder is showing, when the older adult taps “Taken” at 08:03, then the status becomes “Taken”, 08:03 is recorded, and reminders for that meal stop. | **TC-04.1** — confirm.test | 🟡 logic ผ่าน — รอหน้าจอ/อุปกรณ์ |  |
-| 2 | Wrong path. Given the meal is already confirmed, when “Taken” is tapped again, then no duplicate record is created. | **TC-04.2** — confirm.test (ไม่ซ้ำ NFR-07) · R-7 | 🟡 logic ผ่าน — รอหน้าจอ/อุปกรณ์ |  |
-| 3 | Given the first reminder at 08:00, when the older adult taps “Not yet”, then they are reminded again at 08:05. | **TC-04.3** — mealTimeline.test (ยังไม่กิน → รอบถัดไป) | 🟡 logic ผ่าน — รอหน้าจอ/อุปกรณ์ |  |
-| 4 | Wrong path. Given the last reminder at 08:10, when the older adult taps “Not yet”, then the caregiver is alerted immediately (without waiting for 08:15). | **TC-04.4** — status.test (แจ้งทันที BR-11) | 🟡 logic ผ่าน — รอหน้าจอ/อุปกรณ์ |  |
-| 5 | Given the meal was not confirmed by 08:15, when the older adult taps “Taken” on the home screen at 08:40, then the status becomes “Taken (late confirmation)” with 08:40. | **TC-04.5** — confirm.test (late confirmation) — A5-T03 | 🟡 logic ผ่าน — รอหน้าจอ/อุปกรณ์ |  |
-| 6 | Wrong path. Given the next meal's reminder time (12:00) has passed, when the older adult tries to confirm the 08:00 meal, then it cannot be confirmed and the status stays “Not yet confirmed”. | **TC-04.6** — confirm.test (พ้นหน้าต่าง) | 🟡 logic ผ่าน — รอหน้าจอ/อุปกรณ์ |  |
-| 7 | Wrong path. Given the older adult's phone is offline, when they tap “Taken” at 08:03, then their screen shows “Taken” at once, and the confirmation reaches the caregiver with 08:03 as its time within 10 seconds of the connection returning. | **TC-04.7** — MT-05 (ออฟไลน์ → ส่งเมื่อกลับมา) | ⬜ ยังไม่ทำ |  |
-| 8 | Wrong path. Given the first reminder at 08:00, when the older adult taps “Taken” at exactly 08:15 (T+15), then the status becomes “Taken” (not late) with 08:15. | **TC-04.8** — confirm.test + mealTimeline.test — A5-T02 (กดที่ T+15 พอดี → taken) | 🟡 logic ผ่าน — รอหน้าจอ/อุปกรณ์ |  |
-| 9 | Wrong path. Given the older adult's phone is offline, when they tap “Taken” at 08:14 and the confirmation only reaches the shared data at 08:20, then the status is “Taken” with 08:14 (not “Taken (late confirmation)”), because it is decided by the time of the tap and not by the time the data arrived, and only one record is kept even if the confirmation is sent more than once. | **TC-04.9** — confirm.test — A5-T05, A5-T06 (ออฟไลน์ 08:14 ซิงก์ 08:20 → taken เวลา 08:14; ส่งซ้ำ → 1 รายการ) · R-7, R-9 | 🟡 logic ผ่าน — รอหน้าจอ/อุปกรณ์ |  |
-| 10 | Wrong path. Given the 08:00 meal is not confirmed and the next meal's reminder time is 12:00, when the older adult taps “Taken” at exactly 12:00:00, then the status becomes “Taken (late confirmation)” with 12:00; a tap one millisecond later (12:00:00.001) cannot confirm it (criterion 6). | **TC-04.10** — confirm.test + mealTimeline.test — C-T01, C-T02 (กดที่ 12:00:00 พอดีได้ · 12:00:00.001 ไม่ได้) | 🟡 logic ผ่าน — รอหน้าจอ/อุปกรณ์ |  |
+| 1 | Given the 08:00 meal reminder is showing, when the older adult taps “Taken” at 08:03, then the status becomes “Taken”, 08:03 is recorded, and reminders for that meal stop. | **TC-04.1** — confirm.test | ✅ Demo mode |   |
+| 2 | Wrong path. Given the meal is already confirmed, when “Taken” is tapped again, then no duplicate record is created. | **TC-04.2** — confirm.test (ไม่ซ้ำ NFR-07) · R-7 | ✅ Demo mode (ค้าง: Rules) |   |
+| 3 | Given the first reminder at 08:00, when the older adult taps “Not yet”, then they are reminded again at 08:05. | **TC-04.3** — mealTimeline.test (ยังไม่กิน → รอบถัดไป) | ✅ Demo mode |   |
+| 4 | Wrong path. Given the last reminder at 08:10, when the older adult taps “Not yet”, then the caregiver is alerted immediately (without waiting for 08:15). | **TC-04.4** — status.test (แจ้งทันที BR-11) | ✅ Demo mode |   |
+| 5 | Given the meal was not confirmed by 08:15, when the older adult taps “Taken” on the home screen at 08:40, then the status becomes “Taken (late confirmation)” with 08:40. | **TC-04.5** — confirm.test (late confirmation) — A5-T03 | ✅ Demo mode |   |
+| 6 | Wrong path. Given the next meal's reminder time (12:00) has passed, when the older adult tries to confirm the 08:00 meal, then it cannot be confirmed and the status stays “Not yet confirmed”. | **TC-04.6** — confirm.test (พ้นหน้าต่าง) | ✅ Demo mode |   |
+| 7 | Wrong path. Given the older adult's phone is offline, when they tap “Taken” at 08:03, then their screen shows “Taken” at once, and the confirmation reaches the caregiver with 08:03 as its time within 10 seconds of the connection returning. | **TC-04.7** — MT-05 (ออฟไลน์ → ส่งเมื่อกลับมา) | 🟡 บางส่วน — ดู TRACEABILITY |   |
+| 8 | Wrong path. Given the first reminder at 08:00, when the older adult taps “Taken” at exactly 08:15 (T+15), then the status becomes “Taken” (not late) with 08:15. | **TC-04.8** — confirm.test + mealTimeline.test — A5-T02 (กดที่ T+15 พอดี → taken) | ✅ Demo mode |   |
+| 9 | Wrong path. Given the older adult's phone is offline, when they tap “Taken” at 08:14 and the confirmation only reaches the shared data at 08:20, then the status is “Taken” with 08:14 (not “Taken (late confirmation)”), because it is decided by the time of the tap and not by the time the data arrived, and only one record is kept even if the confirmation is sent more than once. | **TC-04.9** — confirm.test — A5-T05, A5-T06 (ออฟไลน์ 08:14 ซิงก์ 08:20 → taken เวลา 08:14; ส่งซ้ำ → 1 รายการ) · R-7, R-9 | ✅ Demo mode (ค้าง: Rules) |   |
+| 10 | Wrong path. Given the 08:00 meal is not confirmed and the next meal's reminder time is 12:00, when the older adult taps “Taken” at exactly 12:00:00, then the status becomes “Taken (late confirmation)” with 12:00; a tap one millisecond later (12:00:00.001) cannot confirm it (criterion 6). | **TC-04.10** — confirm.test + mealTimeline.test — C-T01, C-T02 (กดที่ 12:00:00 พอดีได้ · 12:00:00.001 ไม่ได้) | ✅ Demo mode |   |
 
 ## ไฟล์ที่ต้องเขียน
 
@@ -54,9 +54,9 @@ Definition: the older adult confirms on the reminder screen (FR-03) or on their 
 
 - [x] Issue ถูกสร้างและ assign (#15)
 - [x] ตรรกะ + เทสต์ผ่าน (`npm test`) — `logic/confirm.js` + `tests/confirm.test.js` (5 พ.ย. 2569: TC-04.1, 04.2, 04.5, 04.8, 04.9, AC10 · A5-T01, T02, T03, T06)
-- [ ] หน้าจอเชื่อมกับ logic
+- [x] หน้าจอเชื่อมกับ logic — `features/home.js`, `core/offlineQueue.js` + `tests/reminderHomeView.test.js`, `tests/offlineQueue.test.js` (7) เปิดได้ที่ `public/demo.html` (7 พ.ย. 2569)
 - [ ] ทดสอบบนมือถือจริง (MT ที่เกี่ยวข้อง)
-- [x] `docs/TRACEABILITY.md` อัปเดตแล้ว (ส่วน logic — หน้าจอยังไม่ทำ)
+- [x] `docs/TRACEABILITY.md` อัปเดตแล้ว (ส่วน logic + หน้าจอใน public/ — MT บนมือถือยังไม่ทำ)
 - [ ] บันทึกการใช้ AI แล้ว
 
 **ลิงก์ PR / Issue:** #15 `logic/confirm.js` (PR #34) · #10 E-3 `core/demoData.js` + `tests/demoData.test.js` (6 พ.ย. 2569) — ข้อมูลตัวอย่างชุดเดียวของทีมสำหรับเทสต์และ Demo mode

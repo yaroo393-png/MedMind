@@ -7,7 +7,7 @@
 | เครื่องมือ | ใช้ทำอะไร | ใช้โดย |
 |---|---|---|
 | Claude (แชท) | ร่าง/ตรวจ Charter และ SRS, ออกแบบ, ตรวจคำแนะนำเทคโนโลยี, วาดแผนภาพ, ร่างโครง repo และเอกสาร | Yar (PM) — ถามและตรวจทุกครั้ง · สมาชิกอื่นอ่านผลลัพธ์และยืนยันมติ |
-| Claude Code | เขียนโค้ดและเทสต์ของ `public/js/logic/` (confirm, time, mealTimeline, schedule, status, labelDraft, pairing) และ `public/js/core/` (clock, repo, demoData), ต้นแบบ M3 ทั้งชุด (`docs/02-design/prototypes/2569-11-04/`), ร่างข้อเสนอสัญญา §5.3–§5.5 ใน architecture, แก้เอกสาร, แพ็กไฟล์ให้แต่ละคน commit | Yar (PM) สั่งงาน · **ทุกคนตรวจและยืนยันโค้ดส่วนของตัวเอง** (Takkan, Yar, Suchitra, Nichanan, Rossatorn — บันทึกใน log) — แต่ละคน commit ไฟล์ของตัวเองด้วยบัญชีตัวเอง |
+| Claude Code | เขียนโค้ดและเทสต์ของ `public/js/logic/` (confirm, time, mealTimeline, schedule, status, labelDraft, pairing) และ `public/js/core/` (clock, repo, demoData, offlineQueue), **หน้าจอจริง `public/js/features/` + `public/demo.html` + `public/index.html` (7 พ.ย.)**, ต้นแบบ M3 ทั้งชุด (`docs/02-design/prototypes/2569-11-04/`), ร่างข้อเสนอสัญญา §5.3–§5.5 ใน architecture, แก้เอกสาร, แพ็กไฟล์ให้แต่ละคน commit | Yar (PM) สั่งงาน · **ทุกคนตรวจและยืนยันโค้ดส่วนของตัวเอง** (Takkan, Yar, Suchitra, Nichanan, Rossatorn — บันทึกใน log) — แต่ละคน commit ไฟล์ของตัวเองด้วยบัญชีตัวเอง |
 | Figma AI | สร้างไอคอนชุด `medmind-icons` (หน้าหลัก, แจ้งเตือน, ตั้งค่า, ปรับขนาดตัวอักษร, ธีม) จากต้นแบบมาสคอร์ตการ์ตูนที่ Rossatorn วาดเอง | Suchitra ใช้ Figma AI สร้างไอคอนชุดจากมาสคอร์ตการ์ตูนที่ **Rossatorn วาดด้วยมือ** |
 | Gemini ผ่าน Firebase AI Logic | **ในตัวระบบ (ตามแผน):** อ่านฉลากที่ผู้ดูแลปิดชื่อ/HN แล้ว (FR-02) · สรุปรายสัปดาห์ (FR-09, Could) | **ยังไม่ได้ทำ** — เลื่อนไปรอบถัดไป (DL-24) ตอนนี้ฟีเจอร์ FR-02 ทำงานกับร่างฉลากตัวอย่าง (`core/demoData.js`) ไม่มีการเรียก AI จริง |
 
@@ -19,6 +19,7 @@
 5. **4 พ.ย.** ต้นแบบ M3 (หน้าจอ FR-01–05 ทางถูก/ทางผิด 43 AC, Demo 2 จอ, นาฬิกาจำลองถึงมิลลิวินาที), ปรับสี/ฟอนต์ตามงานออกแบบของ Rossatorn (ออกแบบเอง ไม่ใช้ AI), แก้ accessibility 4 ข้อ, ตั้งค่าการแสดงผล (ขนาดตัวอักษร/โหมดมืด) และไอคอน (Rossatorn วาดมาสคอร์ตการ์ตูนเอง + ใช้ Figma AI สร้างไอคอนชุด)
 6. **5 พ.ย.** เขียน `logic/` ของ FR-03, FR-04, FR-02 (`schedule`) และเทสต์ — เขียนเทสต์ก่อนโค้ดสำหรับ `schedule` และ `status`
 7. **6 พ.ย.** `logic/status.js`, `core/clock.js`, `core/repo.js` (`localRepo`), `core/demoData.js`, `logic/labelDraft.js`, `logic/pairing.js` + เมธอดจับคู่ใน repo, ข้อเสนอสัญญา `labelDraft`/`pairing` และบันทึกมติ DL-19–DL-25 (ทีมตอบทุกข้อที่ AI ถาม), แก้ร่าง Rules ของรหัสเชิญ, แก้เอกสารที่ไม่ตรง (Issue #17), แก้ README ให้ชี้ต้นแบบถูกที่
+8. **7 พ.ย.** ตรวจรีโปทั้งหมดและแก้สถานะ AC/backlog/แผนที่ล้าสมัย · เขียนแผนส่งต่องาน (`docs/HANDOFF.md`) · เขียนหน้าจอจริงของ FR-01–05 ใน `public/js/features/` + `public/demo.html` + `core/offlineQueue.js` และเทสต์ 109 ข้อ (หน้าจอระดับ AC, คิวออฟไลน์, กล่องแจ้งเตือน, โครงสร้างหน้าเว็บ) — เขียนเทสต์พร้อมโค้ด · ฉีดบั๊กเทียม 16 จุดในโค้ดหน้าจอ จับได้ครบ (หลุด 2 จุดตอนแรก → เพิ่มเทสต์จนจับได้) · เปิดดูใน Chromium จริงและเดินทุก FR ผ่านสคริปต์ · **ยังไม่มีสมาชิกคนใดตรวจโค้ดชุดนี้** (ต้องอ่านและอธิบายได้ก่อนสอบ)
 
 **สัดส่วนโดยประมาณ:** โค้ดใน `public/js/` และต้นแบบร่างด้วย AI เกือบทั้งหมด แล้วให้เจ้าของแต่ละไฟล์อ่าน ตรวจ และ commit ด้วยบัญชีตัวเอง — **ไม่ใช่โค้ดที่ทีมเขียนเองทั้งหมด** ทีมเป็นผู้ตัดสินใจ requirement กฎธุรกิจ สัญญาระหว่างโมดูล และขอบเขต (ดูข้อ 3)
 
@@ -39,7 +40,7 @@
 
 **ยังไม่ได้ทำ (บอกตรง ๆ)**
 - ยังไม่ได้ทดสอบบนมือถือจริง (MT-07, MT-08, MT-16) และยังไม่ได้ทดสอบกับผู้สูงอายุ — ช่อง "ผล" ใน `TEST-CHECKLIST.md` ว่างอยู่ [ กรอกเมื่อทำ ]
-- ยังไม่ได้ทดสอบ Security Rules ใน Emulator (R-1…R-14 เป็นร่างในเอกสาร) · ยังไม่มี Firebase จริง · ยังไม่มีการเรียก AI อ่านฉลากจริง
+- ยังไม่ได้ทดสอบ Security Rules ใน Emulator (R-1…R-14 เป็นร่างในเอกสาร) · ยังไม่มี Firebase จริง (ตอนนี้หน้าจอจริงทำงานใน Demo mode กับ `localRepo` เท่านั้น) · ยังไม่มีการเรียก AI อ่านฉลากจริง
 - ปุ่มลัด "ปิดแถบบน" ของ DL-21 ยังไม่ได้ทำ/ทดสอบกับฉลากตัวอย่าง 10 ใบ
 
 ## 4. อะไรได้ผล / ไม่ได้ผล
@@ -66,10 +67,10 @@
 
 | คน | ไฟล์ที่ AI ร่างให้และต้องอธิบายได้ | ต้องตอบได้ |
 |---|---|---|
-| Takkan | `logic/pairing.js`, จับคู่ใน `core/repo.js`, `core/clock.js` | ลำดับตรวจ `joinCheck` และเหตุผล (DL-20) · ทำไมไม่ใช้ `Math.random` · `cancelPairing` ลบอะไร |
-| Yar | `logic/schedule.js`, `logic/labelDraft.js` | `groupMeals` จัดกลุ่มอย่างไร · ทำไม "ไม่เดา" ช่องที่ AI อ่านไม่ออก · `invalid_reminder_time` |
-| Rossatorn | `logic/time.js`, `logic/mealTimeline.js` (โค้ด AI ร่าง) · ชุดสี/ฟอนต์/คอมโพเนนต์ต้นแบบ (ออกแบบเอง ไม่ใช้ AI) | ✅ **ตรวจแล้ว (7 พ.ย.):** ตารางกฎ `mealState` ทีละแถว · ขอบ T+15 / มื้อถัดไป · 3 จุดที่ AI เลือก (T+5/T+10, มื้อซ้อน, เปิดหน้ากลับ) · รัน check ผ่าน |
-| Nichanan | `logic/confirm.js`, `core/demoData.js`, ต้นแบบ (`store`, นาฬิกาจำลอง) | ✅ **ตรวจแล้ว (7 พ.ย.):** ทำไมตัดสินจากเวลาที่กด ไม่ใช่เวลาข้อมูลมาถึง (BR-20) · ทำไม `doseId` กันกดซ้ำ · นาฬิกา forward-only · รัน check ผ่าน |
-| Suchitra | `logic/status.js`, แผนทดสอบ | `alertFor` แจ้งเมื่อไร ชนิดละครั้ง (BR-13) · ทำไมไม่แจ้งช่วง T ถึง T+15 (BR-21) |
+| Takkan | `logic/pairing.js`, จับคู่ใน `core/repo.js`, `core/clock.js` · **ใหม่ 7 พ.ย. (ยังไม่ตรวจ):** `features/pairing.js` | ลำดับตรวจ `joinCheck` และเหตุผล (DL-20) · ทำไมไม่ใช้ `Math.random` · `cancelPairing` ลบอะไร |
+| Yar | `logic/schedule.js`, `logic/labelDraft.js` · **ใหม่ 7 พ.ย. (ยังไม่ตรวจ):** `features/medicineSetup.js` | `groupMeals` จัดกลุ่มอย่างไร · ทำไม "ไม่เดา" ช่องที่ AI อ่านไม่ออก · `invalid_reminder_time` |
+| Rossatorn | `logic/time.js`, `logic/mealTimeline.js` (โค้ด AI ร่าง) · ชุดสี/ฟอนต์/คอมโพเนนต์ต้นแบบ (ออกแบบเอง ไม่ใช้ AI) · **ใหม่ 7 พ.ย. (ยังไม่ตรวจ):** `features/reminder.js`, `features/ui.js`, `features/format.js` | ✅ **ตรวจแล้ว (7 พ.ย.):** ตารางกฎ `mealState` ทีละแถว · ขอบ T+15 / มื้อถัดไป · 3 จุดที่ AI เลือก (T+5/T+10, มื้อซ้อน, เปิดหน้ากลับ) · รัน check ผ่าน |
+| Nichanan | `logic/confirm.js`, `core/demoData.js`, ต้นแบบ (`store`, นาฬิกาจำลอง) · **ใหม่ 7 พ.ย. (ยังไม่ตรวจ):** `features/home.js`, `phone.js`, `demoShell.js`, `demoControls.js`, `model.js`, `core/offlineQueue.js` | ✅ **ตรวจแล้ว (7 พ.ย.):** ทำไมตัดสินจากเวลาที่กด ไม่ใช่เวลาข้อมูลมาถึง (BR-20) · ทำไม `doseId` กันกดซ้ำ · นาฬิกา forward-only · รัน check ผ่าน |
+| Suchitra | `logic/status.js`, แผนทดสอบ · **ใหม่ 7 พ.ย. (ยังไม่ตรวจ):** `features/caregiverStatus.js`, `features/alerts.js` | `alertFor` แจ้งเมื่อไร ชนิดละครั้ง (BR-13) · ทำไมไม่แจ้งช่วง T ถึง T+15 (BR-21) |
 
 ทุกคนต้องตอบได้เพิ่ม: **ปัญหาข้อไหน → FR/AC ข้อไหน → เทสต์ไหนพิสูจน์** · **ใช้ AI ตรงไหน แก้อะไร เพราะอะไร**

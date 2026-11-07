@@ -1,0 +1,212 @@
+/* สไตล์ MedMind (หน้าจอจริงใน public/ ย้ายจากต้นแบบ M3) — โทนเขียวตามงานออกแบบของ Rossatorn การ์ดมุมมน (design-system.md §2)
+ * ใช้ var(--token) จาก tokens.css เท่านั้น ห้ามใส่สี #hex ในไฟล์นี้ (ตรวจด้วย tests/prototype.test.js)
+ * ขนาดตาม NFR-03: ตัวอักษร ≥ 18px · ชื่อยา ≥ 24px · ปุ่มกินแล้ว/ยังไม่กิน สูง ≥ 64px · พื้นที่แตะอื่น ≥ 48px */
+/* ฟอนต์ Sarabun (SIL OFL 1.1 — fonts/OFL.txt) ไฟล์ในเครื่อง ไม่โหลดจากเน็ต · มาจากต้นแบบของ Rossatorn */
+@font-face { font-family: "Sarabun"; font-weight: 400; font-style: normal; font-display: swap; src: url("../fonts/Sarabun-Regular.ttf") format("truetype"); }
+@font-face { font-family: "Sarabun"; font-weight: 600; font-style: normal; font-display: swap; src: url("../fonts/Sarabun-SemiBold.ttf") format("truetype"); }
+@font-face { font-family: "Sarabun"; font-weight: 700; font-style: normal; font-display: swap; src: url("../fonts/Sarabun-Bold.ttf") format("truetype"); }
+* { box-sizing: border-box; }
+html { font-family: var(--font); }
+body { margin: 0; min-height: 100vh; background: linear-gradient(160deg, var(--bg-grad-1), var(--bg-grad-2)); color: var(--text); font-size: var(--fs-body); line-height: 1.5; }
+h1 { font-size: var(--fs-h1); margin: 0 0 var(--space-1); line-height: 1.25; }
+h2 { font-size: var(--fs-h2); margin: 0 0 var(--space-1); }
+h3 { font-size: var(--fs-h2); margin: 0; }
+p { margin: 0 0 var(--space-1); }
+button, input, select { font: inherit; color: inherit; }
+a { color: var(--primary); }
+.ico { width: 24px; height: 24px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- แถบควบคุมของผู้นำเสนอ (อยู่นอกจอมือถือ) ---------- */
+.page { max-width: 1100px; margin: 0 auto; padding: var(--space-2); }
+.pagebar { background: var(--bg); border-radius: var(--radius-lg); box-shadow: var(--shadow); padding: var(--space-2) var(--space-3); margin-bottom: var(--space-3); }
+.pagebar h1 { font-size: var(--fs-h2); }
+.pagebar .covers { margin-top: var(--space-1); border: 0; background: var(--bg); padding: 0; border-radius: 0; }
+.clockbar { display: flex; flex-wrap: wrap; gap: var(--space-1); align-items: center; margin-top: var(--space-1); }
+.clockbar .time { font-size: var(--fs-h2); font-weight: bold; min-width: 8ch; color: var(--accent); }
+.clockbar .tb { min-height: var(--tap-min); padding: 0 var(--space-2); border: 2px solid var(--primary); background: var(--bg); color: var(--primary); border-radius: 999px; cursor: pointer; font-weight: bold; }
+.clockbar .tb:hover { background: var(--accent-soft); }
+.clockbar label { display: inline-flex; gap: var(--space-1); align-items: center; min-height: var(--tap-min); }
+.clockbar .tb-input { min-height: var(--tap-min); width: 12ch; border: 2px solid var(--text-muted); border-radius: var(--radius); background: var(--bg); padding: 0 var(--space-1); font-variant-numeric: tabular-nums; }
+.clockbar .tb-input[aria-invalid="true"] { border-color: var(--notyet); }
+.clockbar select { min-height: var(--tap-min); border: 2px solid var(--text-muted); border-radius: var(--radius); background: var(--bg); padding: 0 var(--space-1); }
+.note { color: var(--text-muted); }
+.demo-banner { background: var(--warn-bg); color: var(--warn-text); padding: var(--space-1) var(--space-2); border-radius: 999px; font-weight: bold; margin-bottom: var(--space-1); display: inline-block; }
+.phones { display: flex; flex-wrap: wrap; gap: var(--space-4); justify-content: center; }
+.phone-wrap { display: flex; flex-direction: column; align-items: center; gap: var(--space-1); }
+.phone-wrap > h2 { font-size: var(--fs-body); color: var(--accent); margin: 0; background: var(--bg); padding: 0 var(--space-2); border-radius: 999px; box-shadow: var(--shadow); }
+.rolebar { display: flex; gap: var(--space-1); justify-content: center; margin-bottom: var(--space-1); }
+.rolebar button { min-height: var(--tap-min); padding: 0 var(--space-2); border: 2px solid var(--primary); background: var(--bg); color: var(--primary); border-radius: 999px; cursor: pointer; font-weight: bold; }
+.rolebar button.is-on { background: var(--primary); border-color: var(--accent); color: var(--on-color); }
+
+/* ---------- ตัวเครื่อง ---------- */
+.phone { color: var(--text); font-size: var(--fs-body); width: 390px; max-width: 100%; height: 780px; background: var(--bg); border: 8px solid var(--bg); border-radius: 40px; box-shadow: var(--shadow); overflow: hidden; position: relative; }
+.view { height: 100%; }
+.phone-inner { display: flex; flex-direction: column; height: 100%; position: relative; background: linear-gradient(180deg, var(--bg-grad-1), var(--bg-grad-2)); border-radius: 32px; overflow: hidden; }
+.phone-inner.is-closed .screen { opacity: 0.5; }
+.appbar { display: flex; align-items: center; gap: var(--space-1); padding: var(--space-1) var(--space-2); background: var(--primary); color: var(--on-color); min-height: 56px; }
+.role-chip { background: var(--accent-soft); color: var(--primary); border-radius: 999px; padding: 0 var(--space-1); font-weight: bold; }
+.appbar-title { flex: 1; font-weight: bold; }
+.appbar-time { font-variant-numeric: tabular-nums; }
+.covers { margin: var(--space-1) var(--space-2) 0; padding: 0 var(--space-1); background: var(--bg); color: var(--text-muted); border-radius: var(--radius); }
+.screen { flex: 1; overflow-y: auto; padding: var(--space-2); }
+.lead { color: var(--text-muted); }
+.hint { color: var(--text-muted); }
+.hint.ok { color: var(--taken); }
+.error { color: var(--notyet); font-weight: bold; }
+
+/* ---------- ภาพประกอบ (ไอคอน SVG วาดเอง ใช้สี token) ---------- */
+.hero { text-align: center; margin-bottom: var(--space-2); }
+.hero h1 { margin-top: var(--space-1); }
+.brand { display: flex; align-items: center; justify-content: center; gap: var(--space-1); color: var(--primary); font-size: var(--fs-h1); font-weight: bold; }
+.logo { width: 88px; height: 88px; }
+.logo-sm { width: 48px; height: 48px; flex: none; }
+.icon-circle { display: inline-flex; align-items: center; justify-content: center; width: 96px; height: 96px; border-radius: 50%; background: var(--bg); color: var(--accent); box-shadow: var(--shadow); }
+.icon-circle .ico { width: 52px; height: 52px; stroke-width: 1.8; }
+.greet { display: flex; align-items: center; gap: var(--space-2); background: var(--bg); border-radius: var(--radius-lg); box-shadow: var(--shadow); padding: var(--space-2); margin-bottom: var(--space-2); }
+.greet h1 { margin: 0; }
+.greet p { margin: 0; color: var(--text-muted); }
+
+/* ---------- คอมโพเนนต์ ---------- */
+.card { background: var(--bg); border: 1px solid var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow); padding: var(--space-2); margin-bottom: var(--space-2); }
+.card.center { text-align: center; }
+.card.empty { text-align: center; color: var(--text-muted); }
+.card.warn { background: var(--warn-bg); color: var(--warn-text); border-color: var(--warn-bg); }
+.card.ok-box { border: 2px solid var(--taken); }
+.card-alert { border: 2px solid var(--notyet); }
+.card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-1); margin-bottom: var(--space-1); }
+.meal-h { margin-top: var(--space-1); color: var(--accent); }
+.meds, .plain { list-style: none; padding: 0; margin: 0 0 var(--space-2); }
+.meds li { display: flex; flex-direction: column; margin-bottom: var(--space-1); padding: var(--space-1) var(--space-2); background: var(--surface); border-radius: var(--radius); }
+.med-name { font-size: var(--fs-med-name); font-weight: bold; line-height: 1.25; }
+.med-qty { font-weight: bold; color: var(--primary); }
+.med-note { color: var(--text-muted); }
+.btn { display: flex; align-items: center; justify-content: center; gap: var(--space-1); width: 100%; min-height: var(--btn-h); margin: 0 0 var(--space-1); padding: 0 var(--space-2); border: 2px solid var(--primary); border-radius: 999px; background: var(--bg); color: var(--primary); font-weight: bold; cursor: pointer; text-align: center; }
+.btn-primary { background: var(--primary); border-color: var(--primary); color: var(--on-color); }
+.btn-taken { background: var(--taken); border-color: var(--taken); color: var(--on-color); }
+.btn-notyet { background: var(--notyet); border-color: var(--notyet); color: var(--on-color); }
+.btn-ghost { background: var(--bg); color: var(--primary); }
+.btn-small { width: auto; min-height: var(--tap-min); margin: 0; }
+.btn.is-on { background: var(--accent); border-color: var(--accent); color: var(--on-color); }
+.btn:disabled { background: var(--surface); border-color: var(--surface); color: var(--text-muted); cursor: not-allowed; }
+.btn:focus-visible, .tab:focus-visible, .role-card:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--text); outline-offset: 2px; }
+.row { display: flex; flex-wrap: wrap; gap: var(--space-1); margin-bottom: var(--space-1); }
+.chip { display: inline-block; padding: 0 var(--space-1); border-radius: 999px; border: 2px solid var(--text-muted); font-weight: bold; background: var(--bg); }
+.chip-taken { border-color: var(--taken); color: var(--taken); }
+.chip-late { border-color: var(--warn-text); color: var(--warn-text); background: var(--warn-bg); }
+.chip-notyet { border-color: var(--notyet); color: var(--notyet); }
+.chip-none { color: var(--text-muted); }
+.banner { background: var(--warn-bg); color: var(--warn-text); border-radius: var(--radius-lg); padding: var(--space-2); margin-bottom: var(--space-2); box-shadow: var(--shadow); }
+.banner-ok { background: var(--bg); color: var(--text); border: 2px solid var(--taken); }
+.banner .btn { margin-top: var(--space-1); }
+.flag { color: var(--notyet); font-weight: bold; }
+.field { display: flex; flex-direction: column; gap: 4px; margin-bottom: var(--space-2); }
+.field span { font-weight: bold; }
+.field input, .field select { min-height: var(--tap-min); padding: 0 var(--space-2); border: 2px solid var(--text-muted); border-radius: var(--radius); background: var(--bg); width: 100%; }
+.check { display: flex; gap: var(--space-1); align-items: center; min-height: var(--tap-min); margin-bottom: var(--space-1); }
+.check input { width: 24px; height: 24px; flex: none; accent-color: var(--accent); }
+.slot { border: 2px solid var(--surface); background: var(--bg); border-radius: var(--radius-lg); margin: 0 0 var(--space-2); padding: var(--space-2); }
+.slot legend { font-weight: bold; padding: 0 var(--space-1); color: var(--accent); }
+.code { font-size: var(--fs-h1); font-weight: bold; letter-spacing: 0.15em; color: var(--accent); }
+.consent { padding-left: var(--space-3); margin: 0 0 var(--space-2); }
+.qr { display: grid; grid-template-columns: repeat(13, 1fr); width: 200px; aspect-ratio: 1; margin: 0 auto var(--space-1); padding: 6px; background: var(--bg); border-radius: var(--radius); box-shadow: var(--shadow); }
+.qr i { background: var(--bg); }
+.qr i.on { background: var(--text); }
+.role-card { display: flex; align-items: center; gap: var(--space-2); text-align: left; width: 100%; min-height: var(--btn-h); margin-bottom: var(--space-2); padding: var(--space-2); background: var(--bg); border: 2px solid var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow); cursor: pointer; }
+.role-card .ico { width: 40px; height: 40px; color: var(--accent); }
+.role-card strong { display: block; font-size: var(--fs-h2); color: var(--primary); }
+.label-mock { background: var(--bg); border: 2px dashed var(--text-muted); border-radius: var(--radius); padding: var(--space-2); margin-bottom: var(--space-2); }
+.lm-title { font-weight: bold; }
+.lm-part { text-decoration: underline; }
+.lm-part.is-covered { background: var(--text); color: var(--text); display: inline-block; min-width: 6ch; text-decoration: none; border-radius: 4px; }
+.spinner { width: 48px; height: 48px; margin: var(--space-3) auto; border: 6px solid var(--accent-soft); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
+.tabs { display: flex; gap: 4px; padding: 6px; background: var(--bg); box-shadow: var(--shadow); }
+.tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 64px; padding: 4px; border: 0; border-radius: var(--radius); background: var(--bg); color: var(--text-muted); cursor: pointer; font-weight: bold; position: relative; }
+.tab .ico { width: 30px; height: 30px; }
+.tab-label { font-size: var(--fs-tab); font-weight: 600; line-height: 1.2; margin-top: 2px; }
+.tab:has(.tab-label) .ico { width: 26px; height: 26px; }
+.tab.is-on { background: var(--accent-soft); color: var(--primary); }
+.badge { position: absolute; top: 2px; right: 10px; min-width: 1.5em; background: var(--notyet); color: var(--on-color); border-radius: 999px; text-align: center; }
+.toast-region { position: absolute; left: var(--space-2); right: var(--space-2); bottom: 92px; z-index: 5; }
+.toast { display: flex; align-items: center; gap: var(--space-1); background: var(--text); color: var(--bg); padding: var(--space-1) var(--space-1) var(--space-1) var(--space-2); border-radius: var(--radius); box-shadow: var(--shadow); }
+.toast span { flex: 1; }
+.toast-close { min-height: var(--tap-min); min-width: var(--tap-min); padding: 0 var(--space-2); border: 2px solid var(--bg); border-radius: 999px; background: var(--text); color: var(--bg); font-weight: bold; cursor: pointer; }
+.toast-close:focus-visible { outline: 3px solid var(--bg); outline-offset: 2px; }
+.sound-bar { width: 100%; min-height: var(--tap-min); margin-bottom: var(--space-2); background: var(--warn-bg); color: var(--warn-text); border: 0; border-radius: 999px; font-weight: bold; cursor: pointer; }
+.modal { position: absolute; inset: 0; background: var(--primary); display: flex; align-items: center; justify-content: center; padding: var(--space-2); }
+.modal-box { background: var(--bg); border-radius: var(--radius-lg); padding: var(--space-3); width: 100%; text-align: center; }
+.closed-note { text-align: center; padding: var(--space-3); }
+
+/* ---------- ต่อยอดจากต้นแบบของ Rossatorn: การ์ดฮีโร่ มาสคอต วงแหวนสถานะ ป้ายรอบเตือน ---------- */
+h1:focus-visible, h2:focus-visible { outline: 3px solid var(--text); outline-offset: 4px; border-radius: 4px; }
+.mascot { flex: none; }
+.hero .mascot { display: block; margin: 0 auto; }
+.hero-row { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-2); }
+.hero-row h1 { margin: 0; }
+.h-section { font-size: var(--fs-h2); }
+.h-card { font-size: var(--fs-h2); margin: 0; }
+.center { text-align: center; }
+.disclaimer { color: var(--text-muted); text-align: center; margin-top: var(--space-2); }
+.card.empty .mascot { display: block; margin: 0 auto var(--space-1); }
+.hero-card { background: var(--hero-bg); color: var(--hero-text); border-radius: var(--radius-lg); box-shadow: var(--shadow); padding: var(--space-2) var(--space-2) var(--space-1); margin-bottom: var(--space-3); }
+.hero-body { display: flex; align-items: center; gap: var(--space-1); }
+.hero-text { flex: 1; min-width: 0; }
+.hero-label { margin: 0; font-weight: 600; }
+.hero-big { margin: 0 0 4px; font-size: var(--fs-h1); font-weight: bold; line-height: 1.25; }
+.hero-sub { margin: 0 0 var(--space-1); }
+.hero-card .btn { margin-top: var(--space-1); }
+.hero-card .btn-taken { border-color: var(--taken); }
+.hero-chip { display: inline-flex; align-items: center; gap: 4px; background: var(--bg); color: var(--text); border-radius: 999px; padding: 0 var(--space-1); font-weight: 600; }
+.hero-chip .ico { width: 20px; height: 20px; color: var(--primary); }
+.btn-light { background: var(--bg); border-color: var(--bg); color: var(--primary); }
+.ring { --p: 0; flex: none; width: 104px; height: 104px; border-radius: 50%; padding: 8px; background: conic-gradient(var(--primary) calc(var(--p) * 1%), var(--bg) 0); }
+.ring span { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; border-radius: 50%; background: var(--bg); color: var(--text); line-height: 1.2; }
+.ring b { font-size: var(--fs-h2); color: var(--taken); }
+.sec-head { display: flex; justify-content: space-between; align-items: center; margin: var(--space-1) 0; }
+.sec-head h2 { margin: 0; }
+.count { background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 0 var(--space-1); font-weight: 600; }
+.remind { margin-bottom: var(--space-3); }
+.round-pill { display: inline-flex; align-items: center; gap: var(--space-1); background: var(--accent-soft); color: var(--text); border-radius: 999px; padding: 4px var(--space-2); font-weight: bold; margin-bottom: var(--space-1); }
+.choice { display: flex; flex-direction: column; gap: var(--space-3); margin: var(--space-2) 0 var(--space-1); } /* แยกปุ่มเขียว/แดงให้ห่าง กันกดพลาด */
+.choice .btn { margin: 0; }
+.btn .ico { width: 26px; height: 26px; }
+.label-says { background: var(--bg); border-left: 6px solid var(--accent); border-radius: var(--radius); padding: var(--space-1) var(--space-2); }
+.med-warn { display: flex; align-items: flex-start; gap: var(--space-1); margin-top: 4px; background: var(--warn-bg); color: var(--warn-text); border-radius: var(--radius); padding: 4px var(--space-1); }
+.med-warn .ico { margin-top: 2px; }
+.alert-card { background: var(--bg); border: 2px solid var(--notyet); border-radius: var(--radius-lg); box-shadow: var(--shadow); padding: var(--space-2); margin-bottom: var(--space-2); }
+.alert-card.alert-ok { border-color: var(--taken); }
+.alert-head { display: flex; gap: var(--space-2); align-items: flex-start; margin-bottom: var(--space-1); }
+.alert-ico { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 48px; height: 48px; border-radius: 50%; background: var(--warn-bg); color: var(--notyet); }
+.alert-ico.ok { background: var(--surface); color: var(--taken); }
+.sound-bar { display: flex; align-items: center; justify-content: center; gap: var(--space-1); }
+.modal-box .mascot { display: block; margin: 0 auto; }
+
+/* ---------- หน้าสารบัญ ---------- */
+.journey { background: var(--bg); border-radius: var(--radius-lg); box-shadow: var(--shadow); padding: var(--space-2) var(--space-3); margin-bottom: var(--space-2); }
+.journey h2 { margin-bottom: var(--space-1); color: var(--accent); }
+.map { width: 100%; border-collapse: collapse; }
+.map th, .map td { text-align: left; vertical-align: top; padding: var(--space-1); border-bottom: 1px solid var(--surface); }
+.map a { color: var(--primary); font-weight: bold; }
+.tag { display: inline-block; padding: 0 var(--space-1); margin: 2px 2px 2px 0; background: var(--accent-soft); border-radius: 999px; color: var(--accent); font-size: var(--fs-body); }
+.linkrow { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+.linkrow a { display: inline-flex; align-items: center; min-height: var(--tap-min); padding: 0 var(--space-2); border: 2px solid var(--primary); border-radius: 999px; color: var(--primary); font-weight: bold; text-decoration: none; background: var(--bg); }
+.linkrow a.primary { background: var(--primary); border-color: var(--accent); color: var(--on-color); }
+
+/* ตั้งค่าการแสดงผล: ปุ่มเลือกขนาดตัวอักษร / โหมดสี (สีและขนาดมาจาก token เท่านั้น) */
+.pref-label { margin: var(--space-2) 0 var(--space-1); font-weight: 600; }
+.seg { display: flex; gap: var(--space-1); }
+.seg-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: var(--space-1); min-height: var(--tap-min); border: 2px solid var(--text-muted); border-radius: var(--radius); background: var(--bg); color: var(--text); font: inherit; font-weight: 600; cursor: pointer; }
+.seg-btn.is-on { background: var(--primary); border-color: var(--primary); color: var(--on-color); }
+.seg-btn:focus-visible { outline: 3px solid var(--text); outline-offset: 2px; }
+.stepper { display: flex; align-items: center; gap: var(--space-2); }
+.step-btn { width: var(--tap-min); height: var(--tap-min); flex: none; display: grid; place-items: center; border: 2px solid var(--primary); border-radius: 50%; background: var(--bg); color: var(--primary); cursor: pointer; }
+.step-btn .ico { width: 28px; height: 28px; }
+.step-btn[aria-disabled="true"] { border-color: var(--text-muted); color: var(--text-muted); cursor: not-allowed; }
+.step-btn:focus-visible { outline: 3px solid var(--text); outline-offset: 2px; }
+.step-val { flex: 1; text-align: center; font-weight: 700; color: var(--text); }
+.h-card .ico { margin-right: var(--space-1); vertical-align: -4px; }
+
+/* จอแคบ (มือถือ): แถบสถานการณ์ไม่ล้นจอ — ชื่อสถานการณ์ยาวต้องย่อลงให้พอดี */
+.clockbar label { flex-wrap: wrap; max-width: 100%; }
+.clockbar select { max-width: 100%; min-width: 0; }

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>โหมดสาธิต MedMind — ผู้สูงอายุและผู้ดูแลคู่กัน</title>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div class="page">
+  <header class="pagebar">
+    <p class="demo-banner" role="note">โหมดสาธิต — ข้อมูลตัวอย่างและนาฬิกาจำลอง ไม่ใช่ข้อมูลจริง ไม่ส่งข้อมูลออก</p>
+    <h1>MedMind — ผู้สูงอายุและผู้ดูแลในหน้าเดียว</h1>
+    <p class="covers">Covers: FR-01–FR-05 (ADR-8 Demo mode) · เดินครบทุก Must FR และทางที่ผิดได้ในเบราว์เซอร์เดียว</p>
+    <p class="note">กดปุ่มเวลาจำลองเพื่อไปถึงเวลาเตือน แล้วลอง "กินแล้ว" / "ยังไม่กิน" ฝั่งซ้าย ดูผลฝั่งขวา · <a href="index.html">หน้าแรก</a></p>
+    <div id="toolbar"></div>
+  </header>
+  <div class="phones">
+    <div class="phone-wrap"><h2>เครื่องผู้สูงอายุ</h2><div class="phone" id="phone-senior"></div></div>
+    <div class="phone-wrap"><h2>เครื่องผู้ดูแล</h2><div class="phone" id="phone-cg"></div></div>
+  </div>
+</div>
+<noscript><p>ต้องเปิด JavaScript เพื่อใช้โหมดสาธิต</p></noscript>
+<script type="module">
+  import { bootDemo } from './js/features/demoShell.js';
+  const q = new URLSearchParams(location.search);
+  window.mmDemo = await bootDemo({
+    toolbar: document.getElementById('toolbar'),
+    seniorEl: document.getElementById('phone-senior'),
+    caregiverEl: document.getElementById('phone-cg'),
+    presetName: q.get('preset'),
+  });
+</script>
+</body>
+</html>

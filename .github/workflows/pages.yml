@@ -1,0 +1,38 @@
+# เผยแพร่ Demo mode (public/) และต้นแบบ M3 ขึ้น GitHub Pages ทุกครั้งที่ merge เข้า main — ให้เปิดบนมือถือด้วยลิงก์ได้ (ไม่มี server code · ไม่มีความลับ)
+# ต้องเปิดก่อนครั้งเดียว: GitHub → Settings → Pages → Build and deployment → Source = "GitHub Actions"
+# ลิงก์ที่ได้: https://<บัญชี>.github.io/<repo>/ (demo.html) และ /prototype/2569-11-04/ (ต้นแบบ M3)
+name: Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm test                      # ไม่เผยแพร่ถ้าเทสต์ไม่ผ่าน
+      - name: รวมไฟล์เว็บ
+        run: |
+          mkdir -p _site/prototype
+          cp -r public/. _site/
+          cp -r docs/02-design/prototypes/. _site/prototype/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

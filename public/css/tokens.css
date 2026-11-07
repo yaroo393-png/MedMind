@@ -1,0 +1,80 @@
+/* Design tokens ของ MedMind — ต้องตรงกับ docs/02-design/design-system.md §2 ทุกค่า
+ * โทนเขียวตามต้นแบบของ Rossatorn (ปรับ 4 พ.ย. 2569) — ตรวจ contrast ใหม่ทุกคู่แล้ว (NFR-03: ≥ 4.5 : 1) ตัวเลขอยู่ใน design-system.md §2
+ * เจ้าของ: Rossatorn (UX/UI) ปรับได้ แต่ต้องแก้ design-system.md ให้ตรงกันและตรวจ contrast ใหม่
+ * กติกา M3: หน้าจอและต้นแบบทุกหน้า "ห้ามคิดสีเอง" — ใช้ var(--ชื่อ) เท่านั้น ห้ามใส่ #hex ลอย ๆ นอกไฟล์นี้ */
+:root {
+  /* สี — โทนเขียวจากต้นแบบของ Rossatorn (SE-Project 26 ต.ค. 2569) · ตัวเลข contrast ใน design-system.md §2 */
+  --text: #18382F;         /* 12.6:1 บน --bg · ≥ 10.3:1 บนทุกพื้น */
+  --text-muted: #54675D;   /* 6.0:1 บน --bg · ≥ 4.9:1 บนทุกพื้น (ห้ามใช้บน --hero-bg) */
+  --bg: #FFFEF8;           /* การ์ด (ขาวอมครีม) */
+  --surface: #EDF2E8;      /* พื้นรอง / การ์ดย่อย */
+  --bg-grad-1: #F5F7F2;    /* พื้นหลังหน้า (ไล่สีอ่อนมาก) */
+  --bg-grad-2: #E9EDE4;
+  --primary: #164C3B;      /* เขียวเข้ม: ปุ่มหลัก ลิงก์ แถบหัว · 9.8:1 กับตัวอักษร --on-color */
+  --accent: #2B6E3F;       /* เขียวรอง: หัวข้อย่อย ตัวเลข · 6.1:1 บน --bg */
+  --accent-soft: #D8F36A;  /* เขียวมะนาว: แท็บที่เลือก ป้ายนับ ป้ายรอบเตือน */
+  --hero-bg: #A6C978;      /* การ์ดฮีโร่ */
+  --hero-text: #18382F;    /* 6.8:1 บน --hero-bg */
+  --taken: #1F653E;        /* ปุ่ม "กินแล้ว" (เขียว) 7.0:1 กับตัวอักษร --on-color */
+  --notyet: #9B352B;       /* ปุ่ม "ยังไม่กิน" (แดง) / ข้อผิดพลาด 7.1:1 กับตัวอักษร --on-color */
+  --warn-bg: #FFF1D8;      /* แถบแจ้งเตือนผู้ดูแล / คำเตือนยา */
+  --warn-text: #785012;    /* 6.4:1 บน --warn-bg */
+  --on-color: #FFFEF8;     /* ตัวอักษรบนปุ่มสี */
+  --shadow: 0 12px 36px rgba(24, 56, 47, 0.06); /* เงาอ่อน (ตกแต่งเท่านั้น) */
+  /* มาสคอต "เมล็ดพีช" — ตัวละครต้นฉบับของ Rossatorn (ต้นแบบ 26 ต.ค. 2569) ใช้ตกแต่งเท่านั้น ไม่สื่อความหมาย ไม่ใช่รูปยา */
+  --mascot-line: #204D39;
+  --mascot-body: #F2C9A0;
+  --mascot-shine: #FFEDD7;
+  --mascot-leaf: #739E54;
+  --mascot-leaf-2: #D8F36A;
+  --mascot-cheek: #E6A583;
+  --mascot-shadow: rgba(22, 76, 59, 0.09);
+  /* ตัวอักษร (NFR-03) */
+  --fs-body: 18px;
+  --fs-med-name: 24px;
+  --fs-h1: 28px;
+  --fs-h2: 22px;
+  --fs-tab: 18px;          /* ข้อความใต้ไอคอนแถบล่างของผู้สูงอายุ: เล็กกว่าตัวอักษรหลักเมื่อขยาย แต่ไม่ต่ำกว่า 18px (NFR-03) */
+  --font: "Sarabun", system-ui, "Noto Sans Thai", sans-serif; /* Sarabun (OFL) โหลดจากไฟล์ในเครื่อง ไม่ใช้ฟอนต์จากเน็ต */
+  /* ขนาดปุ่ม (NFR-03) */
+  --btn-h: 64px;           /* ปุ่ม กินแล้ว / ยังไม่กิน อย่างน้อย */
+  --tap-min: 48px;         /* พื้นที่แตะอื่นอย่างน้อย */
+  /* ระยะและมุม */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --radius: 16px;
+  --radius-lg: 24px;
+}
+
+/* ---------- ตั้งค่าการแสดงผล (หน้าตั้งค่า S-04 / C-09) — ตั้งรายเครื่อง ผ่าน data-size / data-theme บนจอมือถือ ----------
+ * ทุกระดับไม่ต่ำกว่าเกณฑ์ NFR-03 (ตัวอักษร ≥ 18px · ชื่อยา ≥ 24px · ปุ่มกิน ≥ 64px) — ระดับ "ปกติ" คือค่าใน :root ด้านบน */
+[data-size="large"] {
+  --fs-body: 22px; --fs-med-name: 30px; --fs-h1: 32px; --fs-h2: 26px; --fs-tab: 19px;
+  --btn-h: 72px; --tap-min: 56px;
+}
+[data-size="xlarge"] {
+  --fs-body: 26px; --fs-med-name: 34px; --fs-h1: 36px; --fs-h2: 30px; --fs-tab: 20px;
+  --btn-h: 80px; --tap-min: 64px;
+}
+/* โหมดมืด — ไม่ใช่ requirement ใน SRS (เป็นตัวเลือกการแสดงผลของต้นแบบ) · ตรวจ contrast ทุกคู่ ≥ 4.5 : 1 แล้ว ตัวเลขใน design-system.md §2 */
+[data-theme="dark"] {
+  --text: #E9F2EC;
+  --text-muted: #B3C4B9;
+  --bg: #17251F;
+  --surface: #22362D;
+  --bg-grad-1: #0F1A15;
+  --bg-grad-2: #142119;
+  --primary: #8EDBB0;
+  --accent: #A5DDA0;
+  --accent-soft: #2F4A33;
+  --hero-bg: #2E4D3A;
+  --hero-text: #EAF4EE;
+  --taken: #7FD39B;
+  --notyet: #F29B90;
+  --warn-bg: #3B2E14;
+  --warn-text: #F4CF86;
+  --on-color: #0E1C16;     /* ตัวอักษรบนปุ่มสี (โหมดมืดใช้ตัวมืดบนปุ่มสว่าง) */
+  --shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+}
