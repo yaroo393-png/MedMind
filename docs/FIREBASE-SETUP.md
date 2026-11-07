@@ -30,7 +30,7 @@ npm test
 ใช้โปรเจกต์ `demo-medmind` ของ Emulator — ไม่แตะข้อมูลจริง · CI รันให้ทุก PR (งาน `emulator` ใน `.github/workflows/ci.yml`)
 
 ## 5. ข้อควรรู้
-- **โมเดล AI:** `AI_MODEL` ใน `public/js/services/aiLabel.js` (`gemini-2.5-flash`) — ถ้าคอนโซล AI Logic แจ้งว่าเลิกใช้ ให้เปลี่ยนที่นี่ที่เดียว
+- **โมเดล AI:** รายชื่อ `AI_MODELS` ใน `public/js/services/aiLabel.js` — แอปลองตามลำดับเมื่อเจอ 404 (โมเดลถูกถอน เช่น `gemini-2.5-flash` ถูกถอนจาก Gemini Developer API ต.ค. 2569) แล้วจำชื่อที่ใช้ได้ · ถ้ายังไม่ได้ทุกชื่อ เพิ่มชื่อใหม่ไว้หน้าสุดของรายการ (ดูชื่อล่าสุดที่คอนโซล Firebase → AI Logic หรือเอกสาร Firebase AI Logic)
 - **App Check (ต้องตั้ง — Firebase AI Logic บังคับ):** ลงทะเบียนแอป `medmind-wep` ด้วย reCAPTCHA Enterprise (คีย์สร้างใน Google Cloud โปรเจกต์ `medmind-12eb2` · Website · โดเมน `yaroo393-png.github.io` · ฟรี 10,000 ครั้ง/เดือน ไม่ผูกบัตร) แล้ววาง Site key ใน Firebase → App Check → Apps · โค้ดส่งโทเคนใน `core/firebase.js` (`APP_CHECK_SITE_KEY` เป็นค่าสาธารณะ) · ไม่ตั้ง = คำขอ AI ถูกปฏิเสธ 401 "App Check token is invalid" แอปขึ้น "AI ใช้ไม่ได้" · Firestore/Auth ยัง Unenforced
 - **โควตาฟรี:** Firestore อ่าน 50,000 / เขียน 20,000 ครั้งต่อวัน · แอปอ่านจากสำเนาในเครื่อง (onSnapshot) ไม่ได้อ่านซ้ำทุกวินาที · AI มีโควตาต่อนาที/ต่อวัน — หมดแล้วแอปบอกเหตุผลและเปิดฟอร์มกรอกเอง (FR-02 ข้อ 5)
 - **ยกเลิกจับคู่** ลบยา ประวัติ การแจ้ง และรหัส ของคู่นั้นทั้งหมด (BR-17) — กู้คืนไม่ได้

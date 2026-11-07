@@ -2,7 +2,7 @@
 // FR-02 ข้อ 1, 5, 9 · BR-19 · NFR-09, NFR-14 · การเรียก Gemini จริงต้องทดสอบบนมือถือด้วยฉลากที่ปิดชื่อ/HN แล้ว (MT-09) — ห้ามใช้ฉลากที่ยังเห็นชื่อ/HN
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createAiLabel, parseAiText, classifyError, AiUnavailableError, PROMPT, AI_MODEL } from '../public/js/services/aiLabel.js';
+import { createAiLabel, parseAiText, classifyError, AiUnavailableError, PROMPT, AI_MODEL, AI_MODELS } from '../public/js/services/aiLabel.js';
 import { planRedaction, rectFromPoints, TOP_BAND, MAX_SIDE } from '../public/js/services/redact.js';
 import { buildDraft } from '../public/js/logic/labelDraft.js';
 
@@ -82,4 +82,23 @@ test('redact: ลากนิ้วกลับทิศได้ · แตะ�
   assert.equal(rectFromPoints({ x: 0.5, y: 0.5 }, { x: 0.505, y: 0.6 }), null);
   assert.deepEqual(rectFromPoints({ x: -1, y: 0.5 }, { x: 2, y: 0.7 }).w, 1);
   assert.deepEqual(TOP_BAND, { x: 0, y: 0, w: 1, h: 0.3 });
+});
+
+test('โมเดลถูกถอน (404) → ลองชื่อถัดไปจนได้ · จำชื่อที่ใช้ได้ · ข้อผิดพลาดอื่นไม่ลองต่อ · 404 ทุกชื่อ = AI ใช้ไม่ได้', async () => {
+  const gone = new Error('AI/fetch-error: Error fetching from https://x/models/gemini-2.5-flash:generateContent: [404 Not Found]');
+  const reply = JSON.stringify({ name: 'ยา', instructionText: null, warnings: null, contraindications: null, asNeeded: false, slots: [] });
+  const tried = [];
+  const getModel = async (name) => { tried.push(name); return fakeModel(name === 'c' ? reply : gone); };
+  const ai = createAiLabel({ getModel, models: ['a', 'b', 'c', 'd'] });
+  assert.equal((await ai.requestDraft(blob())).name, 'ยา');
+  assert.deepEqual(tried, ['a', 'b', 'c']);
+  await ai.requestDraft(blob());
+  assert.deepEqual(tried.slice(3), ['c'], 'ครั้งที่สองใช้ชื่อที่จำไว้เลย');
+  const tried2 = [];
+  const bad = createAiLabel({ getModel: async (n) => { tried2.push(n); return fakeModel(new Error('[401] Firebase App Check token is invalid.')); }, models: ['a', 'b'] });
+  await assert.rejects(() => bad.requestDraft(blob()), (e) => e.reason === 'service_down' && /App Check/.test(e.detail));
+  assert.deepEqual(tried2, ['a'], 'ไม่ใช่ 404 ไม่ลองชื่อถัดไป');
+  const all = createAiLabel({ getModel: async () => fakeModel(gone), models: ['a', 'b'] });
+  await assert.rejects(() => all.requestDraft(blob()), (e) => e instanceof AiUnavailableError && /404/.test(e.detail));
+  assert.ok(AI_MODELS.length >= 3 && AI_MODELS.every((m) => /^gemini-/.test(m)));
 });
