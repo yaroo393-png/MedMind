@@ -72,7 +72,7 @@ docs/02-design/prototypes/
 | key เก่า | หน้าใหม่ (ID) | ทำอะไร | เจ้าของ |
 |---|---|---|---|
 | `splash`, `role` | S-00 | **ปรับ**: ขั้นยืนยันหลังเลือก + จำบทบาท + ข้ามหน้านี้เมื่อเปิดจากลิงก์ QR (ตาม S-00 ใน design-system) | Rossatorn |
-| `senior-pair`, `senior-connected` | S-01 | **ปรับ**: QR เป็นลิงก์ `caregiver.html?code=…` + ข้อความยินยอม 3 ข้อ (BR-02) | Rossatorn |
+| `senior-pair`, `senior-connected` | S-01 | **ปรับ**: QR เป็นลิงก์ `index.html?code=…` + ข้อความยินยอม 3 ข้อ (BR-02) | Rossatorn |
 | `caregiver-pair`, `caregiver-connected` | C-01 | **ปรับ**: เปิดจากลิงก์ QR/กรอกรหัส + ข้อความผิดพลาดครบ (FR-01 ข้อ 2, 4, 5) | Takkan |
 | `meal-setup` | C-02 | **ปรับ**: เวลาเช้า/กลางวัน/เย็น/ก่อนนอน (BR-06) | PM |
 | `senior-home` | S-02 | **ปรับ**: แสดงจำนวนเม็ดของมื้อนั้น + สถานะ 4 แบบ (BR-14) | Rossatorn |

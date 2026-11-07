@@ -1,6 +1,6 @@
 # Final Project Report — MedMind
 
-> **ฉบับร่าง** — ส่วนที่ขึ้นต้น ✅ มีข้อมูลจริงแล้ว · 🟡 มีบางส่วน ส่วน **[ ]** ทีมเติมเมื่อมีผลจริง (ไม่เดา) · **ความยาว 6–10 หน้า (PM แจ้ง 2 พ.ย. ว่าอาจารย์อนุญาต — decision-log DL-14)** · ส่งเป็น PDF ชื่อ `Final-Report.pdf`
+> **ฉบับส่งอาจารย์ (7 พ.ย. 2569)** — ✅ = มีหลักฐานจริงใน repo · 🟡 = ทำบางส่วน · **[ ]** = ผลจริงที่ยังไม่มี (ไม่เดา) · ส่งเป็น PDF ชื่อ `Final-Report.pdf` (ความยาว 6–10 หน้า — DL-14) · ภาพประกอบอยู่ใน `docs/05-report/figures/`
 
 ## งบหน้า (เป้า 6–10 หน้า — ปรับตามเนื้อหาจริง)
 | ส่วน | หน้า (โดยประมาณ) | เนื้อหาที่ใช้ซ้ำ |
@@ -23,7 +23,7 @@
 | รายวิชา | Introduction to Software Engineering (15031001) ปีการศึกษา 2569 |
 | ทีม | MedMind — Yar Oo (6931503064), Takkan Khanlui (6931503035), Rossatorn Sangkaew (6931503066), Nichanan Lalua (6931503049), Suchitra Khomdee (6931503079) |
 | Repository | https://github.com/yaroo393-png/MedMind |
-| ระบบที่เปิดได้ | [ ลิงก์ ] (เปิดได้ในมือถือ) · **Demo mode:** [ ลิงก์ `demo.html` ] (เดินครบทุก FR ในเบราว์เซอร์เดียว) · วิธีเปิด: ดู `README.md` |
+| ระบบที่เปิดได้ | https://yaroo393-png.github.io/MedMind/ (เปิดได้ในมือถือ) · **Demo mode:** https://yaroo393-png.github.io/MedMind/demo.html (เดินครบทุก FR ในเบราว์เซอร์เดียว) · **ใช้งานจริง 2 เครื่อง:** `senior.html` / `caregiver.html` · วิธีเปิด: ดู `README.md` |
 
 ## 1. ปัญหาและผู้ใช้ ✅
 ผู้สูงอายุที่ต้องกินยาเม็ด/แคปซูลตามเวลาประจำอาจลืมกิน กินผิดเวลา หรือจำไม่ได้ว่ากินแล้วหรือยัง ขณะที่ลูกซึ่งเป็นผู้ดูแลต้องออกไปทำงานและตามดูทั้งวันไม่ได้ วิธีที่ใช้อยู่ (นาฬิกาปลุก กล่องยา โทร/LINE) ยืนยันสถานะและรายงานให้ผู้ดูแลโดยอัตโนมัติไม่ได้
@@ -34,14 +34,28 @@
 SRS v1.5 — 9 FR (Must 5 · Should 1 · Could 3), กฎธุรกิจ 21 ข้อ, NFR 14 ข้อ, use case 7 + diagram, AC 43 ข้อของ FR-01–05 (ทางผิดหรือกรณีขอบ 26 ข้อ) · ไฟล์: `docs/01-requirements/M2-SRS_MedMind.pdf` (v1.5) · มติที่ทีมอนุมัติและเรื่องที่รอตัดสิน: `docs/01-requirements/decision-log.md`
 ขอบเขต: 5 FR ที่เป็น Must ตอบทั้ง 2 คำถามของโครงงาน · นอกขอบเขต: เตือนตอนปิดหน้าเว็บ, ยาเมื่อมีอาการ/ยาน้ำ/ครึ่งเม็ด, คำแนะนำทางการแพทย์
 
-## 3. การออกแบบ ✅ (ภาพประกอบ [ ])
+## 3. การออกแบบ ✅
 สถาปัตยกรรม 3 ชั้นแบบ Layered + Client–Server (หน้าจอ `features/` → ตรรกะ `logic/` → ข้อมูล `core/` + `services/`) · ตรรกะเป็นฟังก์ชันล้วนที่ไม่แตะ DOM, Firebase หรือ `Date.now()` (รับเวลาเป็นพารามิเตอร์) จึงทดสอบด้วย `node --test` ได้โดยไม่ต้องติดตั้งอะไร · ข้อมูลเข้าถึงผ่านสัญญา `repo` ชุดเดียว (§6.3) มี 2 ตัวทำงาน: `localRepo` สำหรับ Demo mode (ADR-8) และ Firestore (ยังไม่สร้าง — DL-24) · อ่านฉลากด้วย Gemini ผ่าน Firebase AI Logic หลังผู้ดูแลปิดชื่อ/HN (BR-19) AI แค่ร่าง ผู้ดูแลตรวจทุกครั้ง (BR-04)
 
 สัญญาระหว่างโมดูลที่ทีมตกลงและบันทึกไว้: Meal/Dose (DL-18, §5.3) · labelDraft (DL-19, §5.4) · จับคู่/รหัสเชิญ (DL-20, §5.5 ลำดับตรวจ `wrong_code → already_has_caregiver → expired → already_used → not_consented`, รหัสหมดอายุเมื่อ `now > expiresAt`) · repo (§6.3) · Security Rules ร่าง (R-12–R-14: อ่านเอกสารเชิญได้ด้วย `get` แต่ `list` ไม่ได้)
 ข้อบกพร่องของร่างสัญญาแรกที่พบเองก่อนเขียนโค้ดและแก้แล้ว 5 จุด (เช่น Rules เดิมห้ามอ่านเอกสารเชิญทั้งที่ขั้นเข้าร่วมต้องอ่าน, `<` กับ `<=` ที่ขอบเวลา, ใช้ `Math.random` สร้างรหัส) — ดู `docs/AI_USAGE_LOG.md` และ `docs/01-requirements/decision-log.md`
 
 เอกสาร: `docs/02-design/architecture.md` (ADR, data model, state machine ของมื้อ, Demo mode) · `design-system.md` (Screen Map, ขนาด/สี NFR-03) · `firestore-rules-draft.md`
-[ ] ใส่ภาพ architecture / ERD / ภาพหน้าจอต้นแบบ (ภาพหน้าจอต้องใช้ข้อมูลสมมติเท่านั้น)
+![สถาปัตยกรรม 5 ชั้น](figures/fig-architecture.png)
+*ภาพที่ 1 — สถาปัตยกรรม: หน้าจอชุดเดียวกันใช้ได้ทั้ง Demo mode และใช้งานจริง ต่างกันที่ที่เก็บข้อมูลและนาฬิกา*
+
+![Demo mode: ผู้สูงอายุและผู้ดูแล](figures/fig-demo-both.png)
+*ภาพที่ 2 — Demo mode (ข้อมูลสมมติ นาฬิกาจำลอง)*
+
+| ผู้สูงอายุ: เตือนรอบที่ 3 | ผู้ดูแล: ยังไม่ยืนยัน | ผู้ดูแล: การแจ้งเตือน |
+|---|---|---|
+| ![](figures/fig-senior-reminder.png) | ![](figures/fig-caregiver-status.png) | ![](figures/fig-caregiver-alert.png) |
+*ภาพที่ 3 — FR-03 / FR-05: ปุ่มกินแล้ว/ยังไม่กิน (≥ 64px) · ผู้ดูแลเห็น "ยังไม่ยืนยัน" ไม่ใช้คำว่า "ไม่ได้กิน" (BR-14)*
+
+| QR จริงของลิงก์เชิญ | ปิดชื่อ/HN ก่อนส่งให้ AI | ร่างจาก AI: ช่องไม่ชัด = "โปรดตรวจสอบ" |
+|---|---|---|
+| ![](figures/fig-real-qr.png) | ![](figures/fig-redact.png) | ![](figures/fig-draft-flags.png) |
+*ภาพที่ 4 — FR-01 ข้อ 1 และ FR-02 (ใช้ฉลากสมมติเท่านั้น)*
 
 ## 4. การสร้างระบบ 🟡
 **ทำแล้ว (หลักฐานอยู่ใน repo):**
@@ -59,7 +73,7 @@ SRS v1.5 — 9 FR (Must 5 · Should 1 · Could 3), กฎธุรกิจ 21 �
 - เตือนตอนปิดหน้าเว็บ — อยู่นอกขอบเขตแต่แรก (ดู §2)
 
 **เทคโนโลยี:** HTML/CSS/JavaScript (ES modules) ไม่มี build step ไม่มี framework · Node test runner · Firebase (กำหนดไว้ในการออกแบบ ยังไม่ใช้งานจริง)
-**ข้อจำกัดที่รู้:** ดู README หัวข้อ "ข้อจำกัดที่สำคัญ" · ลิงก์ระบบที่เปิดได้ในมือถือ: [ ] (ต้องเปิด GitHub Pages แล้วใส่ลิงก์ที่ปก)
+**ข้อจำกัดที่รู้:** ดู README หัวข้อ "ข้อจำกัดที่สำคัญ" · ลิงก์ระบบที่เปิดได้ในมือถือ: https://yaroo393-png.github.io/MedMind/ (PM ยืนยันว่าเปิดได้ 7 พ.ย.)
 
 ## 5. การทดสอบ 🟡
 **ผลเทสต์อัตโนมัติ:** `npm test` (7 พ.ย. 2569) → **ผ่าน 345 / ไม่ผ่าน 0** · `emulator-tests/` (Security Rules R-1…R-14 + `firestoreRepo` กับ Firebase Emulator) → **ผ่าน 31 / ไม่ผ่าน 0** · ทุกฟังก์ชันใน `logic/` มีเทสต์ที่อ้าง AC · เทสต์เขียนก่อนโค้ดตามสัญญา (TDD) และ "ฉีดบั๊กเทียม" ในโค้ดเพื่อพิสูจน์ว่าเทสต์จับได้ (pairing: ฉีด 10 จุด จับได้ครบ · หน้าจอ: ฉีด 16 จุด จับได้ครบ 16)
@@ -104,14 +118,14 @@ SRS v1.5 — 9 FR (Must 5 · Should 1 · Could 3), กฎธุรกิจ 21 �
 ## 6. การใช้ AI และข้อสะท้อน ✅
 **ใช้ AI ช่วยอะไรบ้าง:** (รายละเอียดครบ → [`ai-use-statement.md`](ai-use-statement.md))
 - **Claude (แชท):** ร่าง/ตรวจ Charter, SRS, ออกแบบ, วาดแผนภาพ, ร่างโครง repo
-- **Claude Code:** เขียนโค้ด `logic/` + `core/` + เทสต์, ต้นแบบ M3 ทั้งชุด, ร่างสัญญาโมดูล
+- **Claude Code:** เขียนโค้ด `logic/` + `core/` + หน้าจอ `features/` + Firebase (`firestoreRepo`, `firestore.rules`) + AI อ่านฉลาก + QR + เทสต์ทั้งหมด, ต้นแบบ M3 ทั้งชุด, ร่างสัญญาโมดูล
 - **Figma AI:** สร้างไอคอนชุด `medmind-icons` จากมาสคอร์ตการ์ตูนที่ Rossatorn วาดเอง (Suchitra ใช้ Figma AI)
 
 **สิ่งที่ทีมตรวจและตัดสินใจเอง:**
 - ✅ ขอบเขต FR, กฎการเตือน, ข้อความถึงผู้ดูแล, ตัวเลข NFR (มติ DL-01–DL-25)
 - ✅ ทุกคน commit ด้วยบัญชีตัวเอง · รัน `npm run check` ให้ผ่านก่อน push · ทุก PR ต้องมีผู้รีวิว + CI ผ่าน
 - ✅ AI ลองแก้โค้ดให้ผิดเพื่อดูว่าเทสต์จับได้ (บันทึกใน log ของแต่ละงาน)
-- ✅ **ทุกคนตรวจโค้ดของตัวเองแล้ว** (Takkan, Yar, Suchitra 6 พ.ย. · Nichanan, Rossatorn 7 พ.ย.)
+- ✅ ตรวจโค้ด `logic/` และ `core/` ถึง 6 พ.ย. แล้ว (Takkan, Yar, Suchitra 6 พ.ย. · Nichanan, Rossatorn 7 พ.ย.) · ⬜ **หน้าจอ Firebase และ AI อ่านฉลากที่เพิ่ม 7 พ.ย. ยังไม่มีสมาชิกตรวจ**
 
 **อะไรได้ผล:**
 - เขียนเทสต์ก่อนโค้ด แล้วลองทำโค้ดให้ผิด → พิสูจน์ว่าเทสต์จับได้
@@ -121,26 +135,28 @@ SRS v1.5 — 9 FR (Must 5 · Should 1 · Could 3), กฎธุรกิจ 21 �
 - AI เพิ่ม FR ที่ไม่มีในปัญหาจริง · ตอบว่า ML Kit อ่านไทยได้ (ผิด)
 - ร่างแรกมีบั๊ก: `labelDraft` พังเมื่อไม่มี slot สมบูรณ์ · เทสต์ 2 ข้อผิดเอง
 - ข้อเสนอสัญญาฉบับแรกผิด 5 จุด (เจอตอนตรวจซ้ำ)
+- ตอนทดสอบ Security Rules กับ Emulator เจอบั๊กจริง 2 ตัวที่เทสต์ธรรมดาไม่เจอ: ตัวฟังข้อมูลตายถาวรถ้าเริ่มก่อนเอกสารคู่ขึ้นเซิร์ฟเวอร์ และเครื่องผู้สูงอายุไม่รู้ว่าผู้ดูแลยกเลิกจับคู่ — แก้แล้ว
+- **เหตุการณ์ที่ต้องเปิดเผย:** ระหว่างพัฒนามีการส่งรูปฉลากยาจริง 4 ใบ (เห็นชื่อ/HN ของสมาชิกทีม) ให้ Claude Code ทางแชต · AI ตอบทันทีว่าผิดกติกา ไม่บันทึกชื่อ/HN ลงไฟล์ใด ไม่ส่งรูปให้ Gemini และใช้เฉพาะรูปแบบฉลากปรับการออกแบบ (DL-28) — รายละเอียดใน AI-Use Statement ข้อ 5
 
 **บทเรียน:** AI พูดมั่นใจแม้ผิด → ต้องมีเทสต์ มีมนุษย์ตรวจ และตรวจย้อนกับ requirement ก่อนยอมรับ
 
-**AI ในตัวระบบ:** ยังไม่ได้ทำ — FR-02 (อ่านฉลาก) ใช้ร่างตัวอย่างจาก `demoData.js` ไม่มีการเรียก Gemini จริง (เลื่อนไปรอบถัดไป DL-24)
+**AI ในตัวระบบ:** เขียนแล้ว (7 พ.ย.) — ถ่ายรูป → ผู้ดูแลลากนิ้วปิดชื่อ/HN → วาดรูปใหม่ไม่มี EXIF → Gemini ผ่าน Firebase AI Logic → ร่างให้ผู้ดูแลตรวจ (FR-02 ข้อ 1, 5, 9) · ทดสอบเต็มเส้นทางในเบราว์เซอร์โดยดักคำขอ AI แล้วตอบแทน (ตรวจว่าภาพที่ส่งถูกปิดจริงและไม่มี EXIF) · **ยังไม่เคยเรียก Gemini จริง ความแม่นยำกับฉลากจริงยังไม่มีตัวเลข [ รอ MT-09 ]**
 
 ## 7. ส่วนร่วมรายคน ✅
 กระบวนการ: Incremental + sprint สั้น 3 รอบ (Sprint 0 วิเคราะห์, Sprint 1–2 พัฒนา) — ดู [`docs/PROJECT-PLAN.md`](../../docs/PROJECT-PLAN.md)
 
 | คน | FR / งาน | ไฟล์โค้ด | PR / Commit สำคัญ |
 |---|---|---|---|
-| **Yar Oo** (PM) | FR-02, เอกสาร, repo/CI | [`logic/schedule.js`](../../public/js/logic/schedule.js), [`logic/labelDraft.js`](../../public/js/logic/labelDraft.js) | [#41](https://github.com/yaroo393-png/MedMind/pull/41) labelDraft, [#36](https://github.com/yaroo393-png/MedMind/pull/36) schedule, [#39](https://github.com/yaroo393-png/MedMind/pull/39) มติ DL-19–25, [#45](https://github.com/yaroo393-png/MedMind/pull/45) AI-Use Statement |
-| **Takkan Khanlui** | FR-01, core, Rules | [`logic/pairing.js`](../../public/js/logic/pairing.js), [`core/repo.js`](../../public/js/core/repo.js), [`core/clock.js`](../../public/js/core/clock.js) | [#43](https://github.com/yaroo393-png/MedMind/pull/43) pairing, [#38](https://github.com/yaroo393-png/MedMind/pull/38) clock+repo, ต้นแบบ FR-01 · ตรวจแล้ว (6 พ.ย.) |
-| **Rossatorn Sangkaew** | FR-03, Design | [`logic/time.js`](../../public/js/logic/time.js), [`logic/mealTimeline.js`](../../public/js/logic/mealTimeline.js), [`tokens.css`](../02-design/prototypes/tokens.css) (ออกแบบชุดสี/ฟอนต์เอง) + วาดมาสคอร์ตการ์ตูนเอง | [#35](https://github.com/yaroo393-png/MedMind/pull/35) mealTimeline · ตรวจแล้ว (7 พ.ย.) |
-| **Nichanan Lalua** | FR-04, ต้นแบบ | [`logic/confirm.js`](../../public/js/logic/confirm.js), [`core/demoData.js`](../../public/js/core/demoData.js), ต้นแบบ Demo mode | [#40](https://github.com/yaroo393-png/MedMind/pull/40) demoData, เทสต์ต้นแบบ · ตรวจแล้ว (7 พ.ย.) |
-| **Suchitra Khomdee** | FR-05, ไอคอน | [`logic/status.js`](../../public/js/logic/status.js), [`tests/status.test.js`](../../tests/status.test.js), ไอคอน (ใช้ Figma AI สร้างจากมาสคอร์ตที่ Rossatorn วาด) | [#37](https://github.com/yaroo393-png/MedMind/pull/37) status.js + เทสต์ · ตรวจแล้ว (6 พ.ย.) |
+| **Yar Oo** (PM) | FR-02, เอกสาร, repo/CI | [`logic/schedule.js`](../../public/js/logic/schedule.js), [`logic/labelDraft.js`](../../public/js/logic/labelDraft.js) | [#41](https://github.com/yaroo393-png/MedMind/pull/41) labelDraft, [#36](https://github.com/yaroo393-png/MedMind/pull/36) schedule, [#39](https://github.com/yaroo393-png/MedMind/pull/39) มติ DL-19–25, [#45](https://github.com/yaroo393-png/MedMind/pull/45) AI-Use Statement · [#48](https://github.com/yaroo393-png/MedMind/pull/48) / [#49](https://github.com/yaroo393-png/MedMind/pull/49) (รวมและเปิด PR) · AI อ่านฉลาก `services/aiLabel.js`, `services/redact.js`, `features/medicineSetup.js` |
+| **Takkan Khanlui** | FR-01, core, Rules | [`logic/pairing.js`](../../public/js/logic/pairing.js), [`core/repo.js`](../../public/js/core/repo.js), [`core/clock.js`](../../public/js/core/clock.js) | [#43](https://github.com/yaroo393-png/MedMind/pull/43) pairing, [#38](https://github.com/yaroo393-png/MedMind/pull/38) clock+repo, ต้นแบบ FR-01 · ตรวจแล้ว (6 พ.ย.) · [#49](https://github.com/yaroo393-png/MedMind/pull/49): `firestore.rules`, `core/firestoreRepo.js`, `core/firebase.js`, `features/qr.js`, `emulator-tests/` · [#48](https://github.com/yaroo393-png/MedMind/pull/48): `features/pairing.js` |
+| **Rossatorn Sangkaew** | FR-03, Design | [`logic/time.js`](../../public/js/logic/time.js), [`logic/mealTimeline.js`](../../public/js/logic/mealTimeline.js), [`tokens.css`](../02-design/prototypes/tokens.css) (ออกแบบชุดสี/ฟอนต์เอง) + วาดมาสคอร์ตการ์ตูนเอง | [#35](https://github.com/yaroo393-png/MedMind/pull/35) mealTimeline · ตรวจแล้ว (7 พ.ย.) · [#48](https://github.com/yaroo393-png/MedMind/pull/48): `features/reminder.js`, `ui.js`, `format.js`, CSS · [#49](https://github.com/yaroo393-png/MedMind/pull/49): สไตล์หน้าใช้งานจริง, เทสต์โครงสร้างหน้าเว็บ |
+| **Nichanan Lalua** | FR-04, ต้นแบบ | [`logic/confirm.js`](../../public/js/logic/confirm.js), [`core/demoData.js`](../../public/js/core/demoData.js), ต้นแบบ Demo mode | [#40](https://github.com/yaroo393-png/MedMind/pull/40) demoData, เทสต์ต้นแบบ · ตรวจแล้ว (7 พ.ย.) · [#48](https://github.com/yaroo393-png/MedMind/pull/48): `demo.html`, `features/home.js`, `phone.js`, `core/offlineQueue.js` · [#49](https://github.com/yaroo393-png/MedMind/pull/49): `senior.html`, `caregiver.html`, `features/realShell.js` |
+| **Suchitra Khomdee** | FR-05, ไอคอน | [`logic/status.js`](../../public/js/logic/status.js), [`tests/status.test.js`](../../tests/status.test.js), ไอคอน (ใช้ Figma AI สร้างจากมาสคอร์ตที่ Rossatorn วาด) | [#37](https://github.com/yaroo393-png/MedMind/pull/37) status.js + เทสต์ · ตรวจแล้ว (6 พ.ย.) · [#48](https://github.com/yaroo393-png/MedMind/pull/48): `features/caregiverStatus.js`, `alerts.js` · ส่วน CI emulator และแผนทดสอบมือถือ (ส่วน G) อยู่ระหว่าง commit [ ใส่ลิงก์ PR ] |
 
 **หมายเหตุความโปร่งใส:**
 - `confirm.js` และ `time.js` (เจ้าของคือ Nichanan และ Rossatorn) ถูก commit ใน [PR #34](https://github.com/yaroo393-png/MedMind/pull/34) ภายใต้บัญชี PM · เจ้าของทั้งสองตรวจและอธิบายโค้ดได้ (7 พ.ย.) ตามบันทึกใน AI-Use Statement
 - ✅ ตรวจแล้ว: โค้ด `logic/` และ `core/` ที่เขียนถึง 6 พ.ย. (Takkan, Yar, Suchitra 6 พ.ย. · Nichanan, Rossatorn 7 พ.ย.)
-- **ยังไม่ตรวจ:** หน้าจอจริง `public/js/features/`, `public/demo.html`, `core/offlineQueue.js` และเทสต์ 109 ข้อที่เพิ่ม 7 พ.ย. (ร่างโดย AI) — เจ้าของแต่ละ FR ต้องอ่านและอธิบายได้ก่อนสอบ และเปิด PR จากบัญชีตัวเอง · ตารางข้างบนจะเติมลิงก์ PR ของหน้าจอเมื่อ merge
+- **ยังไม่ตรวจ:** หน้าจอจริง `public/js/features/`, Firebase (`firestoreRepo`, `firestore.rules`), AI อ่านฉลาก, QR และเทสต์ที่เพิ่ม 7 พ.ย. (ร่างโดย AI) ทั้งหมด merge แล้วผ่าน PR #48/#49 แต่เจ้าของแต่ละไฟล์ต้องอ่านและอธิบายได้ก่อนสอบ
 - PR #42 ("Create status.js" ของ Suchitra) ซ้ำกับ #37 ที่ merge แล้ว ต้องปิดโดยไม่ merge [ ยืนยันหลังปิดแล้ว] · ส่วนร่วมรายคนตัดสินจาก GitHub ของแต่ละบัญชี [ ตรวจหน้า Contributors ก่อนส่ง ]
 
 ## 8. ตาราง Golden Thread

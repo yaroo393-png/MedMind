@@ -19,13 +19,13 @@
 ## งานรองรับ (enabler) — ไม่ใช่ FR แต่ทุก FR ต้องใช้
 | ID | งาน | อ้างอิง | ขนาด (เสนอ) | Increment | เจ้าของ | สถานะ |
 |---|---|---|---|---|---|---|
-| E-1 | ตั้ง Firebase project (Spark), Anonymous Auth, Firestore, Hosting | architecture ADR-2 | 2 | 1 | Takkan | ⬜ |
-| E-2 | `core/firebase.js`, `core/clock.js`, `core/repo.js` (`firestoreRepo` + `localRepo`) | architecture §5, ADR-8 | 3 | 1 | Takkan | 🔄 (`clock` + `localRepo` เสร็จ · `firestoreRepo`/`firebase.js` เลื่อน DL-24) |
+| E-1 | ตั้ง Firebase project (Spark), Anonymous Auth, Firestore, Hosting | architecture ADR-2 | 2 | 1 | Takkan | ✅ (7 พ.ย. — โปรเจกต์ `medmind-12eb2` Spark · ไม่ใช้ Hosting ใช้ GitHub Pages · ดู `docs/FIREBASE-SETUP.md`) |
+| E-2 | `core/firebase.js`, `core/clock.js`, `core/repo.js` (`firestoreRepo` + `localRepo`) | architecture §5, ADR-8 | 3 | 1 | Takkan | ✅ (`clock`, `localRepo` 6 พ.ย. · `firebase.js`, `firestoreRepo` 7 พ.ย. — PR #49) |
 | E-3 | ข้อมูลตัวอย่าง + สคริปต์ seed คู่ทดสอบ (`core/demoData.js`) | architecture §11 | 2 | 1 | Nichanan | ✅ (PR #40) |
-| E-4 | Design tokens + โครงหน้า S-00…S-03, C-07 | design-system §2–4 | 3 | 1 | Rossatorn | 🔄 (`public/css/tokens.css`, `app.css`, `features/ui.js` ย้ายจากต้นแบบแล้ว) |
+| E-4 | Design tokens + โครงหน้า S-00…S-03, C-07 | design-system §2–4 | 3 | 1 | Rossatorn | ✅ (`public/css/tokens.css`, `app.css`, `features/ui.js` — PR #48) |
 | E-5 | Demo mode `demo.html` (2 บทบาท + ปุ่มเลื่อนนาฬิกา + จำลอง AI ล่ม/ออฟไลน์) | ADR-8, M4 | 5 | 1 → 2 | Nichanan (+ ทุกคนเพิ่มส่วน FR ตัวเอง) | ✅ (`public/demo.html` + `features/demoShell.js` · Demo mode เดินครบ FR-01–05) |
-| E-6 | Security Rules + เทสต์ Emulator R-1…R-11 | firestore-rules-draft.md | 3 | 2 | **Suchitra** (ย้ายจาก Takkan — DL-12) | ⬜ |
-| E-7 | แผน/ผลทดสอบมือ MT-01…MT-15 + heuristic evaluation โดยทีมอื่น | TRACEABILITY | 3 | Final | Suchitra | ⬜ |
-| E-8 | Final Report, Demo Slides, AI-Use Statement, README | M4 | 3 | Final | Yar Oo | 🔄 (ร่างเสร็จ · ทีมเติม [ ]) |
+| E-6 | Security Rules + เทสต์ Emulator R-1…R-11 | firestore-rules-draft.md | 3 | 2 | **Suchitra** (ย้ายจาก Takkan — DL-12) | ✅ เขียนและทดสอบแล้ว (`firestore.rules`, `emulator-tests/` R-1…R-14 + อีก 4 ข้อ — PR #49 · DL-27) · รอ Suchitra ตรวจ และวางใน Firebase Console |
+| E-7 | แผน/ผลทดสอบมือ MT-01…MT-16 + heuristic evaluation โดยทีมอื่น | TRACEABILITY | 3 | Final | Suchitra | 🔄 (แผน `TEST-CHECKLIST.md` ส่วน A–G พร้อม · **ผลบนมือถือจริงยังว่าง**) |
+| E-8 | Final Report, Demo Slides, AI-Use Statement, README | M4 | 3 | Final | Yar Oo | 🔄 (รายงาน/AI-Use Statement/README ครบ · สไลด์ `.pptx` + สคริปต์เดโม + ชุดซ้อมสอบพร้อม · เหลือช่อง [ ] ที่ต้องใช้ผลจริง) |
 
 **รวมขนาด MVP (เสนอ):** FR 29 + enabler 24 = **53 points** — เทียบกับ velocity จริงหลัง Sprint 1 (ดู `docs/PROJECT-PLAN.md`) ถ้าไม่พอ ให้ตัดจาก Could ก่อน แล้วค่อยลดความครบของ Should/หน้าจอ ห้ามตัด Must
