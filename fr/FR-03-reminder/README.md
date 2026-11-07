@@ -51,6 +51,7 @@ Definition — reminder timeline, shared with FR-04 and FR-05 (T = the meal's re
 - [x] Issue ถูกสร้างและ assign (#14)
 - [x] ตรรกะ + เทสต์ผ่าน (`npm test`) — `logic/mealTimeline.js` + `tests/mealTimeline.test.js` (18) + `tests/time.test.js` (3) (5 พ.ย. 2569)
 - [x] หน้าจอเชื่อมกับ logic — `features/reminder.js` + `tests/reminderHomeView.test.js` (15, ร่วมกับ FR-04) เปิดได้ที่ `public/demo.html` (7 พ.ย. 2569)
+- [x] ใช้งานจริงบน Firebase (`senior.html`) ใช้หน้าเตือนชุดเดียวกับ Demo mode (7 พ.ย. 2569) · **ยังไม่ทดสอบเสียงบนมือถือจริง** (MT-04)
 - [ ] ทดสอบบนมือถือจริง (MT ที่เกี่ยวข้อง)
 - [x] `docs/TRACEABILITY.md` อัปเดตแล้ว (ส่วน logic + หน้าจอใน public/ — MT บนมือถือยังไม่ทำ)
 - [ ] บันทึกการใช้ AI แล้ว

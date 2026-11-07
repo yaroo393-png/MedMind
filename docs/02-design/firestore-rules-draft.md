@@ -1,4 +1,6 @@
-# Firestore Security Rules — ฉบับร่าง (ยังไม่ได้ทดสอบ)
+# Firestore Security Rules — ฉบับร่าง (เอกสารออกแบบ)
+
+> **อัปเดต 7 พ.ย. 2569:** ฉบับใช้จริงอยู่ที่ [`firestore.rules`](../../firestore.rules) และทดสอบกับ Firebase Emulator แล้ว ([`emulator-tests/rules.spec.mjs`](../../emulator-tests/rules.spec.mjs) — R-1…R-14 ผ่าน) · ต่างจากร่างนี้ตาม decision-log DL-27 · วิธีวางในคอนโซล: [`docs/FIREBASE-SETUP.md`](../FIREBASE-SETUP.md)
 
 > **ห้ามนำไป deploy จนกว่าจะเขียนเทสต์ใน Firebase Emulator ผ่านทุกข้อด้านล่าง** — ร่างด้วย AI จาก SRS v1.5 (NFR-04, 05, 07, 10; BR-01, 02, 03, 12, 17, 20; มติ A1/A5) โดยมีผู้ตรวจ (System Designer) เป็นผู้รับรอง · ถ้ากฎขัดกับ SRS ให้ยึด SRS
 > ไม่ได้วางเป็น `firestore.rules` ที่ root เพื่อไม่ให้ถูก deploy โดยไม่ตั้งใจ — เมื่อทดสอบผ่านแล้วค่อยย้ายไปเป็น `firestore.rules`

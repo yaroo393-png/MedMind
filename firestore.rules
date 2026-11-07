@@ -1,0 +1,141 @@
+rules_version = '2';
+// Security Rules ของ MedMind — ตามร่าง docs/02-design/firestore-rules-draft.md + มติ DL-20 และ DL-27 (ดูหมายเหตุท้ายไฟล์ร่าง)
+// ทดสอบด้วย Firebase Emulator: emulator-tests/ (cd emulator-tests ; npm install ; npm test) — ห้าม deploy ถ้าเทสต์ไม่ผ่าน
+// หลัก: ปฏิเสธทุกอย่างเป็นค่าเริ่มต้น · ทุกเส้นทางใต้ pairs/{pairId} เข้าได้เฉพาะ seniorUid / caregiverUid ของคู่นั้น (NFR-04)
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function pairRef(pairId) { return /databases/$(database)/documents/pairs/$(pairId); }
+    function isSenior(pairId)    { return signedIn() && get(pairRef(pairId)).data.seniorUid == request.auth.uid; }
+    function isCaregiver(pairId) { return signedIn() && get(pairRef(pairId)).data.caregiverUid == request.auth.uid; }
+    function isMember(pairId)    { return isSenior(pairId) || isCaregiver(pairId); }
+    function hhmm(s) { return s is string && s.matches('^([01][0-9]|2[0-3]):[0-5][0-9]$'); }
+
+    // ----- รหัสเชิญ (FR-01 · BR-01) -----
+    // ช่อง consented / hasCaregiver เป็น "สำเนาเพื่อบอกเหตุผล" ให้เครื่องผู้ดูแล (DL-20) — ผู้ตัดสินจริงคือเอกสาร pairs/{pairId}
+    match /invites/{code} {
+      // ผู้สูงอายุสร้างรหัสของคู่ตัวเอง · อายุไม่เกิน 10 นาที + เผื่อนาฬิกาเครื่องเร็ว 60 วินาที (DL-27)
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['pairId', 'seniorUid', 'expiresAt', 'usedAt', 'usedBy', 'consented', 'hasCaregiver'])
+        && request.resource.data.seniorUid == request.auth.uid
+        && request.resource.data.usedAt == null
+        && request.resource.data.consented == (getAfter(pairRef(request.resource.data.pairId)).data.consentAt != null)
+        && request.resource.data.hasCaregiver == false
+        && request.resource.data.expiresAt is timestamp
+        && request.resource.data.expiresAt <= request.time + duration.value(10, 'm') + duration.value(60, 's')
+        && getAfter(pairRef(request.resource.data.pairId)).data.seniorUid == request.auth.uid
+        && getAfter(pairRef(request.resource.data.pairId)).data.inviteCode == code;
+      // อ่านทีละเอกสารเมื่อรู้รหัส (ใช้เลือกข้อความ) — ห้าม list กันการกวาดหารหัส
+      allow get: if signedIn();
+      allow list: if false;
+      allow update: if signedIn() && (
+        // (1) ผู้ดูแลใช้รหัส: ยังไม่ใช้ · ไม่หมดอายุ (ตรง expiresAt พอดียังใช้ได้) · ผู้สูงอายุยินยอมแล้ว · ยังไม่มีผู้ดูแล · แก้พร้อม pairs ใน batch เดียว
+        ( resource.data.usedAt == null
+          && request.time <= resource.data.expiresAt
+          && get(pairRef(resource.data.pairId)).data.consentAt != null
+          && get(pairRef(resource.data.pairId)).data.caregiverUid == null
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['usedAt', 'usedBy', 'hasCaregiver'])
+          && request.resource.data.usedAt == request.time
+          && request.resource.data.usedBy == request.auth.uid
+          && request.resource.data.hasCaregiver == true
+          && getAfter(pairRef(resource.data.pairId)).data.caregiverUid == request.auth.uid )
+        // (2) ผู้สูงอายุอัปเดตสำเนา consented หลังกดยินยอม (batch เดียวกับการตั้ง consentAt)
+        || ( resource.data.seniorUid == request.auth.uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['consented'])
+          && request.resource.data.consented == true
+          && getAfter(pairRef(resource.data.pairId)).data.consentAt != null )
+      );
+      // ผู้สูงอายุลบรหัสเก่าของตัวเอง (สร้างรหัสใหม่ / ยกเลิกจับคู่)
+      allow delete: if signedIn() && resource.data.seniorUid == request.auth.uid;
+    }
+
+    // ----- คู่ผู้สูงอายุ–ผู้ดูแล -----
+    match /pairs/{pairId} {
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['seniorUid', 'caregiverUid', 'consentAt', 'inviteCode'])
+        && request.resource.data.seniorUid == request.auth.uid
+        && request.resource.data.caregiverUid == null
+        && request.resource.data.consentAt == null
+        && request.resource.data.inviteCode is string;
+      // อ่าน/ค้น (list) ได้เฉพาะคู่ของตัวเอง — คำค้นต้องมี where('seniorUid'|'caregiverUid', '==', uid)
+      allow read: if signedIn()
+        && (resource.data.seniorUid == request.auth.uid || resource.data.caregiverUid == request.auth.uid);
+      allow update: if signedIn() && (
+        // ผู้สูงอายุ: กดยินยอม (ครั้งเดียว ตั้งเป็นเวลาของเซิร์ฟเวอร์) หรือเปลี่ยนรหัสเชิญ
+        ( resource.data.seniorUid == request.auth.uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['consentAt', 'inviteCode'])
+          && (resource.data.consentAt == null ? request.resource.data.consentAt == request.time
+                                              : request.resource.data.consentAt == resource.data.consentAt) )
+        ||
+        // ผู้ดูแล: เข้าร่วม (ต้องมีรหัสปัจจุบันที่ถูกใช้ใน batch เดียวกัน) — ต้องยินยอมแล้วและยังว่าง
+        ( resource.data.caregiverUid == null
+          && resource.data.consentAt != null
+          && request.resource.data.caregiverUid == request.auth.uid
+          && request.auth.uid != resource.data.seniorUid                         // เครื่องผู้สูงอายุจับคู่กับตัวเองไม่ได้
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['caregiverUid'])
+          && getAfter(/databases/$(database)/documents/invites/$(resource.data.inviteCode)).data.usedBy == request.auth.uid
+          && get(/databases/$(database)/documents/invites/$(resource.data.inviteCode)).data.usedAt == null
+          && request.time <= get(/databases/$(database)/documents/invites/$(resource.data.inviteCode)).data.expiresAt )
+        ||
+        // ผู้ดูแล: ตั้งเวลามื้อ 4 ช่อง รูป HH:MM (BR-06)
+        ( resource.data.caregiverUid == request.auth.uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['mealTimes'])
+          && request.resource.data.mealTimes.keys().hasOnly(['breakfast', 'lunch', 'dinner', 'bedtime'])
+          && hhmm(request.resource.data.mealTimes.breakfast) && hhmm(request.resource.data.mealTimes.lunch)
+          && hhmm(request.resource.data.mealTimes.dinner) && hhmm(request.resource.data.mealTimes.bedtime) )
+      );
+      // ยกเลิกจับคู่: ฝ่ายใดก็ลบได้ (BR-17) — ฝั่งแอปต้องลบเอกสารย่อยใน batch เดียวกัน (Firestore ไม่ลบ sub-collection ให้)
+      allow delete: if signedIn()
+        && (resource.data.seniorUid == request.auth.uid || resource.data.caregiverUid == request.auth.uid);
+    }
+
+    // ----- ยา: ผู้ดูแลเท่านั้นที่เขียน (BR-03) · ความถูกต้องของแต่ละ slot ตรวจด้วย validateSlot ฝั่งแอป -----
+    match /pairs/{pairId}/medicines/{id} {
+      allow read: if isMember(pairId);
+      allow create, update: if isCaregiver(pairId)
+        && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 200
+        && request.resource.data.slots is list
+        && request.resource.data.slots.size() >= 1 && request.resource.data.slots.size() <= 12;   // A1 · R-11
+      allow delete: if isMember(pairId);
+    }
+
+    // ----- บันทึกยืนยัน: ผู้สูงอายุสร้างได้ครั้งเดียวต่อมื้อ ห้ามแก้ (BR-12, NFR-07) -----
+    match /pairs/{pairId}/doses/{doseId} {
+      allow read: if isMember(pairId);
+      // BR-20: status ตัดสินด้วย confirmedAt เท่านั้น · ตรง T+15 พอดี = taken · serverReceivedAt ต้องเป็นเวลาของเซิร์ฟเวอร์ (R-9)
+      allow create: if isSenior(pairId)
+        && request.resource.data.keys().hasOnly(['scheduledTime', 'confirmedAt', 'serverReceivedAt', 'status'])
+        && request.resource.data.scheduledTime is timestamp
+        && request.resource.data.confirmedAt is timestamp
+        && request.resource.data.serverReceivedAt == request.time
+        && request.resource.data.status in ['taken', 'taken_late']
+        && request.resource.data.status ==
+           (request.resource.data.confirmedAt <= request.resource.data.scheduledTime + duration.value(15, 'm') ? 'taken' : 'taken_late');   // R-10
+      allow update: if false;
+      allow delete: if isMember(pairId);
+    }
+
+    // ----- เหตุการณ์ "ยังไม่กิน" รอบสุดท้าย (BR-11) -----
+    match /pairs/{pairId}/events/{doseId} {
+      allow read: if isMember(pairId);
+      allow create: if isSenior(pairId)
+        && request.resource.data.keys().hasOnly(['kind', 'at'])
+        && request.resource.data.kind == 'not_yet_last_round'
+        && request.resource.data.at is timestamp;
+      allow update: if false;
+      allow delete: if isMember(pairId);
+    }
+
+    // ----- ผู้ดูแลเห็นการแจ้งแล้ว (BR-13: ครั้งเดียวต่อมื้อ) — id = `${doseId}_${kind}` -----
+    match /pairs/{pairId}/alertSeen/{alertId} {
+      allow read: if isMember(pairId);
+      allow create: if isCaregiver(pairId)
+        && request.resource.data.keys().hasOnly(['seenAt'])
+        && request.resource.data.seenAt == request.time
+        && (alertId.matches('.*_not_confirmed$') || alertId.matches('.*_confirmed_late$'));
+      allow update: if false;
+      allow delete: if isMember(pairId);
+    }
+  }
+}

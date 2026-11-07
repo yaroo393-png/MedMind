@@ -157,7 +157,11 @@
 
 **ที่ยังเหลือใน P1 (ถ้ามีเวลา):** `public/index.html` ให้เป็นหน้าเลือกบทบาท S-00 จริง (จำบทบาทด้วย `localStorage`) เมื่อทำ `senior.html`/`caregiver.html` · ปรับดีไซน์หน้าจอจริงตามผลทดสอบมือถือ (MT-08/MT-16)
 
-### P2 — Firebase จริง (ระดับ B · Issue #8, #9 ขั้น B, E-6)
+### P2 — Firebase จริง ✅ เขียนและทดสอบกับ Emulator แล้ว 7 พ.ย. (เหลือ: วาง Rules ในคอนโซล + ทดสอบมือถือจริง — `docs/FIREBASE-SETUP.md`, TEST-CHECKLIST ส่วน G)
+
+> โปรเจกต์ `medmind-12eb2` (Spark) · `firestore.rules` + `core/firebase.js` + `core/firestoreRepo.js` + `senior.html`/`caregiver.html` + `features/realShell.js` + QR จริง · Rules R-1…R-14 และ repo ผ่าน 31 เทสต์ใน `emulator-tests/` · ตารางเดิมด้านล่างเก็บไว้เป็นประวัติ
+
+### P2 (แผนเดิม) — Firebase จริง (ระดับ B · Issue #8, #9 ขั้น B, E-6)
 
 **ต้องตัดสินใจก่อนเริ่ม (ถามทีม บันทึก DL):** สร้าง Firebase project ด้วยบัญชีใคร · ใช้ `firebase-tools` + `@firebase/rules-unit-testing` เป็น devDependencies (ต้อง `npm install` และ Java สำหรับ Emulator) · CI จะรัน Emulator หรือไม่
 
@@ -170,7 +174,9 @@
 | P2-5 | Rossatorn + Nichanan | `public/senior.html`, `public/caregiver.html` ใช้ `features/` ชุดเดียวกับ `demo.html` ต่างแค่ repo | ADR-9 | ทดสอบข้ามมือถือ 2 เครื่อง (MT-01, MT-05, MT-06, MT-11) |
 | P2-6 | Nichanan | FR-04 AC7 ออฟไลน์: พึ่ง offline persistence ของ Firestore + `confirmedAt` จากเวลาที่กด (BR-20) | FR-04 AC7, MT-05 | MT-05 ผ่าน: ปิดเน็ต กด → จอขึ้นทันที → เปิดเน็ต ผู้ดูแลเห็นภายใน 10 วินาที |
 
-### P3 — AI อ่านฉลากจริง (FR-02 AC5, AC9 · Yar)
+### P3 — AI อ่านฉลากจริง ✅ เขียนแล้ว 7 พ.ย. (เหลือ: เรียก Gemini จริงด้วยฉลากที่ปิดชื่อ/HN — MT-09, MT-13 · DL-28)
+
+### P3 (แผนเดิม) — AI อ่านฉลากจริง (FR-02 AC5, AC9 · Yar)
 
 | รหัส | ไฟล์ / งาน | อ้างอิง | เสร็จเมื่อ |
 |---|---|---|---|

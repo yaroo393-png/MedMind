@@ -24,7 +24,7 @@ test('มีไฟล์หน้าเว็บและไฟล์สไต�
 });
 
 test('M3: ทุกหน้า HTML มีแถบ "Covers: FR-xx" และชี้ไฟล์สไตล์/สคริปต์ที่มีอยู่จริง', () => {
-  for (const f of ['index.html', 'demo.html']) {
+  for (const f of ['index.html', 'demo.html', 'senior.html', 'caregiver.html']) {
     const s = read(f);
     assert.match(s, /Covers: FR-0\d/, `${f} ไม่มี Covers`);
     for (const m of s.matchAll(/(?:href|src)="(?!https?:|#)([^"]+)"/g)) assert.ok(existsSync(root + m[1].split('?')[0]), `${f} ชี้ไฟล์ที่ไม่มี: ${m[1]}`);
@@ -75,17 +75,37 @@ test('M3: ใช้ token เท่านั้น ไม่มีสี #hex �
   }
 });
 
-test('ADR-8 / NFR-09: Demo mode ไม่ต้องมี server — ไม่มีการเรียกเครือข่าย ลิงก์ภายนอก หรือที่เก็บถาวรของเบราว์เซอร์', () => {
+test('ADR-8 / NFR-09: Demo mode ไม่ต้องมี server — ไม่มีการเรียกเครือข่าย ลิงก์ภายนอก หรือที่เก็บถาวรของเบราว์เซอร์ · ใช้งานจริงโหลดได้เฉพาะ SDK ของ Firebase จาก CDN', () => {
   for (const f of codeFiles) {
     const s = read(f);
-    assert.doesNotMatch(s, /\bfetch\(|XMLHttpRequest|WebSocket|sendBeacon|https?:\/\//, `public/${f} อ้างเครือข่าย`);
-    assert.doesNotMatch(s, /localStorage|sessionStorage|indexedDB|document\.cookie/, `public/${f} เก็บข้อมูลลงเบราว์เซอร์ (ผู้สูงอายุไม่ควรมีข้อมูลค้างนอกที่เก็บของแอป)`);
+    if (f === 'js/core/firebase.js') {
+      for (const m of s.matchAll(/https?:\/\/[^\s'"`]+/g)) assert.match(m[0], /^https:\/\/www\.gstatic\.com\/firebasejs\/|^http:\/\/127\.0\.0\.1:9099$/, `firebase.js อ้าง ${m[0]}`);
+    } else {
+      assert.doesNotMatch(s, /\bfetch\(|XMLHttpRequest|WebSocket|sendBeacon|https?:\/\//, `public/${f} อ้างเครือข่าย`);
+    }
+    assert.doesNotMatch(s, /localStorage|sessionStorage|indexedDB|document\.cookie/, `public/${f} เก็บข้อมูลลงเบราว์เซอร์เอง (ใช้ที่เก็บของแอปเท่านั้น)`);
   }
 });
 
-test('สถาปัตยกรรม: เฉพาะ phone.js และ demoShell.js แตะ DOM · logic/ และ core/ ไม่แตะ DOM · Date.now() อยู่ที่ clock.js ที่เดียว', () => {
+test('ADR-8: demo.html และไฟล์ที่มัน import ทั้งหมดไม่แตะ Firebase (เปิดได้โดยไม่มีเครือข่าย)', () => {
+  const seen = new Set();
+  const visit = (file) => {
+    if (seen.has(file)) return;
+    seen.add(file);
+    const dir = file.includes('/') ? file.slice(0, file.lastIndexOf('/') + 1) : '';
+    for (const m of read(file).matchAll(/(?:from|import)\s*\(?\s*['"](\.{1,2}\/[^'"]+)['"]/g)) {
+      const target = new URL(m[1], `file:///${dir}`).pathname.slice(1);
+      if (existsSync(root + target)) visit(target);
+    }
+  };
+  visit('demo.html');
+  assert.ok(seen.has('js/features/phone.js') && seen.has('js/core/repo.js'), 'ไล่ import ไม่ครบ');
+  for (const bad of ['js/core/firebase.js', 'js/core/firestoreRepo.js', 'js/features/realShell.js', 'js/services/aiLabel.js']) assert.equal(seen.has(bad), false, `demo.html ดึง ${bad}`);
+});
+
+test('สถาปัตยกรรม: เฉพาะ phone.js, demoShell.js, realShell.js และ redactTool.js แตะ DOM · logic/ และ core/ ไม่แตะ DOM · Date.now() อยู่ที่ clock.js ที่เดียว', () => {
   const domWords = /\b(document|window|localStorage|innerHTML|addEventListener)\b/;
-  for (const f of featureFiles.filter((x) => !/phone\.js$|demoShell\.js$/.test(x))) {
+  for (const f of featureFiles.filter((x) => !/phone\.js$|demoShell\.js$|realShell\.js$|redactTool\.js$/.test(x))) {
     assert.doesNotMatch(read(f).replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, ''), domWords, `public/${f} แตะ DOM`);
   }
   for (const f of files.filter((x) => /^js\/(logic|core)\//.test(x) && x.endsWith('.js'))) {

@@ -22,9 +22,9 @@ export function makePhone(ctx, role, route) {
     return phone.snap;
   };
   /** วาดหน้าปัจจุบัน → { title, covers, body, overlay, tabs } */
-  phone.view = async (name = phone.route) => {
+  phone.view = async (name = phone.route, extra = {}) => {
     await phone.load();
-    return SCREENS[name]({ role, snap: phone.snap, ui: phone.ui, pref: phone.pref, sound: phone.sound, inbox: phone.inbox, flags: ctx.flags });
+    return SCREENS[name]({ role, snap: phone.snap, ui: phone.ui, pref: phone.pref, sound: phone.sound, inbox: phone.inbox, flags: ctx.flags, real: false, ctx, ...extra });
   };
   /** กดปุ่ม: เรียก action ที่ชื่อ act ด้วย env เหมือนใน phone.js */
   phone.act = async (act, data = {}) => {
@@ -35,6 +35,8 @@ export function makePhone(ctx, role, route) {
       later: (fn) => { phone.timer = fn; }, cancelLater: () => { phone.timer = null; },
       setFlag: (k, v) => { ctx.flags[k] = v; }, setInbox: (box) => { phone.inbox = box; }, unlockSound: () => { phone.sound = true; },
       onUnpaired: () => { phone.unpaired = true; },
+      ai: null, photo: null, render: () => {},
+      ...(phone.extraEnv ?? {}),
     };
     await ACTIONS[act](env, data);
     return phone.toasts.at(-1);

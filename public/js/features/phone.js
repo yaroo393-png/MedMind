@@ -10,6 +10,7 @@ import * as medicine from './medicineSetup.js';
 import * as home from './home.js';
 import * as reminder from './reminder.js';
 import * as status from './caregiverStatus.js';
+import { attachRedact } from './redactTool.js';
 
 const FEATURES = [pairing, medicine, home, reminder, status];
 export const SCREENS = Object.assign({}, ...FEATURES.map((f) => f.screens));
@@ -127,7 +128,7 @@ export class Phone {
     this.snap = snap;
     if (!(this.route in SCREENS) || (NEEDS_PAIR.has(this.route) && snap.pairState !== 'connected')) this.route = this.role === 'senior' ? 'senior-pair' : 'cg-pair';
 
-    const model = { role: this.role, snap, ui: this.ui, pref: this.pref, sound: this.sound, inbox: this.inbox, flags: ctx.flags };
+    const model = { role: this.role, snap, ui: this.ui, pref: this.pref, sound: this.sound, inbox: this.inbox, flags: ctx.flags, real: ctx.name === 'real', ctx };
     const scr = SCREENS[this.route](model);
     const showTabs = scr.tabs !== false;
     const inert = scr.overlay ? ' inert' : ''; // กล่องยืนยันเปิด → ส่วนอื่นกด/โฟกัสไม่ได้
@@ -145,6 +146,7 @@ export class Phone {
       (showTabs && open ? this.tabs(snap, inert) : '') + (scr.overlay ?? '') + '</div>';
     this.restoreFocus(key, routeChanged, Boolean(scr.overlay));
     this.lastRoute = this.route;
+    attachRedact(this.view.querySelector('[data-redact]'), (r) => this.run('add-rect', r));   // C-04 ใช้งานจริง
 
     // เสียงเตือน: ดังครั้งเดียวเมื่อมีรอบเตือนใหม่ (หลายมื้อพร้อมกันก็ครั้งเดียว — BR-16) · เปิดหน้ากลับไม่เล่นรอบที่ผ่านไปแล้ว (BR-18)
     if (this.role === 'senior') {
@@ -175,6 +177,7 @@ export class Phone {
       toast: (m) => this.toast(m), go: (r) => this.go(r), later: (fn, ms) => this.later(fn, ms), cancelLater: () => this.cancelLater(),
       setFlag: (k, v) => { this.ctx.flags[k] = v; }, setInbox: (box) => { this.inbox = box; }, unlockSound: () => this.unlockSound(),
       onUnpaired: () => this.ctx.onUnpaired?.(),
+      ai: this.ctx.ai ?? null, photo: this.ctx.photo ?? null, render: () => this.render(),
     };
   }
   async run(act, data) {
@@ -199,6 +202,7 @@ export class Phone {
     if (d.field === 'sample') this.run('set-sample', { value: t.value });
     else if (d.field === 'aiproblem') this.run('set-ai-problem', { value: t.value });
     else if (d.field === 'tick') this.run('set-tick', { checked: t.checked });
+    else if (d.field === 'photo') this.run('set-photo', { file: t.files?.[0] ?? null });
     else if (d.time) this.run('set-time', { time: d.time, value: t.value });
     else if (d.path) this.run('edit-field', { path: d.path, value: t.value });
   }

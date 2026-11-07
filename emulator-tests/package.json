@@ -1,0 +1,11 @@
+{
+  "name": "medmind-emulator-tests",
+  "private": true,
+  "type": "module",
+  "description": "ทดสอบ Security Rules (R-1…R-14) และ firestoreRepo กับ Firebase Emulator — แยกจาก npm test หลัก (ต้อง npm install + Java 21)",
+  "scripts": {
+    "test": "firebase emulators:exec --config ../firebase.json --only firestore,auth --project demo-medmind \"node --test --test-concurrency=1 ./*.spec.mjs\""
+  },
+  "dependencies": { "firebase": "^12.0.0" },
+  "devDependencies": { "firebase-tools": "^15.0.0" }
+}

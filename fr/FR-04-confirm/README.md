@@ -55,6 +55,7 @@ Definition: the older adult confirms on the reminder screen (FR-03) or on their 
 - [x] Issue ถูกสร้างและ assign (#15)
 - [x] ตรรกะ + เทสต์ผ่าน (`npm test`) — `logic/confirm.js` + `tests/confirm.test.js` (5 พ.ย. 2569: TC-04.1, 04.2, 04.5, 04.8, 04.9, AC10 · A5-T01, T02, T03, T06)
 - [x] หน้าจอเชื่อมกับ logic — `features/home.js`, `core/offlineQueue.js` + `tests/reminderHomeView.test.js`, `tests/offlineQueue.test.js` (7) เปิดได้ที่ `public/demo.html` (7 พ.ย. 2569)
+- [x] ใช้งานจริงบน Firebase: ออฟไลน์กด "กินแล้ว" แล้วส่งภายหลังด้วยเวลาที่กดเดิม (`firestoreRepo` + offline cache, 7 พ.ย. 2569) · **ยังไม่ทดสอบบนมือถือจริง** (MT-05)
 - [ ] ทดสอบบนมือถือจริง (MT ที่เกี่ยวข้อง)
 - [x] `docs/TRACEABILITY.md` อัปเดตแล้ว (ส่วน logic + หน้าจอใน public/ — MT บนมือถือยังไม่ทำ)
 - [ ] บันทึกการใช้ AI แล้ว

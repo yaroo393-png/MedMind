@@ -56,6 +56,7 @@ Definition: only the caregiver can add or edit medicines. A medicine has a name 
 - [x] Issue ถูกสร้างและ assign (#12, #13)
 - [x] ตรรกะ + เทสต์ผ่าน (`npm test`) — ✅ `logic/schedule.js` + `tests/schedule.test.js` 16 เทสต์ (5 พ.ย. 2569) · ✅ `logic/labelDraft.js` + `tests/labelDraft.test.js` 18 เทสต์ (6 พ.ย. 2569, #13)
 - [x] หน้าจอเชื่อมกับ logic — `features/medicineSetup.js` + `tests/medicineSetupView.test.js` (15) เปิดได้ที่ `public/demo.html` (7 พ.ย. 2569)
+- [x] AI อ่านฉลากจริงเขียนแล้ว (7 พ.ย. 2569) — `services/redact.js`, `services/aiLabel.js`, `features/redactTool.js` · **ยังไม่เคยเรียก Gemini จริง** — ทดสอบ MT-09/MT-13 ด้วยฉลากที่ปิดชื่อ/HN แล้วเท่านั้น
 - [ ] ทดสอบบนมือถือจริง (MT ที่เกี่ยวข้อง)
 - [x] `docs/TRACEABILITY.md` อัปเดตแล้ว (ส่วน `schedule.js` และ `labelDraft.js`)
 - [ ] บันทึกการใช้ AI แล้ว

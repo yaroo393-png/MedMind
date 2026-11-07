@@ -77,6 +77,9 @@ flowchart TB
 | `features/caregiverStatus.js`, `features/alerts.js` | UI | FR-05 | C-07, C-08 + กล่องแจ้งเตือน (`collectAlerts` จด `markAlertSeen`) (**ทำแล้ว 7 พ.ย.**) | Suchitra |
 | `features/ui.js`, `features/format.js`, `features/model.js` | UI | ทุก FR | ชิ้นส่วน HTML กลาง (`esc`, ปุ่ม, การ์ดมื้อ) · ข้อความ/รูปแบบเวลา · `loadSnapshot` อ่าน repo แล้วคำนวณด้วย `logic/` (**ทำแล้ว 7 พ.ย.**) | Rossatorn / Nichanan |
 | `features/phone.js`, `features/demoShell.js`, `features/demoControls.js` | UI | ADR-8, ADR-9 | จอมือถือ 1 เครื่อง (ไฟล์เดียวที่แตะ DOM ร่วมกับ `demoShell.js`) · เปลือก `demo.html` · สถานการณ์/นาฬิกาจำลอง (**ทำแล้ว 7 พ.ย.**) | Nichanan |
+| `core/firebase.js`, `core/firestoreRepo.js` | Data | ทุก FR · ADR-2, ADR-5 | เชื่อม Firebase (Anonymous Auth + Firestore offline cache, SDK จาก CDN ตรึงเวอร์ชัน 12.19.0) · `firestoreRepo` = สัญญาเดียวกับ `localRepo` §6.3 อ่านจากสำเนาที่ `onSnapshot` ป้อน (ไม่เปลืองโควตา) เขียนแบบไม่รอเซิร์ฟเวอร์สำหรับงานที่ต้องใช้ตอนออฟไลน์ (**ทำแล้ว 7 พ.ย.** — `emulator-tests/repo.spec.mjs`) | Takkan |
+| `services/redact.js`, `services/aiLabel.js`, `features/redactTool.js` | Data / UI | FR-02 ข้อ 1, 5, 9 · BR-19 · DL-28 | วาดรูปใหม่พร้อมแถบดำ (ไม่มี EXIF ≤ 1280 px) · ส่งให้ Gemini ผ่าน Firebase AI Logic พร้อม JSON schema · ลากนิ้ววาดแถบ (**ทำแล้ว 7 พ.ย.** — ยังไม่เคยเรียก Gemini จริง) | Yar |
+| `features/qr.js`, `features/realShell.js` | UI | FR-01 ข้อ 1 · ADR-9 | QR จริงของลิงก์ `caregiver.html?code=` (ไม่ใช้ไลบรารีภายนอก ตรวจกับไลบรารีอ้างอิง) · เปลือกของหน้าใช้งานจริง (**ทำแล้ว 7 พ.ย.**) | Takkan / Nichanan |
 | `core/offlineQueue.js` | Data | FR-04 AC7, 9 | ห่อ repo ของเครื่องผู้สูงอายุใน Demo mode: ออฟไลน์ = จอเปลี่ยนทันที ส่งภายหลังด้วย "เวลาที่กด" เดิม (BR-20) · ของจริงใช้ Firestore offline persistence (**ทำแล้ว 7 พ.ย.**) | Nichanan |
 
 ### 5.0 หน้าเว็บ (entry points) — 1 เครื่อง = 1 บทบาท (ADR-9)
@@ -89,7 +92,7 @@ flowchart TB
 
 ทั้ง `senior.html`, `caregiver.html` และ `demo.html` ใช้ `logic/` และ `features/` **ชุดเดียวกัน** ต่างกันแค่ repo ที่ส่งเข้าไปและหน้าจอที่แสดง
 
-**สถานะ 7 พ.ย. 2569:** ทำแล้ว `public/demo.html` (Demo mode เดินครบ FR-01–05) และ `public/index.html` (หน้าแนะนำ + ลิงก์ไป demo — ยังไม่ใช่หน้าเลือกบทบาท S-00 ที่จำบทบาทด้วย `localStorage`) · **ยังไม่ทำ** `senior.html`, `caregiver.html` เพราะต้องมี `firestoreRepo` (DL-24)
+**สถานะ 7 พ.ย. 2569:** ทำแล้วทั้ง 4 หน้า — `demo.html` (Demo mode), `index.html` (S-00 เลือกบทบาทด้วยลิงก์ ไม่จำบทบาทในเครื่อง), `senior.html` และ `caregiver.html` (Firebase จริงผ่าน `features/realShell.js` + `core/firestoreRepo.js`) · ทดสอบ 2 เบราว์เซอร์กับ Firebase Emulator แล้ว · **ยังไม่ได้ทดสอบบนมือถือจริงกับโปรเจกต์จริง**
 
 **ทดสอบข้ามเครื่องบนมือถือจริง:** deploy ขึ้น Firebase Hosting preview channel (ได้ลิงก์ HTTPS ชั่วคราว) → มือถือ A เปิด `index.html` เลือก "ผู้สูงอายุ" → มือถือ B เลือก "ผู้ดูแล" แล้วสแกน QR บนจอ A ด้วยแอปกล้อง → จับคู่ → B ถ่ายฉลากจริง (ปิดชื่อ/HN ก่อนส่ง) → A ได้รับเตือนตามเวลาที่บันทึก · การเปิดผ่าน IP ในวง Wi-Fi (`http://192.168.x.x`) ไม่ใช่ HTTPS กล้อง/Firebase อาจใช้ไม่ได้
 
@@ -368,7 +371,7 @@ erDiagram
 **Unpair (BR-17 / NFR-10):** ลบ `pairs/{pairId}` พร้อมทุกเอกสารใน sub-collection (batch) และ invite ที่เกี่ยวข้อง · หลังลบ กฎจะปฏิเสธทุกคำขอเพราะหา pair ไม่เจอ · ต้องมีเทสต์นับเอกสารที่เหลือ = 0
 
 
-### 6.3 สัญญาของที่เก็บข้อมูล (`core/repo.js`) — `localRepo` ทำแล้ว 6 พ.ย. · `firestoreRepo` ต้องมีเมธอดชื่อและรูปเดียวกัน
+### 6.3 สัญญาของที่เก็บข้อมูล (`core/repo.js`) — `localRepo` ทำแล้ว 6 พ.ย. · `firestoreRepo` (`core/firestoreRepo.js`) ทำแล้ว 7 พ.ย. เมธอดชื่อและรูปเดียวกัน (+ `ready()`, `dispose()`; `joinWithCode` คืน `self_pairing` เพิ่ม)
 ทุกเมธอดคืน Promise · คืนสำเนาเสมอ · `logic/` และ `features/` ไม่ import repo ตรง — รับผ่านพารามิเตอร์ (Issue #9) · สร้างด้วย `createLocalRepo({ clock, seed })` (`clock` จาก `core/clock.js`: `createClock()` = นาฬิกาจริง, `createClock({ start })` = นาฬิกาจำลองสำหรับเทสต์/Demo mode)
 
 | เมธอด | รับ → คืน | กฎที่จำลอง (ต้องตรงกับ Rules) |

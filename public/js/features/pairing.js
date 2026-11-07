@@ -2,6 +2,7 @@
 // เจ้าของ: Takkan (FR-01) · BR-01, BR-02, BR-17 · NFR-05 · ตัดสินด้วย logic/pairing.js ผ่าน repo (joinWithCode / recordConsent / cancelPairing)
 // รูปแบบ (DL-26): screens = ฟังก์ชันล้วน model → { title, covers, body, overlay?, tabs? } ทดสอบด้วย node · actions = ฟังก์ชันที่เรียก repo
 import { esc, btn, icon, hero, dialog, qrGrid, prefsCard } from './ui.js';
+import { qrSvg } from './qr.js';
 import { fmtCountdown, JOIN_TEXT } from './format.js';
 
 const spaced = (code) => `${code.slice(0, 3)} ${code.slice(3)}`;
@@ -27,7 +28,9 @@ export const screens = {
     } else {
       const left = invite.expiresAt - snap.now;
       body = hero('link', 'ให้ลูกหลานสแกน หรือบอกรหัสนี้', 'ไม่ต้องสมัคร ไม่ต้องพิมพ์') +
-        `<div class="card center">${qrGrid(invite.code)}<p class="hint">QR ตัวอย่าง (ระบบจริง = ลิงก์ที่สแกนด้วยแอปกล้อง)</p>` +
+        (model.real && model.ctx?.inviteLink
+          ? `<div class="card center">${qrSvg(model.ctx.inviteLink(invite.code))}<p class="hint">ผู้ดูแลสแกนด้วยแอปกล้องของมือถือ แล้วกด "เชื่อมต่อ"</p>`
+          : `<div class="card center">${qrGrid(invite.code)}<p class="hint">QR ตัวอย่าง (ระบบจริง = ลิงก์ที่สแกนด้วยแอปกล้อง)</p>`) +
         `<p class="code" aria-label="รหัส 6 หลัก">${esc(spaced(invite.code))}</p>` +
         (left < 0 ? '<p class="error">รหัสหมดอายุแล้ว (เกิน 10 นาที)</p>' : `<p class="hint">ใช้ได้ครั้งเดียว · หมดอายุใน ${fmtCountdown(left)}</p>`) +
         btn('ghost', 'สร้างรหัสใหม่', 'new-code') + '</div>' +
@@ -55,14 +58,15 @@ export const screens = {
     let body;
     if (snap.pairState === 'connected') {
       body = '<h1>เชื่อมต่อแล้ว</h1><div class="card ok-box"><p>ได้รับข้อมูลหลังผู้สูงอายุยินยอมแล้ว</p></div>' + btn('primary', 'ไปหน้าสถานะ', 'go', { to: 'cg-status' }) +
-        `<div class="card"><p class="hint">ทดสอบ: ผู้ดูแลคนที่สองใช้รหัสเดิม (FR-01 ข้อ 5)</p>${btn('ghost', 'ลองเชื่อมต่อด้วยรหัสเดิม', 'join-second')}</div>` +
+        (model.real ? '' : `<div class="card"><p class="hint">ทดสอบ: ผู้ดูแลคนที่สองใช้รหัสเดิม (FR-01 ข้อ 5)</p>${btn('ghost', 'ลองเชื่อมต่อด้วยรหัสเดิม', 'join-second')}</div>`) +
         (ui.error ? `<p class="error" role="alert">${esc(ui.error)}</p>` : '');
     } else {
       body = hero('link', 'เชื่อมต่อกับพ่อแม่', 'สแกน QR ด้วยแอปกล้องของมือถือ หรือกรอกรหัส 6 หลัก') +
         `<label class="field"><span>รหัส 6 หลัก</span><input type="text" inputmode="numeric" maxlength="6" data-live="codeInput" value="${esc(ui.codeInput)}" autocomplete="off"></label>` +
         (ui.error ? `<p class="error" role="alert">${esc(ui.error)}</p>` : '') +
-        btn('primary', 'เชื่อมต่อ', 'join') + btn('ghost', 'เปิดจากลิงก์ QR (เติมรหัสให้)', 'fill-code') +
-        '<p class="hint">ในโหมดสาธิต ปุ่ม "เปิดจากลิงก์ QR" จำลองการสแกน QR บนเครื่องผู้สูงอายุ</p>';
+        btn('primary', 'เชื่อมต่อ', 'join') +
+        (model.real ? '<p class="hint">สแกน QR บนเครื่องผู้สูงอายุด้วยแอปกล้อง หรือพิมพ์รหัส 6 หลักที่แสดงบนเครื่องนั้น</p>'
+          : btn('ghost', 'เปิดจากลิงก์ QR (เติมรหัสให้)', 'fill-code') + '<p class="hint">ในโหมดสาธิต ปุ่ม "เปิดจากลิงก์ QR" จำลองการสแกน QR บนเครื่องผู้สูงอายุ</p>');
     }
     return { title: 'จับคู่', covers: 'FR-01, BR-01, BR-02 · NFR-05', tabs: snap.pairState === 'connected', body };
   },

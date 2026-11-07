@@ -1,11 +1,12 @@
 // FR-02 เพิ่มยาจากฉลาก: C-02 ตั้งเวลามื้อ · C-03 ถ่ายรูปฉลาก · C-04 ปิดชื่อ/HN · C-05 AI อ่าน/ตรวจร่าง/กรอกเอง · C-06 รายการยา
 // เจ้าของ: Yar Oo (FR-02) · BR-04–BR-07, BR-19 · NFR-06, NFR-09, NFR-14 · ตัดสินด้วย logic/labelDraft.js และ logic/schedule.js เท่านั้น
-// สำคัญ: ตอนนี้ "AI" เป็นตัวจำลอง — ร่างมาจาก core/demoData.js (ฉลากสมมติ) ยังไม่มีการเรียก Gemini หรือรูปจริง (DL-24) · services/aiLabel.js, redact.js ยังไม่สร้าง
+// Demo mode: "AI" เป็นตัวจำลอง ร่างมาจาก core/demoData.js (ฉลากสมมติ) · ใช้งานจริง (model.real): ถ่ายรูปจริง → ปิดแถบดำ (services/redact.js) → Gemini ผ่าน env.ai (services/aiLabel.js)
 import { esc, btn, hero, flag } from './ui.js';
 import { buildDraft, applyEdit, addSlot, removeSlot, canSave, canSend, toMedicine } from '../logic/labelDraft.js';
 import { reminderTime } from '../logic/schedule.js';
 import { labelDrafts } from '../core/demoData.js';
 import { MEAL_NAMES, TIMING_NAMES, REASON_TEXT, AI_PROBLEMS } from './format.js';
+import { TOP_BAND } from '../services/redact.js';
 
 const DEFAULT_TIMES = { breakfast: '07:00', lunch: '12:00', dinner: '18:00', bedtime: '21:00' };
 const MEAL_KEYS = ['breakfast', 'lunch', 'dinner', 'bedtime'];
@@ -53,6 +54,24 @@ function slotRows(draft, mealTimes) {
   }).join('');
 }
 
+// C-04 ใช้งานจริง: รูปจริง + แถบดำที่ลากวาด (ภาพนี้ = ภาพที่จะส่ง) · ส่งได้เมื่อมีแถบอย่างน้อย 1 แถบ และติ๊กยืนยัน (BR-19)
+function realCover(model) {
+  const { ui } = model;
+  if (!ui.photo) return { title: 'ปิดชื่อ/HN', covers: 'FR-02, BR-19, NFR-14', body: '<p class="hint">ยังไม่มีรูป</p>' + btn('primary', 'ถ่ายรูปฉลาก', 'go', { to: 'cg-photo' }) };
+  const rects = ui.rects ?? [];
+  const tick = Boolean(ui.tick);
+  const ready = canSend({ coveredTicked: tick }) && rects.length > 0;
+  const boxes = rects.map((r) => `<div class="redact-box" style="left:${r.x * 100}%;top:${r.y * 100}%;width:${r.w * 100}%;height:${r.h * 100}%"></div>`).join('');
+  return { title: 'ปิดชื่อ/HN', covers: 'FR-02, BR-19, NFR-14', body: hero('shield', 'ปิดชื่อ HN และบาร์โค้ด', 'ลากนิ้วบนรูปเพื่อทำแถบดำ') +
+    `<div class="redact-stage" data-redact="1" style="aspect-ratio:${ui.photo.width} / ${ui.photo.height}"><img src="${esc(ui.photo.url)}" alt="รูปฉลากที่จะส่ง (ส่วนที่ปิดจะเป็นสีดำ)">${boxes}</div>` +
+    `<div class="row">${btn('ghost', 'ปิดแถบบน', 'cover-top')}${btn('ghost', 'ลบแถบล่าสุด', 'undo-rect')}${btn('ghost', 'ล้างทั้งหมด', 'clear-rects')}</div>` +
+    (rects.length ? `<p class="hint">ปิดแล้ว ${rects.length} แถบ · ภาพข้างบนคือภาพที่จะส่งจริง ระบบวาดภาพใหม่ ลบข้อมูลไฟล์ และไม่เก็บต้นฉบับ</p>` : '<p class="error">ยังไม่ได้ปิดส่วนใดเลย — ลากนิ้วปิดชื่อ HN บาร์โค้ด หรือกด "ปิดแถบบน"</p>') +
+    '<div class="card warn"><p>บริการ AI แบบฟรีอาจนำข้อมูลที่ส่งไปปรับปรุงผลิตภัณฑ์ จึงต้องปิดชื่อและ HN ก่อนส่งทุกครั้ง</p></div>' +
+    `<label class="check"><input type="checkbox" data-field="tick"${tick ? ' checked' : ''}> ปิดชื่อและ HN แล้ว</label>` +
+    `<button type="button" class="btn btn-primary" data-act="send-ai"${ready ? '' : ' disabled'}>ส่งให้ AI</button>` +
+    (ready ? '' : '<p class="hint">ต้องมีแถบปิดอย่างน้อย 1 แถบ และติ๊กยืนยันก่อน — ระหว่างนี้ไม่มีอะไรถูกส่งออก</p>') + btn('ghost', 'ยกเลิก', 'cancel-draft') };
+}
+
 export const screens = {
   // C-02 — ตั้งเวลามื้อ (BR-06)
   'cg-meals'(model) {
@@ -64,6 +83,14 @@ export const screens = {
 
   // C-03 — ถ่ายรูปฉลาก (ตอนนี้เลือกฉลากสมมติแทนการถ่ายจริง)
   'cg-photo'(model) {
+    if (model.real) {   // ใช้งานจริง: ถ่าย/เลือกรูปฉลากจากมือถือผู้ดูแล — รูปอยู่ในเครื่องจนกว่าจะปิดชื่อ/HN และติ๊กยืนยัน
+      return { title: 'ถ่ายรูปฉลาก', covers: 'FR-02, BR-19', body: hero('camera', 'ถ่ายรูปฉลากยา', 'ถ่ายเฉพาะฉลาก ให้ตัวหนังสือชัด แสงพอ') +
+        '<div class="card warn"><strong>ยังไม่มีอะไรถูกส่ง</strong><p>ขั้นต่อไปให้ปิดชื่อ HN และบาร์โค้ดก่อน แล้วจึงส่งให้ AI อ่าน</p></div>' +
+        (model.snap.mealTimes ? '' : '<div class="card warn" role="alert"><p>ยังไม่ได้ตั้งเวลามื้อ — ตั้งก่อน ไม่เช่นนั้นระบบคำนวณเวลาเตือนไม่ได้</p>' + btn('ghost', 'ตั้งเวลามื้อ', 'go', { to: 'cg-meals' }) + '</div>') +
+        '<label class="field"><span>ถ่ายรูป หรือเลือกรูปฉลาก</span><input type="file" accept="image/*" capture="environment" data-field="photo"></label>' +
+        (model.ui.photoError ? `<p class="error" role="alert">${esc(model.ui.photoError)}</p>` : '') +
+        btn('ghost', 'กรอกเองโดยไม่ถ่ายรูป', 'manual-entry') };
+    }
     const sample = model.ui.sample ?? 'complete';
     const opts = Object.entries(SAMPLE_TITLES).map(([k, t]) => `<option value="${k}"${sample === k ? ' selected' : ''}>${esc(t)}</option>`).join('');
     const problems = Object.entries(AI_PROBLEMS).map(([k, t]) => `<option value="${k}"${model.flags.aiProblem === k ? ' selected' : ''}>${esc(t)}</option>`).join('');
@@ -77,6 +104,7 @@ export const screens = {
 
   // C-04 — ปิดชื่อ/HN/บาร์โค้ด + ติ๊กยืนยัน · ไม่ติ๊ก = ปุ่มส่งปิด ไม่มีอะไรถูกส่ง (ข้อ 8, 9, BR-19)
   'cg-cover'(model) {
+    if (model.real) return realCover(model);
     const cover = model.ui.cover ?? {};
     const all = cover.name && cover.hn && cover.barcode;
     const tick = Boolean(model.ui.tick);
@@ -93,7 +121,7 @@ export const screens = {
 
   // C-05 (กำลังอ่าน)
   'cg-ai'() {
-    return { title: 'AI กำลังอ่าน', covers: 'FR-02, ADR-3, NFR-08', tabs: false, body: hero('sparkle', 'AI กำลังอ่านฉลาก…', '(จำลอง)') +
+    return { title: 'AI กำลังอ่าน', covers: 'FR-02, ADR-3, NFR-08', tabs: false, body: hero('sparkle', 'AI กำลังอ่านฉลาก…', '') +
       '<div class="spinner" aria-hidden="true"></div><p class="hint">AI แค่ร่าง — คุณต้องตรวจทุกช่องก่อนบันทึก</p>' + btn('ghost', 'ยกเลิก', 'cancel-draft') };
   },
 
@@ -136,6 +164,29 @@ export const screens = {
   },
 };
 
+// ทิ้งรูปต้นฉบับ (ไม่เก็บ — FR-02 ข้อ 9)
+function dropPhoto(env) {
+  if (env.ui.photo && env.photo) env.photo.release(env.ui.photo);
+  env.ui.photo = null; env.ui.rects = [];
+}
+
+// ใช้งานจริง: วาดรูปใหม่พร้อมแถบดำ → ส่งให้ AI → ร่าง · ใช้ไม่ได้ = บอกเหตุผลแล้วเปิดฟอร์มกรอกเอง (ข้อ 5)
+const AI_REASON_TEXT = { offline: AI_PROBLEMS.offline, service_down: AI_PROBLEMS.down, quota: AI_PROBLEMS.quota, unreadable: AI_PROBLEMS.unreadable };
+async function sendReal(env) {
+  if (!env.ui.photo || !(env.ui.rects ?? []).length) return;          // ต้องปิดอย่างน้อย 1 แถบ (BR-19)
+  const blob = await env.photo.redact(env.ui.photo, env.ui.rects);     // ภาพใหม่ ไม่มี EXIF
+  dropPhoto(env);                                                       // ทิ้งต้นฉบับทันที
+  env.go('cg-ai'); env.render();
+  try {
+    const json = await env.ai.requestDraft(blob);
+    env.ui.manualReason = null;
+    env.ui.draft = buildDraft(json, { mealTimes: env.snap.mealTimes ?? undefined });
+    env.go('cg-draft');
+  } catch (error) {
+    startManual(env, `${AI_REASON_TEXT[error?.reason] ?? AI_PROBLEMS.down} — กรอกข้อมูลยาด้วยตัวเองได้เลย ไม่มีอะไรถูกบันทึกให้`);
+  }
+}
+
 // ร่างปัจจุบัน — ถ้าเปิดหน้าตรวจร่างตรง ๆ (ยังไม่มีร่าง) ใช้ฉลากตัวอย่างที่เลือกไว้
 function currentDraft(env) {
   return env.ui.draft ?? buildDraft(labelDrafts()[env.ui.sample ?? 'complete'], { mealTimes: env.snap.mealTimes ?? undefined });
@@ -171,14 +222,30 @@ export const actions = {
   'set-sample'(env, d) { env.ui.sample = d.value; },
   'set-ai-problem'(env, d) { env.setFlag('aiProblem', d.value); },
   /** "ส่งให้ AI" — ต้องติ๊ก "ปิดชื่อและ HN แล้ว" ก่อน ไม่เช่นนั้นไม่ส่งอะไรเลย (BR-19) */
-  'send-ai'(env) {
+  async 'send-ai'(env) {
     if (!canSend({ coveredTicked: env.ui.tick })) return;
+    if (env.ai) return sendReal(env);
     const problem = env.flags.aiProblem;
     if (problem) { startManual(env, `${AI_PROBLEMS[problem]} — กรอกข้อมูลยาด้วยตัวเองได้เลย ไม่มีอะไรถูกบันทึกให้`); return; } // ข้อ 5
     env.go('cg-ai');
     env.later(() => startDraft(env), AI_DELAY_MS); // AI จำลอง
   },
-  'cancel-draft'(env) { env.cancelLater(); env.ui.draft = null; env.go('cg-meds'); env.toast('ยกเลิก — ไม่ได้บันทึกอะไร'); },
+  'cancel-draft'(env) { env.cancelLater(); dropPhoto(env); env.ui.draft = null; env.go('cg-meds'); env.toast('ยกเลิก — ไม่ได้บันทึกอะไร'); },
+  // ---- ใช้งานจริง: รูปฉลาก + แถบปิด ----
+  async 'set-photo'(env, d) {
+    if (!d.file || !env.photo) return;
+    dropPhoto(env);
+    try {
+      env.ui.photo = await env.photo.load(d.file);   // { url, width, height, bitmap }
+      env.ui.rects = []; env.ui.tick = false; env.ui.photoError = null;
+      env.go('cg-cover');
+    } catch { env.ui.photoError = 'เปิดรูปนี้ไม่ได้ — ลองถ่ายใหม่'; }
+  },
+  'add-rect'(env, d) { env.ui.rects = [...(env.ui.rects ?? []), { x: Number(d.x), y: Number(d.y), w: Number(d.w), h: Number(d.h) }]; },
+  'cover-top'(env) { env.ui.rects = [...(env.ui.rects ?? []), { ...TOP_BAND }]; },
+  'undo-rect'(env) { env.ui.rects = (env.ui.rects ?? []).slice(0, -1); },
+  'clear-rects'(env) { env.ui.rects = []; },
+  'manual-entry'(env) { dropPhoto(env); startManual(env, 'กรอกข้อมูลยาเองจากฉลาก'); },
   manual(env) { startManual(env, 'ยาที่กินเมื่อมีอาการยังไม่รองรับ — ถ้าเป็นยาเวลาตายตัว กรอกเองได้'); },
   /** ผู้ดูแลแก้ช่องของร่าง (ค่าที่แก้ชนะค่าจาก AI — ข้อ 2) */
   'edit-field'(env, d) {
