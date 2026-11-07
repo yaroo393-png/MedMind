@@ -11,13 +11,13 @@
 |---|---|
 | M1 Team Charter | ✅ Complete (scope in/out + success measure) — [`M1-Charter_MedMind.pdf`](docs/00-charter/M1-Charter_MedMind.pdf) · readable on GitHub: [`charter.md`](docs/00-charter/charter.md) ([Thai](docs/00-charter/charter.th.md)) |
 | M2 SRS | ✅ v1.5 (FR-01–05 Must, FR-06 Should, FR-07–09 Could · BR-01–21 · NFR-01–14 · use cases + diagram · document history) — [`M2-SRS_MedMind.pdf`](docs/01-requirements/M2-SRS_MedMind.pdf) · [`spec.md`](docs/01-requirements/spec.md) ([Thai](docs/01-requirements/spec.th.md)) · [`backlog.md`](docs/01-requirements/backlog.md) |
-| M2 Design | 🟡 Draft (includes Demo mode, ADR-8, ADR-9) — [`architecture.md`](docs/02-design/architecture.md), [`design-system.md`](docs/02-design/design-system.md), [`firestore-rules-draft.md`](docs/02-design/firestore-rules-draft.md) · waiting for the team to review and decide §11 (documents in Thai) |
-| Traceability (Golden Thread) | 🟡 Structure ready — [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) · Code/Test columns are filled in as code is written |
-| M3 prototype (`docs/02-design/prototypes/`) | 🟡 First draft, **built from scratch** (covers FR-01–05 + unhappy paths + two-phone demo mode — opens without a server) — [`2569-11-04/index.html`](docs/02-design/prototypes/2569-11-04/index.html) · [`NOTES.md`](docs/02-design/prototypes/2569-11-04/NOTES.md) · awaiting the owner's review and a test on real phones (MT-08, MT-16) |
-| System (web app) `public/` | 🟡 The **logic and core parts are done and tested** (`public/js/logic/`, `public/js/core/` — check with `npm test`) · **the real system's screens and HTML pages are not built yet** (`public/js/features/` is empty, no `public/*.html`) — reviewers can see everything working in the **prototype** above |
-| Automated tests | 🟡 Tests exist for `logic/`, `core/` and the prototype (run `npm test`) · screen tests of the real system and the Security Rules in the Emulator do not exist yet |
+| M2 Design | ✅ Complete draft; module contracts agreed (DL-18–DL-20, DL-26; includes Demo mode, ADR-8, ADR-9) — [`architecture.md`](docs/02-design/architecture.md), [`design-system.md`](docs/02-design/design-system.md), [`firestore-rules-draft.md`](docs/02-design/firestore-rules-draft.md) · open items: §11 |
+| Traceability (Golden Thread) | 🟡 All 43 AC covered — mostly ✅ in Demo mode · what is left (Rules on Firestore, real phones, real AI) is stated in each row — [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) |
+| M3 prototype (`docs/02-design/prototypes/`) | ✅ Covers FR-01–05 including wrong paths and a two-screen demo — opens without a server — [`2569-11-04/index.html`](docs/02-design/prototypes/2569-11-04/index.html) · [`NOTES.md`](docs/02-design/prototypes/2569-11-04/NOTES.md) · not yet tested on real phones (MT-08, MT-16) |
+| System (web app) `public/` | 🟡 **Demo mode of the real system is done**: FR-01–05 screens (`public/js/features/`) wired to `logic/` + `core/` (`localRepo`, simulated clock) · open [`public/demo.html`](public/demo.html) through a static server · **not built**: real Firebase (`firestoreRepo`, Security Rules), the two-phone pages (`senior.html`/`caregiver.html`), real AI label reading (`aiLabel.js`, `redact.js`) — postponed to the next increment (DL-24) |
+| Automated tests | ✅ 328 tests pass (run `npm test`) — `logic/`, `core/`, every FR screen at acceptance-criterion level, and the structure of the web pages · missing: Security Rules in the Emulator, tests on real phones |
 | Project plan (Week 10) | 🟡 Sprints 0–3, risks, rotating roles, retrospective — [`docs/PROJECT-PLAN.md`](docs/PROJECT-PLAN.md) |
-| Final Report / AI-Use Statement / Demo | 🟡 Skeletons — [`docs/05-report/`](docs/05-report/), [`docs/06-presentation/`](docs/06-presentation/) |
+| Final Report / AI-Use Statement / Demo | 🟡 Final Report and AI-Use Statement have content (a [ ] = no real result yet) · slides are still an outline — [`docs/05-report/`](docs/05-report/), [`docs/06-presentation/`](docs/06-presentation/) |
 
 > **[ ]** = no real data yet, nothing is guessed · this README is updated when there are real results
 
@@ -113,12 +113,16 @@ cd MedMind
 npm test              # automated tests (no npm install needed)
 npm run check         # tests + secrets check — run before every push
 ```
-### ③ The real system in `public/` (not finished)
-When the real HTML pages exist: point a static server at the `public/` folder, for example Live Server in VS Code (do not open with `file://` because ES modules are used) — **there are no pages to open yet** · live demo on the web: [ not yet — added after deployment ]
+### ③ Demo mode of the real system in `public/` (real screens wired to `logic/` + `core/`)
+ES modules are used, so open it through a static server (not by double-clicking `file://`):
+```bash
+cd public
+python -m http.server 8000      # or: npx serve public · or Live Server in VS Code
+```
+Then open `http://localhost:8000/demo.html` — the older adult's and the caregiver's screens side by side, with sample data and a simulated clock (down to the millisecond) · choose a "scenario" in the top bar or open one directly, e.g. `demo.html?preset=reminding` (scenarios: `fresh`, `sample`, `reminding`, `round2`, `notconfirmed`, `late`, `offline`, `syncdelay`)
+It walks through FR-01–05, both the normal and the wrong paths · live demo on the web: [ not yet — added after deployment ]
 
-**Plan for real use on phones (not finished · one device = one role):** the older adult's phone opens the link and chooses "Older adult" (a QR code appears) · the caregiver's phone opens the same link and chooses "Caregiver", or scans the QR code with the phone's camera app → pairing → the caregiver photographs a real label (must be served over HTTPS) — architecture §5.0, ADR-9.
-
-**Demo mode of the real system (planned, ADR-8):** `public/demo.html` will use the real `logic/` + `localRepo` + a simulated clock — not built yet · until then use the prototype's demo in ① (`demo.html` in the prototype folder).
+**Not built (postponed to the next increment — DL-24):** the two-phone pages (`senior.html` / `caregiver.html`, one device = one role, ADR-9) that use Firebase · real label reading with Gemini — the "AI" in the demo is a simulation from made-up labels (`core/demoData.js`); no photo or data leaves the device.
 
 ## ⚙️ Important limits (from SRS §2.2)
 - Confirming is self-reported, not proof that the medicine was taken · the caregiver message is "Medicine not yet confirmed" (never "not taken").

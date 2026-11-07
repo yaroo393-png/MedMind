@@ -8,6 +8,7 @@
 ## แหล่งความจริง (อ่านก่อนทำงานทุกครั้ง)
 - Requirement ทั้งหมดอยู่ใน `docs/01-requirements/spec.md` (สำเนาของ `M2-SRS_MedMind.pdf`: FR, AC, BR-01–21, NFR-01–14) — **ห้ามเดา requirement** ถ้าหาไม่เจอให้ถามก่อน · ปัญหา/ผู้ใช้/ขอบเขตอยู่ใน `docs/00-charter/charter.md`
 - การออกแบบ: `docs/02-design/architecture.md` (สถาปัตยกรรม, โมดูล, data model, state machine, Demo mode) และ `design-system.md` (หน้าจอ, ขนาด/สี)
+- **สถานะงานและแผนจนเสร็จ (รับงานต่อจากบัญชีอื่น อ่านไฟล์นี้ก่อน):** `docs/HANDOFF.md`
 - AC → โค้ด → เทสต์: `docs/TRACEABILITY.md` · งานและขนาด: `docs/01-requirements/backlog.md`, `docs/PROJECT-PLAN.md`
 
 ## ก่อนเริ่มงานทุกครั้ง

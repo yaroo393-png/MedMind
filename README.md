@@ -10,13 +10,13 @@
 |---|---|
 | M1 Team Charter | ✅ ฉบับสมบูรณ์ (มีขอบเขต in/out + ตัววัดความสำเร็จ) — [`M1-Charter_MedMind.pdf`](docs/00-charter/M1-Charter_MedMind.pdf) · อ่านบน GitHub: [`charter.md`](docs/00-charter/charter.md) |
 | M2 SRS | ✅ v1.5 (FR-01–05 Must, FR-06 Should, FR-07–09 Could · BR-01–21 · NFR-01–14 · use case + diagram · Document history) — [`M2-SRS_MedMind.pdf`](docs/01-requirements/M2-SRS_MedMind.pdf) · [`spec.md`](docs/01-requirements/spec.md) · [`backlog.md`](docs/01-requirements/backlog.md) |
-| M2 Design | 🟡 ฉบับร่าง (รวม Demo mode, ADR-8) — [`architecture.md`](docs/02-design/architecture.md), [`design-system.md`](docs/02-design/design-system.md), [`firestore-rules-draft.md`](docs/02-design/firestore-rules-draft.md) · รอทีมตรวจและตัดสินใจ §11 |
-| Traceability (Golden Thread) | 🟡 โครงพร้อม — [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) · ช่อง Code/Test เติมเมื่อมีโค้ด |
-| ต้นแบบ M3 (`docs/02-design/prototypes/`) | 🟡 ร่างแรก **สร้างใหม่ทั้งชุด** (ครบ FR-01–05 + ทางที่ผิด + โหมดสาธิต 2 จอ — เปิดได้โดยไม่ต้องมี server) — [`2569-11-04/index.html`](docs/02-design/prototypes/2569-11-04/index.html) · [`NOTES.md`](docs/02-design/prototypes/2569-11-04/NOTES.md) · รอเจ้าของงานตรวจ/ทดสอบบนมือถือจริง (MT-08, MT-16) |
-| ระบบ (เว็บแอป) `public/` | 🟡 ส่วน **logic และ core เสร็จและมีเทสต์** (`public/js/logic/`, `public/js/core/` — ตรวจด้วย `npm test`) · **หน้าจอและหน้า HTML ของระบบจริงยังไม่ทำ** (`public/js/features/` ว่าง ไม่มี `public/*.html`) — ผู้ตรวจดูการทำงานทั้งหมดได้จาก **ต้นแบบ** ด้านบน |
-| เทสต์อัตโนมัติ | 🟡 มีเทสต์ของ `logic/` `core/` และต้นแบบแล้ว (รัน `npm test`) · เทสต์หน้าจอของระบบจริงและ Security Rules บน Emulator ยังไม่มี |
+| M2 Design | ✅ ร่างครบและสัญญาโมดูลตกลงแล้ว (DL-18–DL-20, DL-26; รวม Demo mode, ADR-8) — [`architecture.md`](docs/02-design/architecture.md), [`design-system.md`](docs/02-design/design-system.md), [`firestore-rules-draft.md`](docs/02-design/firestore-rules-draft.md) · เรื่องที่ยังเปิด: §11 |
+| Traceability (Golden Thread) | 🟡 ครบ 43 AC — ✅ ใน Demo mode เป็นส่วนใหญ่ · ส่วนที่ค้าง (Rules บน Firestore, มือถือจริง, AI จริง) ระบุไว้ในแต่ละแถว — [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) |
+| ต้นแบบ M3 (`docs/02-design/prototypes/`) | ✅ ครบ FR-01–05 + ทางที่ผิด + โหมดสาธิต 2 จอ — เปิดได้โดยไม่ต้องมี server — [`2569-11-04/index.html`](docs/02-design/prototypes/2569-11-04/index.html) · [`NOTES.md`](docs/02-design/prototypes/2569-11-04/NOTES.md) · ยังไม่ได้ทดสอบบนมือถือจริง (MT-08, MT-16) |
+| ระบบ (เว็บแอป) `public/` | 🟡 **Demo mode ของระบบจริงเสร็จ**: หน้าจอ FR-01–05 (`public/js/features/`) ต่อกับ `logic/` + `core/` (`localRepo`, นาฬิกาจำลอง) · เปิด [`public/demo.html`](public/demo.html) ผ่าน static server · **ยังไม่ทำ**: Firebase จริง (`firestoreRepo`, Security Rules), หน้าแยกมือถือ 2 เครื่อง (`senior.html`/`caregiver.html`), AI อ่านฉลากจริง (`aiLabel.js`, `redact.js`) — เลื่อนไปรอบถัดไป (DL-24) |
+| เทสต์อัตโนมัติ | ✅ 328 เทสต์ผ่าน (รัน `npm test`) — `logic/` `core/` หน้าจอทุก FR ระดับ AC และโครงสร้างหน้าเว็บ · ยังไม่มี: Security Rules บน Emulator, เทสต์บนมือถือจริง |
 | แผนงาน (Week 10) | 🟡 sprint 0–3, ความเสี่ยง, บทบาทหมุนเวียน, retro — [`docs/PROJECT-PLAN.md`](docs/PROJECT-PLAN.md) |
-| Final Report / AI-Use Statement / Demo | 🟡 โครงร่าง — [`docs/05-report/`](docs/05-report/), [`docs/06-presentation/`](docs/06-presentation/) |
+| Final Report / AI-Use Statement / Demo | 🟡 Final Report และ AI-Use Statement มีเนื้อหาแล้ว (ช่อง [ ] = ยังไม่มีผลจริง) · สไลด์ยังเป็นโครงเรื่อง — [`docs/05-report/`](docs/05-report/), [`docs/06-presentation/`](docs/06-presentation/) |
 
 > ช่อง **[ ]** = ยังไม่มีข้อมูลจริง ไม่เดา · README นี้อัปเดตเมื่อมีผลจริง
 
@@ -120,12 +120,16 @@ cd MedMind
 npm test              # เทสต์อัตโนมัติ (ไม่ต้อง npm install)
 npm run check         # test + ตรวจความลับ — รันก่อน push ทุกครั้ง
 ```
-### ③ ระบบจริงใน `public/` (ยังไม่เสร็จ)
-เมื่อมีหน้า HTML ของระบบจริง: ให้ static server ชี้โฟลเดอร์ `public/` เช่น Live Server ใน VS Code (ไม่เปิดด้วย `file://` เพราะใช้ ES modules) — **ตอนนี้ยังไม่มีหน้าให้เปิด** · ลิงก์ทดลองใช้บนเว็บ: [ ยังไม่มี — ใส่หลัง deploy ]
+### ③ Demo mode ของระบบจริงใน `public/` (หน้าจอจริงที่ต่อกับ `logic/` + `core/`)
+ใช้ ES modules จึงต้องเปิดผ่าน static server (ไม่ใช่ดับเบิลคลิก `file://`):
+```bash
+cd public
+python -m http.server 8000      # หรือ: npx serve public · หรือ Live Server ใน VS Code
+```
+แล้วเปิด `http://localhost:8000/demo.html` — จอผู้สูงอายุกับจอผู้ดูแลคู่กัน ใช้ข้อมูลตัวอย่างและนาฬิกาจำลอง (ละเอียดถึงมิลลิวินาที) · เลือก "สถานการณ์" ที่แถบด้านบน หรือเปิดตรง ๆ เช่น `demo.html?preset=reminding` (สถานการณ์: `fresh`, `sample`, `reminding`, `round2`, `notconfirmed`, `late`, `offline`, `syncdelay`)
+เดินครบ FR-01–05 ทั้งทางปกติและทางผิด · ลิงก์ทดลองใช้บนเว็บ: [ ยังไม่มี — ใส่หลัง deploy ]
 
-**แผนการใช้งานจริงบนมือถือ (ยังไม่เสร็จ · 1 เครื่อง = 1 บทบาท):** มือถือผู้สูงอายุเปิดลิงก์แล้วเลือก "ผู้สูงอายุ" (เห็น QR) · มือถือผู้ดูแลเปิดลิงก์เดียวกันเลือก "ผู้ดูแล" หรือสแกน QR ด้วยแอปกล้องของมือถือ → จับคู่ → ถ่ายฉลากจริงจากมือถือผู้ดูแล (ต้องเปิดผ่าน HTTPS) — architecture §5.0, ADR-9
-
-**Demo mode ของระบบจริง (ตามแผน ADR-8):** `public/demo.html` จะใช้ `logic/` + `localRepo` + นาฬิกาจำลองจริง — ยังไม่ทำ · ระหว่างนี้ใช้ Demo ของต้นแบบในข้อ ① (`demo.html` ในโฟลเดอร์ต้นแบบ)
+**ยังไม่ทำ (เลื่อนไปรอบถัดไป — DL-24):** หน้าแยกมือถือ 2 เครื่อง (`senior.html` / `caregiver.html`, 1 เครื่อง = 1 บทบาท, ADR-9) ที่ใช้ Firebase · อ่านฉลากด้วย Gemini จริง — ตอนนี้ "AI" ในโหมดสาธิตเป็นตัวจำลองจากฉลากสมมติ (`core/demoData.js`) ไม่มีการส่งรูปหรือข้อมูลใด ๆ ออกจากเครื่อง
 
 ## ⚙️ ข้อจำกัดที่สำคัญ (จาก SRS §2.2)
 - การกดยืนยันเป็นการรายงานด้วยตนเอง ไม่ใช่หลักฐานว่ากินยาจริง · ข้อความถึงผู้ดูแลใช้ "Medicine not yet confirmed" (ไม่ใช้ "not taken")

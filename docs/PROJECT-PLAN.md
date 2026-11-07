@@ -15,6 +15,8 @@
 
 > **สถานะ 6 พ.ย. (ตรวจจาก `main` ที่ da9fb78):** เอกสาร Sprint 0 merge ครบแล้ว · ต้นแบบคลิกได้ (PR #29) และ `logic/` 7 โมดูล + `core/` 3 โมดูลพร้อมเทสต์ merge แล้ว (`npm test` ผ่าน 219) · ยังไม่ทำ: หน้าจอจริงใน `public/`, `public/demo.html`, Firebase (DL-24), AI อ่านฉลาก, ทดสอบมือถือ · ตาราง velocity ด้านล่างให้ PM เติมตัวเลขจริงจากบอร์ด (ไม่เดา)
 
+> **สถานะ 7 พ.ย. (หลังเขียนหน้าจอจริง):** `public/demo.html` (Demo mode) เดินครบ FR-01–05 · `npm test` ผ่าน 328 · ยังไม่ทำ: Firebase จริง (DL-24), `senior.html`/`caregiver.html`, AI อ่านฉลากจริง, ทดสอบมือถือ, ลิงก์ Pages (workflow `pages.yml` พร้อม รอเปิด Pages ใน Settings) · แผนส่งต่องานทั้งหมดอยู่ใน [`HANDOFF.md`](HANDOFF.md)
+
 **ทุก sprint:** เริ่มด้วย sprint planning (เลือกงานจาก backlog + ประมาณขนาด) · ประชุมสั้น 10 นาที/วัน (ทำอะไรไปแล้ว / จะทำอะไร / ติดอะไร) · จบด้วย demo + retrospective
 **Definition of Done (งานหนึ่งชิ้น):** logic + เทสต์ผ่าน · หน้าจอมีป้าย Covers · PR ผ่านการรีวิว 1 คน + CI ผ่าน · อัปเดต TRACEABILITY · บันทึก AI log (ถ้าใช้) — "เกือบเสร็จ" นับเป็น 0
 
@@ -32,7 +34,7 @@
 | R2 | ทีมไม่เคยใช้ Firebase / Security Rules | สูง / สูง | ใช้ logic ล้วน + `localRepo` ทำงานได้ก่อนต่อ Firebase (ADR-4, ADR-8) · ทดสอบ Rules ใน Emulator ก่อน deploy | Takkan | เปิด |
 | R3 | AI อ่านฉลากไทยไม่แม่นพอ / โควตา free tier หมด | กลาง / กลาง | ทางสำรองกรอกเอง (AC 5) · ทดสอบ 20 ฉลากเร็ว (MT-09) · ร่างฉลากตัวอย่างใน Demo mode | Yar Oo | เปิด |
 | R4 | ข้อมูลส่วนตัวหลุดไปกับรูป (ชื่อ/HN) | ต่ำ / สูง | BR-19 + ติ๊กยืนยัน + MT-13 · ห้ามใช้ฉลากจริงที่ยังเห็นชื่อ | Yar Oo | เปิด |
-| R5 | ผู้ตรวจเปิดระบบจริงเองไม่ได้ (ต้องใช้ 2 มือถือ) | สูง / สูง | Demo mode (ADR-8) + README บอกวิธีเปิด + MT-15 | Nichanan | เปิด |
+| R5 | ผู้ตรวจเปิดระบบจริงเองไม่ได้ (ต้องใช้ 2 มือถือ) | สูง / สูง | Demo mode (ADR-8) + README บอกวิธีเปิด + MT-15 | Nichanan | ลดแล้ว: `public/demo.html` เปิดได้ในเบราว์เซอร์เดียว · เหลือลิงก์ Pages |
 | R6 | งานของ FR-03/04/05 ชนกันที่ `mealState` | กลาง / กลาง | ตกลงสัญญา architecture §5.1 ใน Sprint 0 · Rossatorn เป็นเจ้าของ `mealTimeline.js` คนเดียว | Rossatorn | เปิด |
 | R7 | ส่วนร่วมรายคนไม่ปรากฏใน GitHub | กลาง / สูง | ทุกคน commit เองจากบัญชีตัวเอง (RULES §2) · `fr/<FR>/README.md` ของแต่ละคน | Yar Oo | เปิด |
 
