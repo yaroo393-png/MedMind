@@ -45,6 +45,16 @@ test('parseAiText ตัด ```json ออก · classifyError จัดกล�
   assert.equal(new AiUnavailableError('แปลก').reason, 'service_down');
 });
 
+test('classifyError: คำว่า generateContent ไม่ถูกจับเป็น "โควตาหมด" · ข้อผิดพลาด App Check/สิทธิ์ = service_down · 429 = quota · มี detail ให้ทีมอ่าน', async () => {
+  const appCheck = new Error('AI/fetch-error: Error fetching from https://firebasevertexai.googleapis.com/v1beta/projects/p/models/gemini-2.5-flash:generateContent: [401 ] Firebase App Check token is invalid.');
+  assert.equal(classifyError(appCheck), 'service_down');
+  assert.equal(classifyError(new Error('[403] Permission denied on generateContent')), 'service_down');
+  assert.equal(classifyError(new Error('[429] Resource has been exhausted (e.g. check quota).')), 'quota');
+  assert.equal(classifyError(new Error('Too many requests, rate limit')), 'quota');
+  const ai = createAiLabel({ getModel: async () => fakeModel(appCheck) });
+  await assert.rejects(() => ai.requestDraft(blob()), (e) => e.reason === 'service_down' && /App Check/.test(e.detail) && !/โควตา/.test(e.message));
+});
+
 test('PROMPT: ห้ามเดา ห้ามคืนชื่อ/HN · ก่อนอาหารไม่บอกนาที = null · ไม่ใช่ยาเม็ด = null', () => {
   assert.match(PROMPT, /Never guess/);
   assert.match(PROMPT, /Never output patient name, HN/);

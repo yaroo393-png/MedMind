@@ -191,7 +191,9 @@ async function sendReal(env) {
     env.ui.draft = buildDraft(json, { mealTimes: env.snap.mealTimes ?? undefined });
     env.go('cg-draft');
   } catch (error) {
-    startManual(env, `${AI_REASON_TEXT[error?.reason] ?? AI_PROBLEMS.down} — กรอกข้อมูลยาด้วยตัวเองได้เลย ไม่มีอะไรถูกบันทึกให้`);
+    const detail = error?.detail ?? '';
+    if (detail) console.warn('AI อ่านฉลากไม่ได้:', error);
+    startManual(env, `${AI_REASON_TEXT[error?.reason] ?? AI_PROBLEMS.down} — กรอกข้อมูลยาด้วยตัวเองได้เลย ไม่มีอะไรถูกบันทึกให้` + (detail ? ` (รายละเอียดสำหรับทีม: ${detail})` : ''));
   }
 }
 
