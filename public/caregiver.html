@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MedMind — เครื่องผู้ดูแล</title>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body class="real">
+<!-- Covers: FR-01–FR-05 · ใช้งานจริงบน Firebase (1 เครื่อง = 1 บทบาท — ADR-9) · ทุกหน้าจอมีป้าย Covers ของตัวเอง -->
+<div class="phone" id="phone" aria-live="off"></div>
+<noscript><p>ต้องเปิด JavaScript เพื่อใช้ MedMind</p></noscript>
+<script type="module">
+  import { bootReal } from './js/features/realShell.js';
+  window.mmReal = await bootReal({ role: 'caregiver', root: document.getElementById('phone'), search: location.search, hostname: location.hostname, href: location.href });
+</script>
+</body>
+</html>
