@@ -17,6 +17,16 @@ Pain this traces to: forgetting a dose or taking it late (problem statement); sw
 
 Definition — reminder timeline, shared with FR-04 and FR-05 (T = the meal's reminder time):
 
+| Time | What happens (only while the meal is not confirmed) |
+|---|---|
+| T | First reminder with “Taken” / “Not yet” |
+| T+5 | Repeat reminder 1 |
+| T+10 | Repeat reminder 2 — last round; “Not yet” alerts the caregiver now |
+| T+15 | Caregiver alerted “Medicine not yet confirmed” (unless already alerted at T+10) |
+| After T+15 | Late confirmation allowed until the reminder time of the next meal that starts after T+15 (none = 23:59); the caregiver is then told “Medicine confirmed” |
+
+Repeat reminders are at fixed times from T and only while the meal is not confirmed. The reminder screen shows every medicine in the meal (name, tablets for this meal, warnings, contraindications), a green “Taken” and a red “Not yet” button, and plays a sound at every round while MedMind is open and has been tapped once since opening; it shows no medicine photos. The caregiver alert is sent once per meal and never says “not taken”. Meals that overlap (e.g. 06:45 before breakfast and 07:00 after breakfast) each keep their own reminders, caregiver alert and late-confirmation window; the screen lists every unconfirmed meal in time order under separate headings, each with its own buttons, and reminders due at the same moment sound once. When the page is reopened, BR-18 applies. Time boundaries: the caregiver alert is raised within 5 seconds after T+15 has passed (NFR-01), so a confirmation tapped at exactly T+15 is still on time and counts as “Taken” (BR-20); in the criteria, “when it is 08:15” means the first moment after 08:15:00 has passed.
+
 ## Acceptance criteria และเทสต์
 
 | # | AC | เทสต์ | สถานะ | PR |
