@@ -4,9 +4,9 @@
 
 > **Intro to Software Engineering (15031001) — ปีการศึกษา 2569** · คณะ/สาขา: School of Applied Digital Technology, Mae Fah Luang University
 >
-> **ทดลองใช้งานจริง:** https://yaroo393-png.github.io/MedMind/
+> **Prototype:** https://yaroo393-png.github.io/MedMind/
 >
-> **โหมดสาธิต:** https://yaroo393-png.github.io/MedMind/demo.html
+> **Demo:** https://yaroo393-png.github.io/MedMind/demo.html
 
 ## สถานะปัจจุบัน
 | ส่วน | สถานะ |
