@@ -1,6 +1,6 @@
 # Final Project Report — MedMind
 
-> **ฉบับส่งอาจารย์ (7 พ.ย. 2569)** — ✅ = มีหลักฐานจริงใน repo · 🟡 = ทำบางส่วน · **[ ]** = ผลจริงที่ยังไม่มี (ไม่เดา) · ส่งเป็น PDF ชื่อ `Final-Report.pdf` (ความยาว 6–10 หน้า — DL-14) · ภาพประกอบอยู่ใน `docs/05-report/figures/`
+> **ฉบับส่งอาจารย์ (9 พ.ย. 2569)** — ✅ = มีหลักฐานจริงใน repo · 🟡 = ทำบางส่วน · **[ ]** = ผลจริงที่ยังไม่มี รอผู้ทดสอบเติม (ไม่เดา) · ส่งเป็น PDF ชื่อ `Final-Report.pdf` (ความยาว 6–10 หน้า — DL-14) · ภาพประกอบอยู่ใน `docs/05-report/figures/`
 
 ## งบหน้า (เป้า 6–10 หน้า — ปรับตามเนื้อหาจริง)
 | ส่วน | หน้า (โดยประมาณ) | เนื้อหาที่ใช้ซ้ำ |
@@ -59,6 +59,8 @@ SRS v1.5 — 9 FR (Must 5 · Should 1 · Could 3), กฎธุรกิจ 21 �
 
 ## 4. การสร้างระบบ 🟡
 **ทำแล้ว (หลักฐานอยู่ใน repo):**
+- **เว็บใหม่ (PR #65/#66, 9 พ.ย., Rossatorn):** รวมหน้าตาใหม่ 2 ภาษา (ไทย/อังกฤษ) ธีมสีนุ่ม การกรอกฟอร์มไม่เสียข้อความ และ **FR-09 (Could) แท็บสรุปรายสัปดาห์** ในหน้าผู้ดูแล บนฐานที่รวม FR-02 สแกน/OCR ของ PR #63 · ชื่อไฟล์หน้าเว็บและลิงก์เดิมคงไว้ · **เกณฑ์รับงาน FR-09 ยังรอทีมรับรอง ไม่อยู่ใน SRS v1.5 จึงไม่นับใน AC 43 ข้อ** · README ระบุว่า "รอรีวิว" — เจ้าของต้องอ่านโค้ดและมีผู้รีวิวก่อนสอบ
+- **อัปเดต 9 พ.ย. (PR #63, DL-29): ปรับการอ่านฉลากและมี OCR สำรอง** — ปิดการ "คิด" ของ Gemini (วัดทางตรง 25 → ~3 วินาที **แต่ผลทดสอบผ่านระบบจริงของ PM ยังช้า ~2 นาที และสำเร็จ 4 จาก 9 ครั้ง — ดู §5.3 ช**) · ลำดับโมเดลสำรอง · ข้ามเมื่อ 503/ช้าเกิน 20 วินาที · OCR บนเครื่อง (`services/localOcr.js`) ช่วยดูข้อความตอนกรอกเองและเทียบชื่อยากับร่างจาก Gemini · ฟอร์มกรอกเองขึ้นทันทีไม่ต้องรอ OCR
 - **Demo mode ของระบบจริง `public/demo.html`** — หน้าจอ FR-01–FR-05 ใน `public/js/features/` (14 หน้า: S-01…S-04, C-01…C-09 ส่วนที่เกี่ยวกับ Must FR) ต่อกับ `logic/` + `core/` จริง (`localRepo`, นาฬิกาจำลองละเอียดถึงมิลลิวินาที) · จอผู้สูงอายุกับจอผู้ดูแลคู่กัน เลือก "สถานการณ์" ได้ 8 แบบ (เริ่มใหม่, ข้อมูลตัวอย่าง, 07:00 เตือน 2 มื้อพร้อมกัน, 07:10, 07:16 เลย T+15, 07:40, ออฟไลน์, ออฟไลน์แล้วข้อมูลมาถึงช้า) · เดินครบทางปกติและทางผิด · ทุกหน้ามีป้าย "Covers: FR-xx" · ตั้งค่าขนาดตัวอักษร +/− และโหมดสว่าง/มืด · ไอคอนชุด `medmind-icons` · เปิดผ่าน static server (`python -m http.server` ในโฟลเดอร์ `public`)
 - **ต้นแบบคลิกได้** [`prototype/`](../../prototype/index.html) (M3 — เปิดด้วยการดับเบิลคลิก ไม่ใช้เซิร์ฟเวอร์) ครอบคลุม 43 AC ตามตารางใน `index.html`
 - **ตรรกะ `public/js/logic/`** 7 โมดูล: `time`, `confirm`, `mealTimeline`, `schedule`, `status`, `labelDraft`, `pairing` — ทุกฟังก์ชันมีเทสต์อ้าง AC
@@ -68,15 +70,15 @@ SRS v1.5 — 9 FR (Must 5 · Should 1 · Could 3), กฎธุรกิจ 21 �
 - **ใช้งานจริงบน Firebase (7 พ.ย. บ่าย):** `senior.html` / `caregiver.html` (1 เครื่อง = 1 บทบาท) ใช้ `core/firestoreRepo.js` (สัญญาเดียวกับ `localRepo`) + `firestore.rules` (DL-27) · จับคู่ด้วย QR จริง (`features/qr.js`) · AI อ่านฉลาก: ถ่ายรูป → ลากนิ้วปิดชื่อ/HN → วาดรูปใหม่ไม่มี EXIF → Gemini ผ่าน Firebase AI Logic → ร่างให้ผู้ดูแลตรวจ (`services/redact.js`, `services/aiLabel.js`, DL-28)
 
 **ยังไม่ได้ทำ (ระบุตามจริง):**
-- **ทดสอบบนมือถือจริงกับโปรเจกต์ Firebase จริง** — ทดสอบแล้วเฉพาะกับ Firebase Emulator และเบราว์เซอร์ 2 ตัวบนเครื่องเดียว
-- **เรียก Gemini จริง** — ในการทดสอบ ดักคำขอแล้วตอบแทนด้วยค่าตัวอย่าง (ตรวจได้ว่าภาพที่ส่งถูกปิดและไม่มี EXIF) ความถูกต้องของ AI กับฉลากจริง (MT-09) ยังไม่มีตัวเลข
+- **ทดสอบบนมือถือจริง (Android + iPhone) ทั้งสองบทบาท** — ทดสอบแล้วกับ Firebase Emulator เบราว์เซอร์บนคอมพิวเตอร์ และ (9 พ.ย.) การสแกนฉลากผ่าน Firebase จริงบน localhost [ ]
+- **ความแม่นยำของ AI กับฉลากจริง 20 ใบ (MT-09/MT-13)** — เรียก Gemini จริงแล้วเมื่อ 9 พ.ย. แต่ด้วยฉลากสมมติ 2 ใบ (ผลใน §5.3) ยังไม่มีตัวเลข "ถูก ≥ 18/20" [ ]
 - เตือนตอนปิดหน้าเว็บ — อยู่นอกขอบเขตแต่แรก (ดู §2)
 
-**เทคโนโลยี:** HTML/CSS/JavaScript (ES modules) ไม่มี build step ไม่มี framework · Node test runner · Firebase (กำหนดไว้ในการออกแบบ ยังไม่ใช้งานจริง)
+**เทคโนโลยี:** HTML/CSS/JavaScript (ES modules) ไม่มี build step ไม่มี framework · Node test runner · Firebase แพ็ก Spark: Anonymous Auth + Firestore + AI Logic (Gemini) + App Check · OCR สำรอง Tesseract.js (โหลดตอนใช้) · GitHub Pages
 **ข้อจำกัดที่รู้:** ดู README หัวข้อ "ข้อจำกัดที่สำคัญ" · ลิงก์ระบบที่เปิดได้ในมือถือ: https://yaroo393-png.github.io/MedMind/ (PM ยืนยันว่าเปิดได้ 7 พ.ย.)
 
 ## 5. การทดสอบ 🟡
-**ผลเทสต์อัตโนมัติ:** `npm test` (7 พ.ย. 2569) → **ผ่าน 345 / ไม่ผ่าน 0** · `emulator-tests/` (Security Rules R-1…R-14 + `firestoreRepo` กับ Firebase Emulator) → **ผ่าน 31 / ไม่ผ่าน 0** · ทุกฟังก์ชันใน `logic/` มีเทสต์ที่อ้าง AC · เทสต์เขียนก่อนโค้ดตามสัญญา (TDD) และ "ฉีดบั๊กเทียม" ในโค้ดเพื่อพิสูจน์ว่าเทสต์จับได้ (pairing: ฉีด 10 จุด จับได้ครบ · หน้าจอ: ฉีด 16 จุด จับได้ครบ 16)
+**ผลเทสต์อัตโนมัติ:** `npm run check` บน `main` หลัง merge PR #63–#66 (9 พ.ย. 2569) → **ผ่าน 460 / ไม่ผ่าน 0** (ไฟล์ `.test.js` 403 + `.test.mjs` 57) + `check:secrets` ผ่าน (206 ไฟล์) · `emulator-tests/` (Security Rules R-1…R-14 + `firestoreRepo` กับ Firebase Emulator) → **ผ่าน 31 / ไม่ผ่าน 0** (ผล 7 พ.ย. — ไม่ได้รันซ้ำ 9 พ.ย. เพราะต้องใช้ Firebase Emulator [ ]) · ทุกฟังก์ชันใน `logic/` มีเทสต์ที่อ้าง AC · เทสต์เขียนก่อนโค้ดตามสัญญา (TDD) และ "ฉีดบั๊กเทียม" ในโค้ดเพื่อพิสูจน์ว่าเทสต์จับได้ (pairing: ฉีด 10 จุด จับได้ครบ · หน้าจอ: ฉีด 16 จุด จับได้ครบ 16)
 
 | ไฟล์เทสต์ | จำนวน | ตรวจอะไร |
 |---|---|---|
@@ -85,19 +87,25 @@ SRS v1.5 — 9 FR (Must 5 · Should 1 · Could 3), กฎธุรกิจ 21 �
 | `mealTimeline.test.js` | 18 | สถานะมื้อ, หน้าต่างกินช้า, ไม่มีมื้อถัดไป = 23:59:59.999 |
 | `schedule.test.js` | 16 | ตรวจช่องเวลา, เวลาเตือน, จัดกลุ่มมื้อ |
 | `status.test.js` | 16 | เตือนผู้ดูแล, สรุปรายวัน, ป้าย "ยังไม่ยืนยัน" (BR-13/14) |
-| `labelDraft.test.js` | 18 | ร่างยาจากผลอ่านฉลาก, ผลอ่านจาก AI ไม่เชื่อถือ, ตรวจก่อนบันทึก |
+| `labelDraft.test.js` | 20 | ร่างยาจากผลอ่านฉลาก, ผลอ่านจาก AI ไม่เชื่อถือ, ตรวจก่อนบันทึก, เทียบชื่อยากับ OCR (`ocrMismatches`) |
 | `pairing.test.js` | 10 | สร้าง/ตรวจรหัสเชิญ 6 หลัก 10 นาที ใช้ได้ครั้งเดียว |
 | `clock.test.js` | 5 | นาฬิกาจริง/จำลอง |
 | `repo.test.js` / `repoPairing.test.js` | 13 / 7 | `localRepo` ทุกฟังก์ชัน, จับคู่, ยกเลิกแล้วลบข้อมูล (BR-17) |
 | `demoData.test.js` | 10 | ข้อมูลตัวอย่างสมมติ ไม่มีชื่อ/HN จริง |
 | `prototype.test.js` | 46 | ต้นแบบ: ป้าย Covers, token, ขนาดตัวอักษร/ความคมชัด (NFR-03), ขอบเวลา BR-21 |
 | `pairingView.test.js` | 11 | หน้าจอ FR-01: QR+รหัส ยินยอม ปฏิเสธรหัสผิด/หมดอายุ/มีผู้ดูแลแล้ว ยกเลิก 2 ขั้น |
-| `medicineSetupView.test.js` | 15 | หน้าจอ FR-02: ร่างไม่บันทึก, โปรดตรวจสอบ, ยาเมื่อมีอาการ, AI ล่ม, ติ๊กก่อนส่ง, slot ซ้ำ |
+| `medicineSetupView.test.js` | 24 | หน้าจอ FR-02: ร่างไม่บันทึก, โปรดตรวจสอบ, ยาเมื่อมีอาการ, AI ล่ม, ติ๊กก่อนส่ง, slot ซ้ำ · **9 พ.ย.:** OCR สำรอง (ได้ภาพที่ปิดแล้วตัวเดียวกัน, escape HTML, ไม่เติมช่องให้), ฟอร์มกรอกเองขึ้นก่อน OCR เสร็จ, ยกเลิกระหว่างรอแล้วผลเก่าไม่เด้งกลับ, ปิดภาพไม่สำเร็จ = ไม่ส่งอะไรออก |
+| `aiLabel.test.js` | 15 | `services/aiLabel.js` + `redact.js`: คำสั่งถึง AI, แยกประเภทข้อผิดพลาด, ลองโมเดลถัดไปเมื่อ 404/503/ช้า, ไม่ลองซ้ำเมื่อโควตาหมด, ปิดการคิดแล้วถอยเมื่อโมเดลไม่รับ, รับเฉพาะ JPEG ที่ปิดแล้ว, ขอบแถบปิด |
+| `localOcr.test.js` | 7 | OCR สำรอง (Tesseract ปลอม ไม่โหลด CDN): รับเฉพาะ JPEG, export แบบ default, ภาษา `tha+eng`, หมดเวลาแล้วปิด worker, ตัดข้อความยาว |
+| `qr.test.js` | 7 | QR ของลิงก์เชิญ (FR-01 ข้อ 1) |
+| `scannerIntegration.test.js` | 5 | **9 พ.ย. (เว็บใหม่ PR #65/#66):** หน้าจอสแกนฉลากของเว็บใหม่ยังทำงานตามเดิม — ร่างภาษาอังกฤษขึ้นก่อน OCR เสร็จ, AI ล้มแล้วฟอร์มกรอกเอง, ยกเลิกระหว่าง OCR แล้วผลเก่าไม่กลับมา |
+| `weeklySummary` 8 · `weeklySummaryPage` 7 · `weeklyHistory` 3 · `aiWeeklySummary` 10 (`.test.js`) | 28 | FR-09 (Could): สรุปรายสัปดาห์จากบันทึกยืนยันที่มีจริง · AI เลือกประเด็นจากข้อเท็จจริงที่แอปคำนวณ ไม่เขียนข้อความเอง · **เกณฑ์ AC ของ FR-09 ยังรอทีมรับรอง ไม่อยู่ใน SRS v1.5** |
+| `.test.mjs` 8 ไฟล์ (`i18n` 8, `mobileSettingsNavigation` 11, `pairingInput` 5, `phoneFocus` 7, `phoneFormLanguage` 7, `weeklyController` 7, `weeklyLanguage` 5, `weeklyPanel` 7) | 57 | เว็บใหม่: สลับภาษาไทย/อังกฤษ (ไม่แปลชื่อยา/คำเตือน), การนำทางบนมือถือ, ช่องกรอกไม่เสียข้อความ/โฟกัส, แท็บสรุปรายสัปดาห์ |
 | `reminderHomeView.test.js` | 15 | หน้าจอ FR-03/04: หลายมื้อพร้อมกัน, รอบเตือน, กินแล้ว/ยังไม่กิน, ขอบ T+15 และมื้อถัดไป, ออฟไลน์→ส่งทีหลัง |
 | `caregiverStatusView.test.js` | 10 | หน้าจอ FR-05: แจ้งเฉพาะ "ยังไม่ยืนยัน" ครั้งเดียว, ปิดหน้าแล้วเปิดใหม่, ข้อมูลมาถึงช้า |
 | `offlineQueue.test.js` / `alerts.test.js` | 7 / 5 | คิวออฟไลน์ (BR-20) · กล่องแจ้งเตือนผู้ดูแล (BR-13, BR-18) |
 | `model.test.js` / `demoControls.test.js` / `format.test.js` / `ui.test.js` | 7 / 10 / 7 / 9 | ภาพรวมข้อมูล · สถานการณ์และนาฬิกาจำลอง · รูปแบบเวลา/ข้อความ · ชิ้นส่วน HTML และ escape |
-| `publicPages.test.js` | 13 | หน้าเว็บจริง: Covers ทุกหน้า, ทุกปุ่มมีตัวจัดการ, ไม่มีสีลอย/เครือข่าย/ที่เก็บถาวร, NFR-03 ขนาดและ contrast ≥ 4.5:1 |
+| `publicPages.test.js` | 15 | หน้าเว็บจริง: Covers ทุกหน้า, ทุกปุ่มมีตัวจัดการ, ไม่มีสีลอย/เครือข่าย/ที่เก็บถาวร, NFR-03 ขนาดและ contrast ≥ 4.5:1 |
 | `repo-structure.test.js` | 47 | ไฟล์ที่ต้องมีครบ, README 2 ภาษาและ SRS 2 ภาษาเลขตรงกัน, FR ทุกตัวอยู่ใน TRACEABILITY |
 
 **ผลรายคุณสมบัติ (คัดจาก `docs/TRACEABILITY.md`):** ✅ = ผ่านครบ **ในขอบเขต Demo mode** (หน้าจอจริง + logic + localRepo) · ส่วนที่ต้องใช้ Firestore Rules / มือถือจริง / AI จริง ระบุเป็น "ค้าง"
@@ -105,10 +113,53 @@ SRS v1.5 — 9 FR (Must 5 · Should 1 · Could 3), กฎธุรกิจ 21 �
 | FR | AC ทั้งหมด | ✅ Demo mode | 🟡 บางส่วน | เทสต์ที่รองรับ | ค้าง (ยังไม่ได้ทดสอบ) |
 |---|---|---|---|---|---|
 | FR-01 จับคู่ | 6 | 5 (ข้อ 2–6) | 1 (ข้อ 1) | `pairing`, `repoPairing`, `pairingView` | QR จริง, Security Rules R-2…R-5, R-8 ใน Emulator, MT-01 |
-| FR-02 ฉลาก/ตารางยา | 11 | 8 | 3 (ข้อ 1, 5, 9) | `schedule`, `labelDraft`, `demoData`, `medicineSetupView` | AI อ่านฉลากจริง, `redact.js`, MT-02, MT-03, MT-09, MT-13 |
+| FR-02 ฉลาก/ตารางยา | 11 | 9 (ข้อ 2–8, 10, 11) | 2 (ข้อ 1, 9) | `schedule`, `labelDraft`, `demoData`, `medicineSetupView`, `aiLabel`, `localOcr` | ข้อ 1: สำเร็จ 4/9 ช้า ~2 นาที (§5.3 ช) · MT-13 (ตรวจภาพที่ส่งด้วยตา 20 ใบ), MT-02 (ออฟไลน์บนมือถือ), MT-03, MT-09 (ฉลากจริง 20 ใบ) |
 | FR-03 เตือน/ไทม์ไลน์มื้อ | 6 | 4 (ข้อ 3–6) | 2 (ข้อ 1, 2) | `mealTimeline`, `time`, `reminderHomeView` | เสียงเตือนบนมือถือ (MT-04) |
 | FR-04 ยืนยันกิน | 10 | 9 | 1 (ข้อ 7) | `confirm`, `repo`, `clock`, `offlineQueue`, `reminderHomeView` | ส่งภายใน 10 วินาทีบน Firestore (MT-05), R-7, R-9 |
 | FR-05 แจ้งผู้ดูแล | 10 | 9 | 1 (ข้อ 7) | `status`, `alerts`, `caregiverStatusView` | ปิดหน้าเว็บจริงบนมือถือ (MT-06), NFR-01 แบบเรียลไทม์ |
+
+### 5.3 ผลทดสอบ FR-02 กับ Gemini และ OCR จริง (9 พ.ย. 2569)
+**วิธีวัด:** ฉลาก**สมมติ** 2 ใบที่วาดเอง (ไม่มีข้อมูลจริง) · ใบ A ง่าย "AMLODIPINE 5 mg รับประทานครั้งละ 1 เม็ด วันละ 1 ครั้ง หลังอาหารเช้า" · ใบ B ยากกว่า "METFORMIN 500 mg 2 เม็ด วันละ 2 ครั้ง ก่อนอาหาร 30 นาที เช้า–เย็น" พร้อมข้อบ่งใช้ คำเตือน หมายเหตุ · ปิดแถบดำด้านบน (ที่เขียนชื่อ/HN สมมติ) แล้วส่งเป็น JPEG · ใช้ PROMPT และ JSON schema เดียวกับแอป · เรียก Gemini ตรงจากเครื่องของ Claude Code ด้วย API key ของ PM (ส่งเป็นตัวแปรชั่วคราว ไม่ได้เขียนลงไฟล์ใดใน repo) · **ข้อจำกัด:** ตัวอย่างเล็ก (1–4 ครั้งต่อเงื่อนไข) ไม่ใช่ MT-09 · วัดจากเครือข่ายของเครื่องที่ทดสอบ ไม่ใช่มือถือ · ทางตรงไม่ผ่าน Firebase proxy · เวลาของโมเดลที่คนใช้เยอะเปลี่ยนตามช่วงเวลา
+
+**ก. ความเร็วและความถูกต้องต่อโมเดล (ใบ A เว้นแต่ระบุ):**
+| โมเดล | ตั้งค่า | เวลา | ผล |
+|---|---|---|---|
+| `gemini-3.6-flash` | คิดตามปกติ | **25.2 วินาที** (คิด 610 โทเคน) | ถูก |
+| `gemini-3.6-flash` | ปิดการคิด `thinkingBudget: 0` | **5.1** · 2.6 · 4.0 · 3.1 วินาที (4 ครั้ง) · ใบ B 3.0 วินาที | ถูกทุกครั้ง |
+| `gemini-3.6-flash` | `thinkingLevel: minimal` | 6.9 วินาที | ถูก |
+| `gemini-3.5-flash` | ปิดการคิด | 4.5 · 3.1 วินาที · ใบ B 2.9 วินาที | ถูกทุกครั้ง |
+| `gemini-3.5-flash-lite` | ไม่ส่งค่าการคิด (ส่งแล้ว **400** ไม่รับ) | 1.0 วินาที · ใบ B 1.7 วินาที | ถูกทุกครั้ง |
+| `gemini-3.1-flash-lite` | ปิดการคิด | 9.3 วินาที | ถูก |
+| `gemini-3.8-flash` | ปิดการคิด | **503 หลังรอ 72.6 วินาที** ("high demand") | — |
+| `gemini-3.7-flash` | ปิดการคิด | 503 หลัง 2.3 วินาที | — |
+| `gemini-2.5-flash-lite` | — | 404 ถูกถอนแล้ว | — |
+
+→ ต้นเหตุที่ช้า = โมเดลคิดนาน และโมเดลรุ่นใหม่ที่คนใช้เยอะ จึงปิดการคิด ตัด 3.8/3.7/3.1/2.5 ออกจากรายชื่อ และข้ามโมเดลเมื่อ 503 หรือช้าเกิน 20 วินาที (DL-29)
+
+**ข. โค้ดจริงของแอป (`createAiLabel` + `buildDraft`) กับ Gemini จริง ใบ B:** ลำดับเริ่มต้นเรียก `3.6-flash` ได้ร่างใน **6.1 วินาที** (ครั้งแรก) และ **2.7 วินาที** (ครั้งต่อไป) · `3.5-flash-lite` 1.45 วินาที (รวมการลองใหม่หลัง 400) และ 1.3 วินาที · ร่างที่ได้ถูกครบ: ชื่อ METFORMIN 500 mg · เช้า ก่อนอาหาร 30 นาที 2 เม็ด + เย็น ก่อนอาหาร 30 นาที 2 เม็ด · ข้อบ่งใช้ต่อท้ายวิธีกิน · คำเตือน+หมายเหตุรวมในช่องคำเตือน · ข้อห้ามเป็นค่าว่างเพราะฉลากไม่มี · **0 ช่องที่ต้อง "โปรดตรวจสอบ"** · ไม่มีชื่อ/HN ในผล
+
+**ค. OCR บนเครื่อง (Tesseract.js 5.1.1, ภาษา `tha+eng`) ใน Chromium กับภาพที่ผ่าน `redactImage`:**
+| ภาพ | เวลา | ผล |
+|---|---|---|
+| ฉลากสมมติพิมพ์ชัด 2 ใบ | 1.0–1.3 วินาที ความมั่นใจ 93 | อ่านถูกทุกบรรทัด · ชื่อ/HN สมมติบนแถบดำไม่หลุดเข้าผล |
+| **ภาพถ่ายฉลากจริง 1 ใบ** (PM ทดสอบเอง ไม่บันทึกใน repo) | — | **อ่านเป็นขยะ ใช้ไม่ได้** → จึงใช้ OCR ช่วยดูเท่านั้น ห้ามให้ตัดสินใจ/เติมช่อง |
+
+คำขอเครือข่ายระหว่าง OCR มีเพียง 5 ไฟล์ (โมดูล, worker, wasm, ภาษาไทย, ภาษาอังกฤษ รวมราว 7.7 MB ครั้งแรก) ไม่มีการส่งภาพออกนอกเครื่อง
+
+**ง. การปิดภาพ (`redact.js`) ใน Chromium:** ทั้ง `OffscreenCanvas` และ `<canvas>` สำรองได้ JPEG 1280×640 จากรูปต้นฉบับ 2000×1000 · ปฏิเสธไฟล์ PDF, ไฟล์ว่าง และการส่งโดยไม่มีแถบ · **ไม่ได้ตรวจ EXIF ในไฟล์ผลลัพธ์โดยตรง** (อาศัยการวาดใหม่ลง canvas) และยังไม่ได้ตรวจภาพที่ส่งด้วยตา 20 ใบ (MT-13) [ ]
+
+**จ. เหตุการณ์จริงบน Firebase (ภาพหน้าจอของ PM):** คำขอไปที่ `gemini-3.8-flash` ถูกปฏิเสธ **401 App Check token invalid** (Console เจอ 403 ตอนแลกโทเคน) → แอปแสดง "บริการ AI ใช้ไม่ได้" พร้อมรายละเอียดสำหรับทีม แล้วเปิดฟอร์มกรอกเองพร้อมข้อความ OCR โดยไม่บันทึกอะไร (**FR-02 ข้อ 5 ทำงานจริง**) → ลงทะเบียน App Check debug token ใน Firebase Console แล้ว PM ยืนยันว่า**สแกนได้** (บน localhost) · ก่อนแก้ PM รายงานว่า "ช้ามาก" (ไม่มีตัวเลข) · การสแกนบนเว็บจริง (Pages + reCAPTCHA Enterprise) บนมือถือ [ ]
+
+**ช. ผลทดสอบระบบจริงของ PM (สแกนยา 9 ครั้ง ผ่านแอปจริง + Firebase AI Logic, 9 พ.ย.):**
+| ผล | จำนวน |
+|---|---|
+| ได้ร่างตามจริง | **4 ครั้ง** |
+| ไม่ขึ้นข้อมูล แล้วแอปเปิดฟอร์มกรอกเอง (FR-02 ข้อ 5) | **5 ครั้ง** |
+| เวลาที่หมุนรอต่อครั้ง | ราว **2 นาที** (ประมาณการ ไม่ได้จับเวลา) |
+
+เทียบเกณฑ์: NFR-08 กำหนดได้ร่างภายใน 10 วินาที → **ยังไม่ผ่าน** · สำเร็จ 4/9 (44%) ต่ำกว่าเป้า MT-09 (≥ 18/20) แต่ยังไม่ครบ 20 ใบของ MT-09 (ทดสอบ 9 ครั้ง) · **ใช้โค้ดรุ่นล่าสุด · แอปจริง `caregiver.html` บน localhost · ฉลากจริงที่ปิดชื่อ/HN แล้ว · 5 ครั้งที่ล้ม กล่องเหลืองขึ้นข้อความ App Check (401/403)** · ทางล้มทำงานตามออกแบบ (ไม่ค้างตลอด ไม่บันทึกอะไร ให้กรอกเอง) · **ผลนี้ต่างจากวัดทางตรง (~3 วินาที ถูกครบ) มาก → ต้นเหตุที่ล้มคือ App Check (401/403) ไม่ใช่ความเร็วของโมเดล · ส่วนที่หมุนรอราว 2 นาที (สมมติฐาน: ระบบขอโทเคน App Check ซ้ำจนหมดเวลา) ยังไม่ได้พิสูจน์ด้วยการวัดแยก [ ]** · ขั้นต่อไป: ทดสอบซ้ำบนเว็บจริง (Pages + reCAPTCHA Enterprise ไม่ใช้ debug token) แล้วเทียบ · เพิ่มการตรวจโทเคน App Check ก่อนส่งภาพ พร้อมเวลาตัดสั้น ๆ เพื่อไม่ให้หมุนรอนาน [ ]
+
+**ฉ. การพิสูจน์ว่าเทสต์จับบั๊กได้:** ฉีดบั๊กเทียม 2 จุดใน FR-02 ใหม่ (ปิดตัวกันผลเก่าเมื่อยกเลิก; ลืม `default` export ของ Tesseract) → เทสต์ตกทั้งคู่ · บั๊กจริงที่เจอตอนตรวจชุดแก้ของ PM: OCR ใช้ไม่ได้ทุกครั้งเพราะอ่าน `createWorker` ผิดที่ ซึ่งเทสต์ที่ใช้ของปลอมจับไม่ได้ จึงเพิ่มเทสต์ที่จำลอง export แบบจริง
 
 **ที่ยังไม่ได้ทำ (ไม่ใส่ตัวเลขที่ไม่มี):**
 - ทดสอบบนมือถือ OPPO Reno 16 5G (Android) และ iPhone 13 (iOS) ทั้งสองบทบาท — ตาราง `TEST-CHECKLIST.md` ยังว่าง [ ]
@@ -138,16 +189,19 @@ SRS v1.5 — 9 FR (Must 5 · Should 1 · Could 3), กฎธุรกิจ 21 �
 - ตอนทดสอบ Security Rules กับ Emulator เจอบั๊กจริง 2 ตัวที่เทสต์ธรรมดาไม่เจอ: ตัวฟังข้อมูลตายถาวรถ้าเริ่มก่อนเอกสารคู่ขึ้นเซิร์ฟเวอร์ และเครื่องผู้สูงอายุไม่รู้ว่าผู้ดูแลยกเลิกจับคู่ — แก้แล้ว
 - **เหตุการณ์ที่ต้องเปิดเผย:** ระหว่างพัฒนามีการส่งรูปฉลากยาจริง 4 ใบ (เห็นชื่อ/HN ของสมาชิกทีม) ให้ Claude Code ทางแชต · AI ตอบทันทีว่าผิดกติกา ไม่บันทึกชื่อ/HN ลงไฟล์ใด ไม่ส่งรูปให้ Gemini และใช้เฉพาะรูปแบบฉลากปรับการออกแบบ (DL-28) — รายละเอียดใน AI-Use Statement ข้อ 5
 
-**บทเรียน:** AI พูดมั่นใจแม้ผิด → ต้องมีเทสต์ มีมนุษย์ตรวจ และตรวจย้อนกับ requirement ก่อนยอมรับ
+- **9 พ.ย. (ตรวจชุดแก้ FR-02 ที่ PM เสนอ):** AI ตรวจแล้วพบว่า OCR ใช้ไม่ได้ทุกครั้ง, คำสั่งถึง Gemini ตัดกฎที่ SRS ต้องการ (ก่อนอาหารไม่บอกนาที = null ฯลฯ), ใช้สีลอย, และมีส่วนที่ขัด BR-19/CLAUDE.md (เรียก Gemini ตรงจากเบราว์เซอร์ด้วยคีย์ + ส่งรูปทั้งใบไม่ปิดชื่อ) จึงไม่นำมาใช้ · ชื่อโมเดลที่ AI หรือชุดเดิมเสนอบางตัวใช้ไม่ได้จริง (3.8-flash ค้าง 72 วินาที แล้ว 503) → ต้องวัดจริงก่อนเชื่อ
+- **เหตุการณ์ที่ต้องเปิดเผย (9 พ.ย.):** PM ส่ง Gemini API key ของตัวเองในแชตให้ Claude Code เพื่อวัดความเร็ว (ใช้ผ่านตัวแปรชั่วคราว ตรวจแล้วไม่มี key ในไฟล์ใดของ repo) และภาพหน้าจอ Console ที่ส่งมามี App Check debug token · key และ token ถือว่าเปิดเผยแล้ว **PM แจ้ง (9 พ.ย.) ว่าลบและสร้างใหม่ทั้งคู่แล้ว** · ระบบจริงไม่ใช้ key นี้ (ใช้ Firebase AI Logic) จึงไม่ต้องแก้โค้ด
 
-**AI ในตัวระบบ:** เขียนแล้ว (7 พ.ย.) — ถ่ายรูป → ผู้ดูแลลากนิ้วปิดชื่อ/HN → วาดรูปใหม่ไม่มี EXIF → Gemini ผ่าน Firebase AI Logic → ร่างให้ผู้ดูแลตรวจ (FR-02 ข้อ 1, 5, 9) · ทดสอบเต็มเส้นทางในเบราว์เซอร์โดยดักคำขอ AI แล้วตอบแทน (ตรวจว่าภาพที่ส่งถูกปิดจริงและไม่มี EXIF) · **ยังไม่เคยเรียก Gemini จริง ความแม่นยำกับฉลากจริงยังไม่มีตัวเลข [ รอ MT-09 ]**
+**บทเรียน:** AI พูดมั่นใจแม้ผิด → ต้องมีเทสต์ มีมนุษย์ตรวจ วัดกับของจริง และตรวจย้อนกับ requirement ก่อนยอมรับ · งานที่ "ดูเร็วขึ้น" ต้องวัด: ความช้าของ FR-02 มาจากการคิดของโมเดล ไม่ใช่ที่โค้ดฝั่งเรา
+
+**AI ในตัวระบบ:** ถ่ายรูป → ผู้ดูแลลากนิ้วปิดชื่อ/HN → วาดรูปใหม่ไม่มี EXIF → Gemini ผ่าน Firebase AI Logic → ร่างให้ผู้ดูแลตรวจ (FR-02 ข้อ 1, 5, 9) · **เรียก Gemini จริงแล้ว 9 พ.ย.** กับฉลากสมมติ วัดทางตรงได้ร่างถูกครบ ~3 วินาที แต่ผ่านระบบจริง PM ทดสอบ 9 ครั้งได้ผล 4 ครั้งและหมุนรอราว 2 นาที (§5.3 ช) · ถ้า Gemini ใช้ไม่ได้ → ฟอร์มกรอกเอง + ข้อความ OCR ช่วยดู (ไม่เติมช่องให้) · AI แค่ร่าง ผู้ดูแลตรวจทุกครั้ง ไม่ให้คำแนะนำยา · **ความแม่นยำกับฉลากจริง 20 ใบยังไม่มีตัวเลข [ รอ MT-09 ]**
 
 ## 7. ส่วนร่วมรายคน ✅
 กระบวนการ: Incremental + sprint สั้น 3 รอบ (Sprint 0 วิเคราะห์, Sprint 1–2 พัฒนา) — ดู [`docs/PROJECT-PLAN.md`](../../docs/PROJECT-PLAN.md)
 
 | คน | FR / งาน | ไฟล์โค้ด | PR / Commit สำคัญ |
 |---|---|---|---|
-| **Yar Oo** (PM) | FR-02, เอกสาร, repo/CI | [`logic/schedule.js`](../../public/js/logic/schedule.js), [`logic/labelDraft.js`](../../public/js/logic/labelDraft.js) | [#41](https://github.com/yaroo393-png/MedMind/pull/41) labelDraft, [#36](https://github.com/yaroo393-png/MedMind/pull/36) schedule, [#39](https://github.com/yaroo393-png/MedMind/pull/39) มติ DL-19–25, [#45](https://github.com/yaroo393-png/MedMind/pull/45) AI-Use Statement · [#48](https://github.com/yaroo393-png/MedMind/pull/48) / [#49](https://github.com/yaroo393-png/MedMind/pull/49) (รวมและเปิด PR) · AI อ่านฉลาก `services/aiLabel.js`, `services/redact.js`, `features/medicineSetup.js` |
+| **Yar Oo** (PM) | FR-02, เอกสาร, repo/CI | [`logic/schedule.js`](../../public/js/logic/schedule.js), [`logic/labelDraft.js`](../../public/js/logic/labelDraft.js) | [#41](https://github.com/yaroo393-png/MedMind/pull/41) labelDraft, [#36](https://github.com/yaroo393-png/MedMind/pull/36) schedule, [#39](https://github.com/yaroo393-png/MedMind/pull/39) มติ DL-19–25, [#45](https://github.com/yaroo393-png/MedMind/pull/45) AI-Use Statement · [#48](https://github.com/yaroo393-png/MedMind/pull/48) / [#49](https://github.com/yaroo393-png/MedMind/pull/49) (รวมและเปิด PR) · AI อ่านฉลาก `services/aiLabel.js`, `services/redact.js`, `features/medicineSetup.js` · [#59](https://github.com/yaroo393-png/MedMind/pull/59) โมเดลถูกถอน · [#63](https://github.com/yaroo393-png/MedMind/pull/63) อ่านเร็วขึ้น + `services/localOcr.js` · [#64](https://github.com/yaroo393-png/MedMind/pull/64) จัดโครง repo (`prototype/`, `slides/`) |
 | **Takkan Khanlui** | FR-01, core, Rules | [`logic/pairing.js`](../../public/js/logic/pairing.js), [`core/repo.js`](../../public/js/core/repo.js), [`core/clock.js`](../../public/js/core/clock.js) | [#43](https://github.com/yaroo393-png/MedMind/pull/43) pairing, [#38](https://github.com/yaroo393-png/MedMind/pull/38) clock+repo, ต้นแบบ FR-01 · ตรวจแล้ว (6 พ.ย.) · [#49](https://github.com/yaroo393-png/MedMind/pull/49): `firestore.rules`, `core/firestoreRepo.js`, `core/firebase.js`, `features/qr.js`, `emulator-tests/` · [#48](https://github.com/yaroo393-png/MedMind/pull/48): `features/pairing.js` |
 | **Rossatorn Sangkaew** | FR-03, Design | [`logic/time.js`](../../public/js/logic/time.js), [`logic/mealTimeline.js`](../../public/js/logic/mealTimeline.js), [`tokens.css`](../../prototype/css/tokens.css) (ออกแบบชุดสี/ฟอนต์เอง) + วาดมาสคอร์ตการ์ตูนเอง | [#35](https://github.com/yaroo393-png/MedMind/pull/35) mealTimeline · ตรวจแล้ว (7 พ.ย.) · [#48](https://github.com/yaroo393-png/MedMind/pull/48): `features/reminder.js`, `ui.js`, `format.js`, CSS · [#49](https://github.com/yaroo393-png/MedMind/pull/49): สไตล์หน้าใช้งานจริง, เทสต์โครงสร้างหน้าเว็บ |
 | **Nichanan Lalua** | FR-04, ต้นแบบ | [`logic/confirm.js`](../../public/js/logic/confirm.js), [`core/demoData.js`](../../public/js/core/demoData.js), ต้นแบบ Demo mode | [#40](https://github.com/yaroo393-png/MedMind/pull/40) demoData, เทสต์ต้นแบบ · ตรวจแล้ว (7 พ.ย.) · [#48](https://github.com/yaroo393-png/MedMind/pull/48): `demo.html`, `features/home.js`, `phone.js`, `core/offlineQueue.js` · [#49](https://github.com/yaroo393-png/MedMind/pull/49): `senior.html`, `caregiver.html`, `features/realShell.js` |
@@ -157,17 +211,41 @@ SRS v1.5 — 9 FR (Must 5 · Should 1 · Could 3), กฎธุรกิจ 21 �
 - `confirm.js` และ `time.js` (เจ้าของคือ Nichanan และ Rossatorn) ถูก commit ใน [PR #34](https://github.com/yaroo393-png/MedMind/pull/34) ภายใต้บัญชี PM · เจ้าของทั้งสองตรวจและอธิบายโค้ดได้ (7 พ.ย.) ตามบันทึกใน AI-Use Statement
 - ✅ ตรวจแล้ว: โค้ด `logic/` และ `core/` ที่เขียนถึง 6 พ.ย. (Takkan, Yar, Suchitra 6 พ.ย. · Nichanan, Rossatorn 7 พ.ย.)
 - **ยังไม่ตรวจ:** หน้าจอจริง `public/js/features/`, Firebase (`firestoreRepo`, `firestore.rules`), AI อ่านฉลาก, QR และเทสต์ที่เพิ่ม 7 พ.ย. (ร่างโดย AI) ทั้งหมด merge แล้วผ่าน PR #48/#49 แต่เจ้าของแต่ละไฟล์ต้องอ่านและอธิบายได้ก่อนสอบ
-- PR #42 ("Create status.js" ของ Suchitra) ซ้ำกับ #37 ที่ merge แล้ว ต้องปิดโดยไม่ merge [ ยืนยันหลังปิดแล้ว] · ส่วนร่วมรายคนตัดสินจาก GitHub ของแต่ละบัญชี [ ตรวจหน้า Contributors ก่อนส่ง ]
+- `features/qrScan.js` (เจ้าของ FR-01 คือ Takkan) ถูกเพิ่มใน [PR #53](https://github.com/yaroo393-png/MedMind/pull/53) โดย Claude Code ในเซสชันของ PM (ผู้เขียน commit คือ `Claude`) · `services/localOcr.js` และการปรับ `aiLabel.js` (PR #63) ร่างโดย Claude Code ตามคำสั่ง PM แล้ว commit จากบัญชี PM · เจ้าของแต่ละไฟล์ต้องอ่านและอธิบายได้ก่อนสอบ
+- PR ที่ยังเปิดอยู่ ณ 9 พ.ย.: [#42](https://github.com/yaroo393-png/MedMind/pull/42) ("Create status.js" ของ Suchitra ซ้ำกับ #37 ที่ merge แล้ว → ต้องปิดโดยไม่ merge) · [#62](https://github.com/yaroo393-png/MedMind/pull/62) (ข้อความลิงก์ใน README) · [#61](https://github.com/yaroo393-png/MedMind/pull/61) (FR-09 เวอร์ชันแรกของ Rossatorn — โค้ดถูกนำไปรวมใน PR #65/#66 แล้ว จึงเสนอให้ปิดโดยไม่ merge) [ สถานะหลังปิด/รวม ] · ส่วนร่วมรายคนตัดสินจาก GitHub ของแต่ละบัญชี (`git shortlog` 9 พ.ย.: yaroo393-png 32 + Yar Oo 13 (คนเดียวกัน 2 ชื่อ), KaidangSuk 8, V31311 6, IDK-SleepyBro 6 + Rossatorn Sangkaew 2 (บัญชีเดียวกัน ต่างชื่อ/อีเมล), khaiwann 4, Claude 3)
 
 ## 8. ตาราง Golden Thread
-(คัดจาก `docs/TRACEABILITY.md` — ตรวจตรงของจริงเมื่อ 7 พ.ย. 2569 · หน้าจอ = `public/demo.html` (Demo mode) และต้นแบบ M3 ใน `prototype/` · ✅ = ในขอบเขต Demo mode)
+(คัดจาก `docs/TRACEABILITY.md` — ตรวจตรงของจริงเมื่อ 9 พ.ย. 2569 · หน้าจอ = `public/demo.html` (Demo mode) และต้นแบบ M3 ใน `prototype/` · ✅ = ในขอบเขต Demo mode)
 
 | ปัญหา | FR | Design | Feature (หน้าจอ) | Test (ผลจริง) |
 |---|---|---|---|---|
 | ผู้สูงอายุสมัครบัญชียาก; ผู้ดูแลไม่อยู่ด้วย | FR-01 | architecture §5.5, §6, §7.1 | S-01, S-04, C-01, C-09 · `features/pairing.js` | `pairing` 10 + `repoPairing` 7 + `pairingView` 11 ผ่าน (AC 2–6 ✅ Demo) · ค้าง: Rules R-2…R-8 ใน Emulator, QR จริง, MT-01 |
-| ผู้ดูแลอยากให้ช่วยกรอกข้อมูลยาจากฉลาก | FR-02 | architecture §5.4, §7.2 | C-02…C-06 · `features/medicineSetup.js` | `schedule` 16 + `labelDraft` 18 + `demoData` 10 + `medicineSetupView` 15 ผ่าน (AC 8 ข้อ ✅ Demo) · ค้าง: AI อ่านฉลากจริง, `redact.js` (AC 5, 9), MT-09/13 |
+| ผู้ดูแลอยากให้ช่วยกรอกข้อมูลยาจากฉลาก | FR-02 | architecture §5.4, §7.2, ADR-3, DL-29 | C-02…C-06 · `features/medicineSetup.js` · `services/aiLabel.js` `redact.js` `localOcr.js` | `schedule` 16 + `labelDraft` 20 + `demoData` 10 + `medicineSetupView` 24 + `aiLabel` 15 + `localOcr` 7 ผ่าน · **เรียก Gemini จริง 9 พ.ย.: ทางตรงฉลากสมมติ ~3 วินาที ถูกครบ แต่ผ่านระบบจริงสำเร็จ 4/9 และช้า ~2 นาที (§5.3)** (AC 9 ข้อ ✅ · ข้อ 1 และ 9 🟡) · ค้าง: AC 1 ความเร็ว (NFR-08), AC 9 → MT-13, MT-09 (ฉลากจริง 20 ใบ), MT-02 |
 | ลืมกินยา / กินไม่ตรงเวลา | FR-03 | architecture §5.1, §7.3 | S-03 · `features/reminder.js` | `mealTimeline` 18 + `time` 3 + `reminderHomeView` 15 (ร่วม FR-04) ผ่าน (AC 3–6 ✅ Demo) · ค้าง: เสียงเตือนบนมือถือ MT-04 |
 | จำไม่ได้ว่ากินแล้วหรือยัง | FR-04 | architecture §5.3, §6 | S-02, S-03 · `features/home.js` | `confirm` 10 + `repo` 13 + `clock` 5 + `offlineQueue` 7 + `reminderHomeView` ผ่าน (AC 9 ข้อ ✅ Demo) · ค้าง: AC 7 ส่งภายใน 10 วินาที MT-05, R-7/R-9 |
 | โทร/ส่ง LINE ถามทุกมื้อ | FR-05 | architecture §5.3, §6 | C-07, C-08 · `features/caregiverStatus.js` | `status` 16 + `alerts` 5 + `caregiverStatusView` 10 ผ่าน (AC 9 ข้อ ✅ Demo) · ค้าง: AC 7 ปิดหน้าเว็บจริง MT-06, เรียลไทม์บน Firestore |
 
-รวม: `npm test` ผ่าน 345 / 0 ไม่ผ่าน · `emulator-tests/` ผ่าน 31 / 0 · ✅ เฉพาะในขอบเขต Demo mode (หน้าจอจริง + logic + localRepo) — ผลบนมือถือจริง, Security Rules ใน Emulator และ AI อ่านฉลากจริง **ยังไม่มี** ห้ามเปลี่ยนเป็น ✅ จนกว่าจะมีผลจริง
+รวม: `npm run check` ผ่าน 460 / 0 ไม่ผ่าน (9 พ.ย. หลัง PR #66) · `emulator-tests/` ผ่าน 31 / 0 (7 พ.ย.) · ✅ ในขอบเขต Demo mode (หน้าจอจริง + logic + localRepo) และ FR-02 กับ Gemini จริง (ทางตรงบนฉลากสมมติ; ผ่านระบบจริงสำเร็จ 4/9 และช้า) — ผลบนมือถือจริง, MT-09/13 (ฉลากจริง 20 ใบ) **ยังไม่มี** ห้ามเปลี่ยนเป็น ✅ จนกว่าจะมีผลจริง
+
+## ภาคผนวก A — ตรวจเทียบเกณฑ์ที่อาจารย์กำหนด (9 พ.ย. 2569)
+**ที่มา:** โพสต์ของอาจารย์ + หน้า Git for Teams §6, §9, §10 · ตรวจจาก `main` (`8dbc0c4`) ด้วย `git ls-files`, `git log`, `git shortlog` และเปิดต้นแบบในเบราว์เซอร์จริง
+
+| เกณฑ์ (checklist §9) | ผล | หลักฐาน |
+|---|---|---|
+| ไม่มีเลขเวอร์ชัน/คำว่า "final" ในชื่อไฟล์ · 1 เอกสาร 1 ไฟล์ | ✅ | ค้นชื่อไฟล์ทั้ง repo (180 ไฟล์) เจอแค่ `final-report.md` ซึ่งเป็นชื่อที่อาจารย์ตั้งเอง · SRS/Charter มีไฟล์ส่ง `.pdf` + สำเนาอ่านบน GitHub `.md` ตามที่ README อธิบาย |
+| มีโฟลเดอร์ `docs/`, `prototype/`, `slides/` | ✅ | PR #64 · ต้นแบบย้ายจาก `docs/02-design/prototypes/2569-11-04/` (ชื่อมีวันที่) |
+| ต้นแบบเปิดในเบราว์เซอร์ได้ ไม่ต้องมี server/DB และ README บอกวิธีเปิด | ✅ | เปิด `prototype/index.html`, `app.html`, `demo.html` แบบ `file://` ใน Chromium: โหลด token ครบ มีป้าย Covers ไม่มี error · README หัวข้อ "วิธีเปิดใช้งาน ①" |
+| README มีสมาชิก รหัสนักศึกษา บัญชี GitHub วิธีเปิด | ✅ | `README.md` ตาราง "ทีมและการแบ่งงาน" + ลิงก์ Pages |
+| Final Report + Golden Thread, สไลด์เดโม, M3 AI-Use Statement อยู่ใน repo | ✅ | `docs/05-report/final-report.md` §8, `slides/demo-slides.pdf` (12 หน้า), `docs/05-report/ai-use-statement.md` |
+| งานทั้งหมด merge เข้า `main` | 🟡 | ยังมี PR เปิด #42, #61, #62 (ดู §7) และ branch เก่า 4 ตัวที่ merge แล้วแต่ยังเก็บ SRS พาธเก่า `docs/02-requirements/` (`docs/setup-repo`, `docs/bilingual`, `docs/ai-log-fill`, `feature/m4-setup-and-deps`) [ ลบ branch/ปิด PR แล้ว ] |
+| ทุกคนมี commit จากบัญชีตัวเอง ข้อความมีความหมาย | ✅ | `git shortlog` (§7) ทุกบัญชีมี commit · ข้อความ commit ส่วนใหญ่ระบุ FR/งาน · ไฟล์ที่ commit แทนกันระบุไว้ใน §7 |
+
+| เกณฑ์ M3 | คะแนน | ที่ทำ |
+|---|---|---|
+| Prototype คลิกได้ครอบทุก Must FR + ทางผิด | 12 | `prototype/` (ตาราง AC 43 ข้อ) · `public/demo.html` Demo mode เดินครบ FR-01–05 + ทางผิดในเบราว์เซอร์เดียว (MT-15) · ลิงก์ Pages เปิดในมือถือ |
+| Golden Thread (ด้ายขาด = จำกัด 50%) | 6 | ตาราง §8 ตรงกับ `docs/TRACEABILITY.md`, README, สไลด์ 10 (ตัวเลขเทสต์ 460 + 31) |
+| Demo และ presentation | 6 | `docs/06-presentation/demo-script.md` (5 นาที) · `slides/demo-slides.pdf` · `oral-exam-prep.md` |
+| Engineering & AI-first (repo, commit, README, AI use) | 6 | PR + CI (`check`, `emulator`) · เทสต์ 460 · `docs/AI_USAGE_LOG.md` ตามจริง |
+| M3 AI-Use Statement (ไม่มี = จำกัด 50%) | ประตู | `docs/05-report/ai-use-statement.md` ตรงกับ log รวมเหตุการณ์ที่ต้องเปิดเผย 2 เรื่อง |
+| ผลตรวจเบื้องต้นของอาจารย์ (§10, 8 พ.ย.) | — | Found ครบ 8/8 · ข้อ "SRS ซ้ำ (2)": ค้นทุก commit ทุก branch ไม่พบไฟล์ชื่อ "(2)" — สิ่งที่ใกล้เคียงที่สุดคือสำเนา SRS พาธเก่าใน 4 branch ข้างบน |
+
