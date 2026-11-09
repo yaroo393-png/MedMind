@@ -102,3 +102,51 @@ test('โมเดลถูกถอน (404) → ลองชื่อถัด
   await assert.rejects(() => all.requestDraft(blob()), (e) => e instanceof AiUnavailableError && /404/.test(e.detail));
   assert.ok(AI_MODELS.length >= 3 && AI_MODELS.every((m) => /^gemini-/.test(m)));
 });
+
+test('ช้า: Gemini ไม่ตอบภายในเวลาที่กำหนด → เลิกรอ แจ้ง "ใช้ไม่ได้" (ไม่ให้วงกลมหมุนค้าง)', async () => {
+  const hang = { async generateContent() { return new Promise(() => {}); } };
+  const ai = createAiLabel({ getModel: async () => hang, timeoutMs: 20 });
+  const t0 = Date.now();
+  await assert.rejects(ai.requestDraft(blob()), (e) => e instanceof AiUnavailableError && e.reason === 'service_down' && /timeout|ช้าเกิน/.test(e.detail));
+  assert.ok(Date.now() - t0 < 1000);
+});
+
+test('เร็ว: ขอโหมดลดการคิดก่อน · โมเดลไม่รับ (400) → ลองใหม่แบบปกติ แล้วจำไว้ว่าไม่ต้องลองโหมดเร็วอีก', async () => {
+  const reply = JSON.stringify({ name: 'ยา', instructionText: null, warnings: null, contraindications: null, asNeeded: false, slots: [] });
+  const asked = [];
+  const getModel = async (name, options) => {
+    asked.push(options?.fast);
+    return options?.fast ? fakeModel(new Error('[400 Bad Request] Invalid argument: thinking_config not supported')) : fakeModel(reply);
+  };
+  const ai = createAiLabel({ getModel, models: ['lite'] });
+  assert.equal((await ai.requestDraft(blob())).name, 'ยา');
+  assert.deepEqual(asked, [true, false]);
+  await ai.requestDraft(blob());
+  assert.deepEqual(asked.slice(2), [false], 'โมเดลนี้ไม่ลองโหมดเร็วซ้ำ');
+});
+
+test('โมเดลคนใช้เยอะ (503) / ช้าเกินเวลา → ไปโมเดลถัดไปทันที · โควตาหมด (429) ไม่ลองตัวอื่น', async () => {
+  const reply = JSON.stringify({ name: 'ยา', instructionText: null, warnings: null, contraindications: null, asNeeded: false, slots: [] });
+  const tried = [];
+  const hang = { generateContent: () => new Promise(() => {}) };
+  const getModel = async (name) => { tried.push(name); return name === 'busy' ? fakeModel(new Error('[503] This model is currently experiencing high demand')) : name === 'slow' ? hang : fakeModel(reply); };
+  const ai = createAiLabel({ getModel, models: ['busy', 'slow', 'ok'], timeoutMs: 20 });
+  assert.equal((await ai.requestDraft(blob())).name, 'ยา');
+  assert.deepEqual(tried, ['busy', 'slow', 'ok']);
+  let quotaCalls = 0;
+  const quota = createAiLabel({ getModel: async () => { quotaCalls += 1; return fakeModel(new Error('[429] Resource exhausted')); }, models: ['a', 'b'] });
+  await assert.rejects(quota.requestDraft(blob()), (e) => e.reason === 'quota');
+  assert.equal(quotaCalls, 1);
+});
+
+test('รายชื่อโมเดล: เฉพาะตัวที่วัดแล้วใช้ได้และเร็ว (ไม่มีตัวที่ถูกถอนหรือค้างนาน)', () => {
+  assert.deepEqual(AI_MODELS, ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.5-flash-lite']);
+});
+
+test('PROMPT: เก็บข้อบ่งใช้ / หมายเหตุ / คำเตือนให้ครบ ลงช่องเดิม (ไม่เปลี่ยนโครง JSON) และไม่ให้ AI แนะนำเอง', () => {
+  assert.match(PROMPT, /ข้อบ่งใช้/);
+  assert.match(PROMPT, /หมายเหตุ/);
+  assert.match(PROMPT, /ผลข้างเคียง/);
+  assert.match(PROMPT, /never add your own advice/);
+  assert.equal(AI_MODELS[0], 'gemini-3.6-flash');
+});
