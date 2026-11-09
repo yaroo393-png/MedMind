@@ -17,6 +17,8 @@
 
 > **สถานะ 7 พ.ย. (หลังเขียนหน้าจอจริง):** `public/demo.html` (Demo mode) เดินครบ FR-01–05 · `npm test` ผ่าน 328 · ยังไม่ทำ: Firebase จริง (DL-24), `senior.html`/`caregiver.html`, AI อ่านฉลากจริง, ทดสอบมือถือ, ลิงก์ Pages (workflow `pages.yml` พร้อม รอเปิด Pages ใน Settings) · แผนส่งต่องานทั้งหมดอยู่ใน [`HANDOFF.md`](HANDOFF.md)
 
+> **สถานะ 9 พ.ย. (วันนำเสนอ):** PR #63 (FR-02 อ่านเร็วขึ้น + OCR สำรอง, DL-29) และ #64 (จัดโครง repo ตามอาจารย์) merge แล้ว · `npm run check` ผ่าน 460 / 0 (หลัง PR #66) · ตาราง velocity และ retro ด้านล่าง **ยังว่าง [ ]** — PM เติมจากบอร์ด GitHub Projects (ห้ามเดาตัวเลข)
+>
 > **สถานะ 7 พ.ย. (ค่ำ):** PR #48 (หน้าจอจริง Demo mode) และ #49 (Firebase จริง + AI อ่านฉลาก) merge แล้ว · `npm test` 345 ผ่าน · `emulator-tests/` 31 ผ่าน · ลิงก์ GitHub Pages เปิดบนมือถือได้ (ผู้ใช้ยืนยัน) · **ยังไม่ทำ:** ทดสอบบนมือถือจริง 2 เครื่องกับ Firebase จริง (TEST-CHECKLIST ส่วน G), เรียก Gemini จริง (MT-09), heuristic/think-aloud (MT-14/07), ปิด PR #42, วาง Rules ในคอนโซล · ตาราง velocity ให้ PM เติมจากบอร์ดจริง
 
 **ทุก sprint:** เริ่มด้วย sprint planning (เลือกงานจาก backlog + ประมาณขนาด) · ประชุมสั้น 10 นาที/วัน (ทำอะไรไปแล้ว / จะทำอะไร / ติดอะไร) · จบด้วย demo + retrospective

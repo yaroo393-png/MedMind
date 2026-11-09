@@ -35,8 +35,8 @@ Definition: only the caregiver can add or edit medicines. A medicine has a name 
 
 ## ไฟล์ที่ต้องเขียน
 
-- โค้ด: logic/labelDraft.js, logic/schedule.js, services/redact.js, services/aiLabel.js, features/labelScan.js
-- เทสต์: tests/labelDraft.test.js, tests/schedule.test.js
+- โค้ด: logic/labelDraft.js, logic/schedule.js, services/redact.js, services/aiLabel.js, services/localOcr.js, features/medicineSetup.js, features/redactTool.js
+- เทสต์: tests/labelDraft.test.js (20), tests/schedule.test.js (16), tests/aiLabel.test.js (15), tests/localOcr.test.js (7), tests/medicineSetupView.test.js (24)
 - หน้าจอ: ดู Screen Map ใน [`design-system.md`](../../docs/02-design/design-system.md) §4 · ทุกหน้าต้องมี "Covers: FR-02"
 
 ## พึ่งพา / เชื่อมกับโมดูลอื่น
@@ -56,11 +56,17 @@ Definition: only the caregiver can add or edit medicines. A medicine has a name 
 - [x] Issue ถูกสร้างและ assign (#12, #13)
 - [x] ตรรกะ + เทสต์ผ่าน (`npm test`) — ✅ `logic/schedule.js` + `tests/schedule.test.js` 16 เทสต์ (5 พ.ย. 2569) · ✅ `logic/labelDraft.js` + `tests/labelDraft.test.js` 18 เทสต์ (6 พ.ย. 2569, #13)
 - [x] หน้าจอเชื่อมกับ logic — `features/medicineSetup.js` + `tests/medicineSetupView.test.js` (15) เปิดได้ที่ `public/demo.html` (7 พ.ย. 2569)
-- [x] AI อ่านฉลากจริงเขียนแล้ว (7 พ.ย. 2569) — `services/redact.js`, `services/aiLabel.js`, `features/redactTool.js` · **ยังไม่เคยเรียก Gemini จริง** — ทดสอบ MT-09/MT-13 ด้วยฉลากที่ปิดชื่อ/HN แล้วเท่านั้น
+- [x] AI อ่านฉลากจริงเขียนแล้ว (7 พ.ย. 2569) — `services/redact.js`, `services/aiLabel.js`, `features/redactTool.js`
+- [x] **เรียก Gemini จริงแล้ว (9 พ.ย. 2569)** — ทางตรงกับฉลากสมมติที่ปิดแถบบน: ปิดการคิด 25 → 3 วินาที · **แต่ PM ทดสอบผ่านระบบจริง 9 ครั้ง: ได้ผล 4 ครั้ง, 5 ครั้งไม่ขึ้นแล้วให้กรอกเอง, หมุนรอราว 2 นาที — ยังไม่ผ่าน NFR-08 · 5 ครั้งที่ล้มขึ้นข้อความ App Check 401/403 (ฉลากจริงที่ปิดชื่อแล้ว โค้ดรุ่นล่าสุด)** · ลำดับโมเดล `3.6-flash → 3.5-flash → 3.5-flash-lite` · OCR บนเครื่องเป็นทางสำรอง (`services/localOcr.js`, DL-29) · ผลวัดครบใน `docs/05-report/final-report.md` §5.3
+- [ ] MT-09 / MT-13: ฉลากจริง 20 ใบที่ปิดชื่อ/HN แล้ว — ยังไม่ได้ทำ (ห้ามใช้ฉลากที่ยังเห็นชื่อ/HN)
 - [ ] ทดสอบบนมือถือจริง (MT ที่เกี่ยวข้อง)
 - [x] `docs/TRACEABILITY.md` อัปเดตแล้ว (ส่วน `schedule.js` และ `labelDraft.js`)
-- [ ] บันทึกการใช้ AI แล้ว
+- [x] บันทึกการใช้ AI แล้ว (`docs/AI_USAGE_LOG.md` แถว 7 พ.ย. และ 9 พ.ย.)
 
-**ลิงก์ PR / Issue:** (เติมที่นี่)
+**ลิงก์ PR / Issue:** [#36](https://github.com/yaroo393-png/MedMind/pull/36) schedule · [#41](https://github.com/yaroo393-png/MedMind/pull/41) labelDraft · [#48](https://github.com/yaroo393-png/MedMind/pull/48) หน้าจอ · [#49](https://github.com/yaroo393-png/MedMind/pull/49) AI อ่านฉลาก · [#59](https://github.com/yaroo393-png/MedMind/pull/59) โมเดลถูกถอน · [#63](https://github.com/yaroo393-png/MedMind/pull/63) เร็วขึ้น + OCR สำรอง
 
-**สิ่งที่เรียนรู้ / ปัญหาที่เจอ:** (เติมที่นี่)
+**สิ่งที่เรียนรู้ / ปัญหาที่เจอ** (ร่างโดย Claude Code จากสิ่งที่วัดจริง 9 พ.ย. — Yar ตรวจและแก้เป็นคำของตัวเอง [ ]):
+- โมเดลที่ "คิด" ก่อนตอบช้ามาก: 25 วินาทีสำหรับงานอ่านฉลาก ปิดการคิดเหลือ 3–5 วินาที ผลเท่ากัน
+- ชื่อโมเดล Gemini เปลี่ยน/ถูกถอนเร็ว (2.5-* → 404) และรุ่นใหม่คนใช้เยอะ (3.8/3.7-flash → 503 ค้าง 72 วินาที) จึงต้องมีรายชื่อสำรองและเวลาตัด
+- Firebase AI Logic ต้องมีโทเคน App Check: ไม่มี → 401 · ทดสอบ localhost ต้องลงทะเบียน debug token ที่ Console
+- OCR ไทยบนเครื่องอ่านภาพพิมพ์ชัดได้ แต่ภาพถ่ายจริงอ่านเป็นขยะ → ใช้ดูประกอบเท่านั้น ห้ามให้ตัดสินแทนผู้ดูแล

@@ -27,7 +27,7 @@ for l in FR-01 FR-02 FR-03 FR-04 FR-05 FR-09 docs test bug design ai-log; do gh 
 | Final — ส่งงาน | Final Report, Demo Slides, AI-Use Statement, README |
 
 ## 4. Issue ชุดแรกที่แนะนำ
-> ร่าง Issue ฉบับเต็มของ Sprint 1 อยู่ที่ [`docs/issues/sprint-1/`](issues/sprint-1/) · Issue จริงบน GitHub คือ #7–#17
+> Issue จริงบน GitHub คือ #7–#17 (ร่างฉบับเต็มของ Sprint 1 เคยอยู่ใน `docs/issues/` — ลบออกเมื่อ 9 พ.ย. 2569 เพราะ Issue จริงบน GitHub เป็นแหล่งความจริงแล้ว ดูร่างเดิมได้จากประวัติ git)
 
 | # | Issue | ผู้รับผิดชอบ | Milestone | Label |
 |---|---|---|---|---|
