@@ -111,7 +111,7 @@
 **P0-2 ลิงก์ที่เปิดบนมือถือได้ (GitHub Pages)** · Yar (เจ้าของ repo — ต้องมีสิทธิ์ Settings)
 1. merge PR นี้ (มี `.github/workflows/pages.yml` ที่เผยแพร่ `public/` และต้นแบบ M3 อัตโนมัติ เมื่อเทสต์ผ่าน)
 2. GitHub → Settings → Pages → Build and deployment → Source = **GitHub Actions** (ครั้งเดียว) แล้ว Actions → Pages → Run workflow (หรือ push ถัดไปเข้า `main`)
-3. ลิงก์: `https://yaroo393-png.github.io/MedMind/demo.html` (Demo mode จริง) · `https://yaroo393-png.github.io/MedMind/prototype/2569-11-04/` (ต้นแบบ M3)
+3. ลิงก์: `https://yaroo393-png.github.io/MedMind/demo.html` (Demo mode จริง) · `https://yaroo393-png.github.io/MedMind/prototype/` (ต้นแบบ M3)
 4. เปิดบนมือถือทั้ง 2 เครื่องตรวจฟอนต์/ไอคอน/นาฬิกาจำลอง แล้วใส่ลิงก์ใน `README.md` (ไทยก่อน) → `README.en.md` → ปก `final-report.md` → สไลด์ 1 → `TEST-CHECKLIST.md`
 - เสร็จเมื่อ: ลิงก์เปิดได้จากมือถือที่ไม่ได้ล็อกอิน GitHub · ถ้า repo เป็น private และไม่ได้ใช้แผนที่รองรับ Pages จะเปิดไม่ได้ → ใช้ Firebase Hosting (P2-1 ขั้นแรก) หรือเดโมจากเครื่องแล้วเขียนตามจริง
 
@@ -260,3 +260,60 @@ python3 -c "import re,os;[print('BROKEN',p,t) for r,d,f in os.walk('.') if '.git
 3. P2: Firebase project อยู่ในบัญชีใคร · ยอมเพิ่ม devDependencies + Java สำหรับ Emulator หรือไม่
 4. P4: ใครติดต่อผู้ให้สัมภาษณ์เพื่อวัดตัววัดความสำเร็จและตรวจ SRS
 5. Issue #8, #9, #11 จะปิดหรือย้ายไป increment ถัดไป
+
+---
+
+## 11. เกณฑ์ของอาจารย์ที่ต้องยึดเมื่อเพิ่มงานใน GitHub (บันทึก 9 พ.ย. 2569)
+
+> ที่มา: โพสต์ของ Dr. Prasara Jakkaew และหน้า [Git for Teams](https://prascymj.github.io/intro2se-git-for-teams/) (ซอร์ส: repo `prascymj/intro2se-git-for-teams` commit `cadb81f`, 8 พ.ย. 2569) · เขียนสรุปตามต้นฉบับ ห้ามเติมเกณฑ์ที่อาจารย์ไม่ได้เขียน · เกณฑ์ M3/M4 ส่วนอื่นดู §2
+
+### 11.1 คะแนนโปรเจกต์ (30% ของวิชา)
+| ส่วน | สัดส่วน |
+|---|---|
+| M1 Team Charter | 3% |
+| M2 SRS + Design | 12% |
+| **M3 Final Prototype + Demo** | **15% (30 คะแนน)**: Prototype คลิกได้ครอบทุก Must FR **12** · Golden Thread **6** · Demo + presentation **6** · Engineering & AI-first process (repo, commits, README, AI use) **6** |
+| สอบปากเปล่า | 10% แยกต่างหาก (รายคน ถามเฉพาะส่วนของตัวเอง) |
+
+- ไม่มี M3 AI-Use Statement **หรือ** Golden Thread ขาด → M3 ได้ไม่เกิน 50%
+- Prototype เปิดไม่ได้ / มี FR ที่ไม่มีหน้าจอ / Golden Thread ขาด → ตีกลับให้แก้ และให้คะแนนครั้งเดียวตอนส่งใหม่
+- คะแนนรายคน = คะแนนทีม × ตัวคูณ (1.00 ปกติ, 0.70 บางส่วน, 0.40 แทบไม่ทำ) ดูจาก**หลักฐานบน GitHub** หลังให้อธิบาย
+- repo ต้องเปิดได้: public หรือเพิ่ม `prascymj` เป็น collaborator
+- เดโม: กลุ่ม 1–13 จันทร์ 9 พ.ย. · กลุ่ม 14–26 จันทร์ 16 พ.ย. (เริ่ม 12:05) · **กลุ่ม 8 MedMind: 13:29–13:41**
+- ถ้าแก้แล้วหรือคิดว่าผลตรวจผิด → คอมเมนต์ใต้โพสต์อาจารย์ ขึ้นต้นด้วย "Group 8 MedMind: …"
+
+### 11.2 โครง repo ที่อาจารย์แนะนำ (§6) และของเรา
+| อาจารย์ | MedMind |
+|---|---|
+| `README.md` (ชื่อระบบ, สมาชิก + รหัส + GitHub, วิธีเปิดต้นแบบ, ลิงก์) | `README.md` (ไทยต้นฉบับ) + `README.en.md` |
+| `docs/M1-team-charter`, `docs/M2-srs` (1 ไฟล์ต่อเอกสาร) | `docs/00-charter/M1-Charter_MedMind.pdf`, `docs/01-requirements/M2-SRS_MedMind.pdf` (+ `.md` สำเนาอ่านบน GitHub) |
+| `docs/design/` (use-case, sequence, data model) | `docs/02-design/` (`architecture.md` มี mermaid sequence/ER/state/flow + `diagrams/use-case-diagram.png`) |
+| `docs/final-report.md`, `golden-thread.md`, `ai-use-statement.md` | `docs/05-report/final-report.md` (§8 Golden Thread), `docs/TRACEABILITY.md`, `docs/05-report/ai-use-statement.md` |
+| `prototype/index.html` (ทางเข้าเดียว เปิดในเบราว์เซอร์) | `prototype/` (ย้ายมา 9 พ.ย.) · ระบบจริง `public/` |
+| `slides/demo-slides.pdf` | `slides/demo-slides.pdf` + `.pptx` ต้นฉบับ (ย้ายมา 9 พ.ย.) |
+| `tests/` | `tests/` + `emulator-tests/` |
+
+### 11.3 Checklist ก่อนเดโม (§9) — ต้องผ่านทุกข้อ
+1. ไม่มีเลขเวอร์ชันหรือคำว่า "final" ในชื่อไฟล์ (เว้นชื่อที่อาจารย์ตั้งเอง เช่น `final-report.md`) · 1 ไฟล์ต่อเอกสาร
+2. มีโฟลเดอร์ `docs/`, `prototype/`, `slides/`
+3. Prototype เปิดในเบราว์เซอร์ได้โดยไม่ต้องมี server/DB และ README บอกวิธีเปิด
+4. README มีสมาชิก รหัสนักศึกษา บัญชี GitHub และวิธีเปิด prototype
+5. commit แล้ว: Final Report + ตาราง Golden Thread, สไลด์เดโม, M3 AI-Use Statement
+6. **งานทั้งหมด merge เข้า `main` แล้ว** (งานที่ค้างใน branch อื่นไม่นับเป็นงานที่ส่ง)
+7. ทุกคนมี commit จากบัญชีตัวเอง ข้อความมีความหมาย
+
+### 11.4 วิธีเพิ่มงานให้ถูก (§4, §5, §7)
+- เวอร์ชัน = commit ไม่ใช่ชื่อไฟล์ (ห้าม `_ver1`, `_final`, `(2)`, โฟลเดอร์วันที่) · ทำเครื่องหมายเวอร์ชันเดโมด้วย tag ได้ เช่น `git tag v1.1 -m "M3 demo version"`
+- 1 งาน = 1 branch (`feature/fr-2-…`, `fix/…`) → PR → เพื่อนรีวิว → merge · **`main` ต้องเปิดและรันได้เสมอ**
+- ข้อความ commit บอกว่าเปลี่ยนอะไร + FR เช่น `Add item list page (FR-2)` · ห้าม "Add files via upload", "final", "fix", "asdf" · อัปโหลดผ่านเว็บได้ แต่ต้องแก้ข้อความ commit
+- commit เล็กและบ่อย 1 เรื่องต่อ commit · **ทุกคน commit งานตัวเองจากบัญชีตัวเอง** (อัปโหลดแทนเพื่อน = ซ่อนส่วนร่วมของเพื่อน)
+- เอกสารเขียนเป็น Markdown เมื่อทำได้ ถ้าใช้ Word ให้ส่งออก PDF ไฟล์เดียวแล้วทับชื่อเดิม
+
+### 11.5 ผลตรวจเบื้องต้นของกลุ่ม 8 (§10 — ตรวจ 8 พ.ย. 2569 15:27, ไม่ใช่คะแนนจริง ตรวจซ้ำก่อนให้คะแนน)
+| ข้อ M3 | ผล |
+|---|---|
+| Team Charter · SRS · Design + diagrams · Clickable prototype · Final Report + Golden Thread · Repo + README · Demo slides · AI-Use Statement | Found ทุกข้อ |
+
+- **Before your demo:** เดโมต้องคลิกได้ทุก Must FR บนทางปกติ (minimum bar)
+- **Git hygiene:** "Remove the duplicate download (2) copy of the SRS" — 9 พ.ย. ค้นทุก commit ทุก branch **ไม่พบไฟล์ชื่อ "(2)"** · ที่น่าจะเป็นตัวซ้ำ: SRS พาธเก่า `docs/02-requirements/M2-SRS_MedMind.pdf` ใน branch ที่ merge แล้ว `docs/setup-repo`, `docs/bilingual`, `docs/ai-log-fill`, `feature/m4-setup-and-deps` → รอ PM ตัดสินใจลบ branch และ/หรือคอมเมนต์ชี้แจงอาจารย์
+- งานค้างตาม §9 ข้อ 6 (9 พ.ย. เช้า): PR #62 (README ลิงก์ — Yar), #61 (FR-09 — Rossatorn, ยังไม่มี AC ใน SRS), #42 (ซ้ำ #37 — ปิดโดยไม่ merge)

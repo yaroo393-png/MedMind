@@ -1,5 +1,5 @@
 /* สไตล์ต้นแบบ MedMind (M3) — โทนเขียวตามต้นแบบของ Rossatorn การ์ดมุมมน (design-system.md §2)
- * ใช้ var(--token) จาก ../../tokens.css เท่านั้น ห้ามใส่สี #hex ในไฟล์นี้ (ตรวจด้วย tests/prototype.test.js)
+ * ใช้ var(--token) จาก tokens.css (โฟลเดอร์เดียวกัน) เท่านั้น ห้ามใส่สี #hex ในไฟล์นี้ (ตรวจด้วย tests/prototype.test.js)
  * ขนาดตาม NFR-03: ตัวอักษร ≥ 18px · ชื่อยา ≥ 24px · ปุ่มกินแล้ว/ยังไม่กิน สูง ≥ 64px · พื้นที่แตะอื่น ≥ 48px */
 /* ฟอนต์ Sarabun (SIL OFL 1.1 — fonts/OFL.txt) ไฟล์ในเครื่อง ไม่โหลดจากเน็ต · มาจากต้นแบบของ Rossatorn */
 @font-face { font-family: "Sarabun"; font-weight: 400; font-style: normal; font-display: swap; src: url("../fonts/Sarabun-Regular.ttf") format("truetype"); }

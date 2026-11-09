@@ -1,6 +1,6 @@
 # Demo Slides — โครงเรื่อง (Problem → Solution)
 
-> สไลด์จริง: `MedMind-Demo-Slides.pptx` (สร้างจากโครงนี้ 7 พ.ย.) · สคริปต์เดโม 5 นาที: [`demo-script.md`](demo-script.md) · ชุดซ้อมสอบปากเปล่า: [`oral-exam-prep.md`](oral-exam-prep.md) · · แต่ละคนพูดฟีเจอร์ตัวเอง 3–5 นาทีในสอบปากเปล่า · **[ ]** = ใส่ตอนมีของจริง
+> สไลด์จริง: [`slides/demo-slides.pdf`](../../slides/demo-slides.pdf) (ต้นฉบับแก้ได้: [`slides/demo-slides.pptx`](../../slides/demo-slides.pptx) — สร้างจากโครงนี้ 7 พ.ย.) · สคริปต์เดโม 5 นาที: [`demo-script.md`](demo-script.md) · ชุดซ้อมสอบปากเปล่า: [`oral-exam-prep.md`](oral-exam-prep.md) · · แต่ละคนพูดฟีเจอร์ตัวเอง 3–5 นาทีในสอบปากเปล่า · **[ ]** = ใส่ตอนมีของจริง
 
 | # | สไลด์ | เนื้อหา | ผู้พูด |
 |---|---|---|---|
