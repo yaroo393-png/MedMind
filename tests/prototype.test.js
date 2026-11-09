@@ -1,4 +1,4 @@
-// ตรวจต้นแบบ M3 (docs/02-design/prototypes/2569-11-04/) ตามเกณฑ์อาจารย์ (M4 §2) และ README ของต้นแบบ
+// ตรวจต้นแบบ M3 (prototype/) ตามเกณฑ์อาจารย์ (M4 §2) และ README ของต้นแบบ
 // ส่วนที่ 1: ไฟล์/ป้าย Covers/ไม่มีสีลอย/ไม่มีเครือข่าย/ไม่มีคำต้องห้าม · ส่วนที่ 2: กฎเวลาที่ต้นแบบคัดมา ต้องตรง SRS v1.5 (BR-14, BR-20, BR-21)
 // ต้นแบบใช้ข้อมูลสมมติ — กฎจริงอยู่ที่ public/js/logic/ (เทสต์แยกของเจ้าของแต่ละ FR)
 import { test } from 'node:test';
@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
-const dir = fileURLToPath(new URL('../docs/02-design/prototypes/2569-11-04/', import.meta.url));
+const dir = fileURLToPath(new URL('../prototype/', import.meta.url));
 const read = (f) => readFileSync(dir + f, 'utf8');
 const htmlFiles = ['index.html', 'app.html', 'demo.html'];
 const screenFiles = ['js/screens/pairing.js', 'js/screens/senior-home.js', 'js/screens/senior-reminder.js', 'js/screens/status.js', 'js/screens/medicine.js'];
@@ -72,7 +72,7 @@ test('NFR-03: ปุ่มกินแล้ว/ยังไม่กิน ส�
   assert.match(css, /\.btn \{[^}]*min-height: var\(--btn-h\)/);
   assert.match(css, /\.med-name \{[^}]*font-size: var\(--fs-med-name\)/);
   assert.match(css, /body \{[^}]*font-size: var\(--fs-body\)/);
-  const tokens = readFileSync(dir + '../tokens.css', 'utf8');
+  const tokens = readFileSync(dir + 'css/tokens.css', 'utf8');
   assert.match(tokens, /--btn-h:\s*64px/);
   assert.match(tokens, /--fs-med-name:\s*24px/);
   assert.match(tokens, /--fs-body:\s*18px/);
@@ -112,7 +112,7 @@ test('ฟอนต์ Sarabun เป็นไฟล์ในเครื่อ�
 });
 
 // ---------- ส่วนที่ 2: กฎเวลาของต้นแบบต้องตรง SRS v1.5 ----------
-await import(new URL('../docs/02-design/prototypes/2569-11-04/js/mock.js', import.meta.url));
+await import(new URL('../prototype/js/mock.js', import.meta.url));
 const M = globalThis.MM.mock;
 const T = M.hm(8, 0); // มื้อ 08:00
 const at = (h, m, s = 0, ms = 0) => M.hm(h, m) + s * 1000 + ms;
@@ -242,7 +242,7 @@ test('ช่องตั้งเวลาจำลอง: อ่าน HH:MM[:S
 });
 
 // ---------- ตั้งค่าการแสดงผล: ขนาดตัวอักษร 3 ระดับ + โหมดมืด (หน้าตั้งค่า S-04 / C-09) ----------
-const tokensCss = readFileSync(fileURLToPath(new URL('../docs/02-design/prototypes/tokens.css', import.meta.url)), 'utf8');
+const tokensCss = readFileSync(fileURLToPath(new URL('../prototype/css/tokens.css', import.meta.url)), 'utf8');
 const block = (sel) => { const m = tokensCss.match(new RegExp(sel.replace(/[[\]"=]/g, '\\$&') + '\\s*\\{([^}]*)\\}')); return m ? m[1] : ''; };
 const tokenOf = (css, name) => { const m = css.match(new RegExp('--' + name + ':\\s*(#[0-9A-Fa-f]{6}|[0-9.]+px)')); return m ? m[1] : null; };
 const luminance = (hex) => {

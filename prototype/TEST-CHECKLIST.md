@@ -1,10 +1,10 @@
-# TEST-CHECKLIST — ทดสอบต้นแบบ M3 (2569-11-04)
+# TEST-CHECKLIST — ทดสอบต้นแบบ M3 (`prototype/`)
 
 > **ร่างแผนทดสอบ** สำหรับ QA (Suchitra) · **ช่อง "ผล" ว่างไว้ทั้งหมด — กรอกจากการทดสอบจริงเท่านั้น ห้ามเดา** · อ้างอิง `docs/TRACEABILITY.md` (MT-04, MT-07, MT-08, MT-15, MT-16, MT-18) · เครื่องทดสอบตาม decision-log DL-06: OPPO Reno 16 5G (Android) และ iPhone 13 (iOS)
 > สถานะ: ⬜ ยังไม่ทดสอบ · ✅ ผ่าน · ❌ ไม่ผ่าน (ใส่รายละเอียดในช่องหมายเหตุและเปิด Issue label `bug`)
 
 ## เตรียมการ
-1. เปิด `docs/02-design/prototypes/2569-11-04/index.html` ในเบราว์เซอร์ (ดับเบิลคลิกได้ ไม่ต้องมี server)
+1. เปิด `prototype/index.html` ในเบราว์เซอร์ (ดับเบิลคลิกได้ ไม่ต้องมี server)
 2. ปิดอินเทอร์เน็ตแล้วเปิดซ้ำ — ต้องใช้ได้ (ต้นแบบไม่เรียกเครือข่าย)
 3. **การเปิดบนมือถือ:** ลิงก์ GitHub Pages: `https://yaroo393-png.github.io/MedMind/demo.html` (โหมดสาธิต) · `https://yaroo393-png.github.io/MedMind/senior.html` / `caregiver.html` (ใช้งานจริง ส่วน G) · เปิดได้บนมือถือแล้ว (PM ยืนยัน 7 พ.ย.) — ผลทดสอบรายแถวในตารางด้านล่างยังต้องกรอกเอง
 

@@ -137,7 +137,7 @@ Pain this traces to: having to call or send a LINE message for every meal; no si
 
 ## ต้นแบบ M3 (Prototype) — AC → หน้าจอ → เทสต์ (อัปเดต 4 พ.ย. 2569)
 
-> ต้นแบบคลิกได้อยู่ที่ [`docs/02-design/prototypes/2569-11-04/`](02-design/prototypes/2569-11-04/index.html) (เปิด `app.html` 1 จอ หรือ `demo.html` 2 จอ ไม่ต้องมี server) · ตาราง AC → วิธีดูในต้นแบบครบ 43 ข้ออยู่ใน `index.html` (`#ac-coverage`) · รายการตรวจด้วยมือ: `TEST-CHECKLIST.md` ในโฟลเดอร์เดียวกัน
+> ต้นแบบคลิกได้อยู่ที่ [`prototype/`](../prototype/index.html) (เปิด `app.html` 1 จอ หรือ `demo.html` 2 จอ ไม่ต้องมี server) · ตาราง AC → วิธีดูในต้นแบบครบ 43 ข้ออยู่ใน `index.html` (`#ac-coverage`) · รายการตรวจด้วยมือ: `TEST-CHECKLIST.md` ในโฟลเดอร์เดียวกัน
 > **นี่คือหลักฐานระดับต้นแบบ ไม่ใช่โค้ดจริง** — คอลัมน์ *Code* / *สถานะ* ในตารางของแต่ละ FR ด้านบนยังเป็น ⬜ จนกว่าจะเขียน `public/js/logic/` + `features/` และเทสต์ของโค้ดจริง · เทสต์ต้นแบบรันด้วย `npm test` ที่ [`tests/prototype.test.js`](../tests/prototype.test.js) (89 ข้อผ่าน ณ วันที่อัปเดต)
 
 | FR | AC ที่ต้นแบบแสดงให้ดูได้ | หน้าจอ (Screen Map) | ไฟล์ต้นแบบ (เจ้าของ) | เทสต์ที่ผูก (`tests/prototype.test.js`) |

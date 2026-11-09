@@ -17,7 +17,7 @@
 | M2 SRS | ✅ v1.5 (FR-01–05 Must, FR-06 Should, FR-07–09 Could · BR-01–21 · NFR-01–14 · use cases + diagram · document history) — [`M2-SRS_MedMind.pdf`](docs/01-requirements/M2-SRS_MedMind.pdf) · [`spec.md`](docs/01-requirements/spec.md) ([Thai](docs/01-requirements/spec.th.md)) · [`backlog.md`](docs/01-requirements/backlog.md) |
 | M2 Design | ✅ Complete draft; module contracts agreed (DL-18–DL-20, DL-26; includes Demo mode, ADR-8, ADR-9) — [`architecture.md`](docs/02-design/architecture.md), [`design-system.md`](docs/02-design/design-system.md), [`firestore-rules-draft.md`](docs/02-design/firestore-rules-draft.md) · open items: §11 |
 | Traceability (Golden Thread) | 🟡 All 43 AC covered — mostly ✅ in Demo mode · what is left (Rules on Firestore, real phones, real AI) is stated in each row — [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) |
-| M3 prototype (`docs/02-design/prototypes/`) | ✅ Covers FR-01–05 including wrong paths and a two-screen demo — opens without a server — [`2569-11-04/index.html`](docs/02-design/prototypes/2569-11-04/index.html) · [`NOTES.md`](docs/02-design/prototypes/2569-11-04/NOTES.md) · not yet tested on real phones (MT-08, MT-16) |
+| M3 prototype (`prototype/`) | ✅ Covers FR-01–05 including wrong paths and a two-screen demo — opens without a server — [`prototype/index.html`](prototype/index.html) · [`NOTES.md`](prototype/NOTES.md) · not yet tested on real phones (MT-08, MT-16) |
 | System (web app) `public/` | 🟡 **Demo mode** (`demo.html`) is done · **real use on Firebase** (`senior.html` / `caregiver.html`) is written: pairing with a real QR code · Firestore + Security Rules · Gemini label reading after the name/HN are covered — tested with the Firebase Emulator in two browsers · **not yet tested on real phones with the real project, and Gemini has not been called for real** · setup: [`docs/FIREBASE-SETUP.md`](docs/FIREBASE-SETUP.md) |
 | Automated tests | ✅ `npm test` 345 tests pass (logic, core, every FR screen per acceptance criterion, QR, label reading with a fake AI, page structure) · ✅ `emulator-tests/` 31 tests pass (Security Rules R-1…R-14 + `firestoreRepo` on the Firebase Emulator — CI job `emulator`) · missing: results on real phones |
 | Project plan (Week 10) | 🟡 Sprints 0–3, risks, rotating roles, retrospective — [`docs/PROJECT-PLAN.md`](docs/PROJECT-PLAN.md) |
@@ -81,14 +81,16 @@ docs/
 │   ├── backlog.md               # Product backlog: MoSCoW + pain + size + status
 │   └── decision-log.md          # decisions the team approved (A1, A5) + pending decisions
 ├── 02-design/                   # architecture.md, design-system.md, firestore-rules-draft.md, diagrams/ (Thai)
-├── 05-report/                   # final-report.md, ai-use-statement.md (skeletons)
-├── 06-presentation/             # demo-slides.md
+├── 05-report/                   # final-report.md, ai-use-statement.md
+├── 06-presentation/             # demo-slides.md (slide text), demo-script.md, oral-exam-prep.md
 ├── TRACEABILITY.md              # Golden Thread: AC → code → test, NFR, BR, manual tests MT-01…16
 ├── AI_USAGE_LOG.md              # the full, honest AI usage log
 ├── PROJECT-PLAN.md              # sprints, velocity, risks, rotating roles, retrospective
 └── GITHUB-SETUP.md              # labels, milestones, ruleset, first issues
 fr/FR-01…FR-05/README.md          # each member's work (evidence of individual contribution)
-public/                           # the real web app (planned: index/senior/caregiver/demo .html) — **today only** js/core/ and js/logic/ exist · css/ and js/{services,features}/ are empty
+prototype/                        # M3 clickable prototype — double-click index.html, no server needed (app.html, demo.html, css/, js/, NOTES.md, TEST-CHECKLIST.md)
+slides/                           # demo slides: demo-slides.pdf (submitted) · demo-slides.pptx (editable source)
+public/                           # the real web app: index / senior / caregiver / demo .html + css/ + js/{logic,core,services,features}/
 tests/                            # node --test
 scripts/check-secrets.js          # secrets / forbidden-file check
 .github/                          # CI, PR template, issue template
@@ -100,11 +102,11 @@ README.md (Thai) · README.en.md (English) · CLAUDE.md · RULES.md
 ### ① Open the clickable prototype (for the M3 reviewer) — nothing to install, no server
 1. Get the code: on GitHub press **Code → Download ZIP** and unzip (or `git clone https://github.com/yaroo393-png/MedMind.git`)
 2. **Double-click** a file to open it in the browser:
-   - [`docs/02-design/prototypes/2569-11-04/demo.html`](docs/02-design/prototypes/2569-11-04/demo.html) — **the older adult's and the caregiver's screens side by side** on the same data, with a simulated clock (pick a "scenario" such as `07:00 — ถึงเวลาเตือน 2 มื้อพร้อมกัน` (the prototype labels are in Thai), buttons +5 minutes / next reminder time / exactly T+15, and a "set simulated time" box down to the millisecond) — walks through FR-01–05, happy and wrong paths, in one browser
-   - [`docs/02-design/prototypes/2569-11-04/app.html`](docs/02-design/prototypes/2569-11-04/app.html) — one screen, switch roles
-   - [`docs/02-design/prototypes/2569-11-04/index.html`](docs/02-design/prototypes/2569-11-04/index.html) — **the table of contents**: a table of all 43 acceptance criteria saying which screen shows each (wrong paths are marked ❌)
+   - [`prototype/demo.html`](prototype/demo.html) — **the older adult's and the caregiver's screens side by side** on the same data, with a simulated clock (pick a "scenario" such as `07:00 — ถึงเวลาเตือน 2 มื้อพร้อมกัน` (the prototype labels are in Thai), buttons +5 minutes / next reminder time / exactly T+15, and a "set simulated time" box down to the millisecond) — walks through FR-01–05, happy and wrong paths, in one browser
+   - [`prototype/app.html`](prototype/app.html) — one screen, switch roles
+   - [`prototype/index.html`](prototype/index.html) — **the table of contents**: a table of all 43 acceptance criteria saying which screen shows each (wrong paths are marked ❌)
 3. Every page has a **"Covers: FR-xx"** bar saying which FR/BR it answers · all data is made up and nothing leaves the machine
-4. Details, how to try it and its limits: [`NOTES.md`](docs/02-design/prototypes/2569-11-04/NOTES.md) · manual test list: [`TEST-CHECKLIST.md`](docs/02-design/prototypes/2569-11-04/TEST-CHECKLIST.md)
+4. Details, how to try it and its limits: [`NOTES.md`](prototype/NOTES.md) · manual test list: [`TEST-CHECKLIST.md`](prototype/TEST-CHECKLIST.md)
 
 > The prototype is a mock (its time rules are rewritten inside it) — the real rules live in `public/js/logic/` and are proven by the automated tests (② below).
 

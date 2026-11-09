@@ -15,7 +15,7 @@
 | M2 SRS | ✅ v1.5 (FR-01–05 Must, FR-06 Should, FR-07–09 Could · BR-01–21 · NFR-01–14 · use case + diagram · Document history) — [`M2-SRS_MedMind.pdf`](docs/01-requirements/M2-SRS_MedMind.pdf) · [`spec.md`](docs/01-requirements/spec.md) · [`backlog.md`](docs/01-requirements/backlog.md) |
 | M2 Design | ✅ ร่างครบและสัญญาโมดูลตกลงแล้ว (DL-18–DL-20, DL-26; รวม Demo mode, ADR-8) — [`architecture.md`](docs/02-design/architecture.md), [`design-system.md`](docs/02-design/design-system.md), [`firestore-rules-draft.md`](docs/02-design/firestore-rules-draft.md) · เรื่องที่ยังเปิด: §11 |
 | Traceability (Golden Thread) | 🟡 ครบ 43 AC — ✅ ใน Demo mode เป็นส่วนใหญ่ · ส่วนที่ค้าง (Rules บน Firestore, มือถือจริง, AI จริง) ระบุไว้ในแต่ละแถว — [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) |
-| ต้นแบบ M3 (`docs/02-design/prototypes/`) | ✅ ครบ FR-01–05 + ทางที่ผิด + โหมดสาธิต 2 จอ — เปิดได้โดยไม่ต้องมี server — [`2569-11-04/index.html`](docs/02-design/prototypes/2569-11-04/index.html) · [`NOTES.md`](docs/02-design/prototypes/2569-11-04/NOTES.md) · ยังไม่ได้ทดสอบบนมือถือจริง (MT-08, MT-16) |
+| ต้นแบบ M3 (`prototype/`) | ✅ ครบ FR-01–05 + ทางที่ผิด + โหมดสาธิต 2 จอ — เปิดได้โดยไม่ต้องมี server — [`prototype/index.html`](prototype/index.html) · [`NOTES.md`](prototype/NOTES.md) · ยังไม่ได้ทดสอบบนมือถือจริง (MT-08, MT-16) |
 | ระบบ (เว็บแอป) `public/` | 🟡 **Demo mode** (`demo.html`) เสร็จ · **ใช้งานจริงบน Firebase** (`senior.html` / `caregiver.html`) เขียนเสร็จ: จับคู่ด้วย QR จริง · Firestore + Security Rules · AI อ่านฉลากด้วย Gemini หลังปิดชื่อ/HN — ทดสอบกับ Firebase Emulator และ 2 เบราว์เซอร์แล้ว · **ยังไม่ได้ทดสอบบนมือถือจริงกับโปรเจกต์จริง และยังไม่เคยเรียก Gemini จริง** · ตั้งค่า: [`docs/FIREBASE-SETUP.md`](docs/FIREBASE-SETUP.md) |
 | เทสต์อัตโนมัติ | ✅ `npm test` 345 เทสต์ผ่าน (logic, core, หน้าจอทุก FR ระดับ AC, QR, AI อ่านฉลากด้วยของปลอม, โครงสร้างหน้าเว็บ) · ✅ `emulator-tests/` 31 เทสต์ผ่าน (Security Rules R-1…R-14 + `firestoreRepo` กับ Firebase Emulator — CI งาน `emulator`) · ยังไม่มี: ผลบนมือถือจริง |
 | แผนงาน (Week 10) | 🟡 sprint 0–3, ความเสี่ยง, บทบาทหมุนเวียน, retro — [`docs/PROJECT-PLAN.md`](docs/PROJECT-PLAN.md) |
@@ -82,19 +82,22 @@ docs/
 │   ├── architecture.md          # สถาปัตยกรรม, ADR 1–8 (รวม Demo mode), โมดูล+สัญญา, ERD, sequence/state
 │   ├── design-system.md         # tokens (ตรวจ contrast แล้ว), คอมโพเนนต์, Screen Map (หน้าจอ ↔ FR)
 │   ├── firestore-rules-draft.md # ร่าง Security Rules + เทสต์ R-1…R-14 (ยังไม่ทดสอบ)
-│   ├── diagrams/                # use-case-diagram.png
-│   └── prototypes/              # ต้นแบบ M3 (README + tokens.css + 2569-11-04/: index.html, app.html, demo.html, js/, css/, NOTES.md)
+│   └── diagrams/                # use-case-diagram.png
 ├── 05-report/
-│   ├── final-report.md          # Final Report + ตาราง Golden Thread (โครงร่าง)
-│   └── ai-use-statement.md      # สรุปการใช้ AI (โครงร่าง)
+│   ├── final-report.md          # Final Report + ตาราง Golden Thread
+│   └── ai-use-statement.md      # M3 AI-Use Statement
 ├── 06-presentation/
-│   └── demo-slides.md           # โครงสไลด์ Problem → Solution
+│   ├── demo-slides.md           # โครงสไลด์ Problem → Solution (ข้อความของสไลด์)
+│   ├── demo-script.md           # สคริปต์เดโม 5 นาที
+│   └── oral-exam-prep.md        # ชุดซ้อมสอบปากเปล่า
 ├── TRACEABILITY.md              # Golden Thread: AC → โค้ด → เทสต์, NFR, BR, แผนทดสอบมือ MT-01…16
 ├── AI_USAGE_LOG.md              # บันทึกการใช้ AI ตามจริง (log เต็ม)
 ├── PROJECT-PLAN.md              # sprint, velocity, ความเสี่ยง, บทบาทหมุนเวียน, retrospective
 └── GITHUB-SETUP.md              # labels, milestones, ruleset, issue ชุดแรก
 fr/FR-01…FR-05/README.md          # งานของแต่ละคน (หลักฐานส่วนร่วมรายคน)
-public/                           # เว็บแอปจริง (ตามแผน: index/senior/caregiver/demo .html) — **ตอนนี้มีเฉพาะ** js/core/ และ js/logic/ · css/ และ js/{services,features}/ ยังว่าง
+prototype/                        # ต้นแบบ M3 คลิกได้ — เปิด index.html ด้วยดับเบิลคลิก ไม่ต้องมี server (app.html, demo.html, css/, js/, NOTES.md, TEST-CHECKLIST.md)
+slides/                           # สไลด์เดโม: demo-slides.pdf (ไฟล์ส่ง) · demo-slides.pptx (ไฟล์ต้นฉบับที่แก้ได้)
+public/                           # เว็บแอปจริง: index / senior / caregiver / demo .html + css/ + js/{logic,core,services,features}/
 tests/                            # node --test
 scripts/check-secrets.js          # ตรวจความลับ/ไฟล์ต้องห้าม
 .github/                          # CI, PR template, issue template
@@ -106,11 +109,11 @@ README.md (ไทย) · README.en.md (English) · CLAUDE.md · RULES.md
 ### ① เปิดต้นแบบที่คลิกเดินได้ (สำหรับผู้ตรวจ M3) — ไม่ต้องติดตั้งอะไร ไม่ต้องมี server
 1. โหลดโค้ด: กด **Code → Download ZIP** บน GitHub แล้วแตกไฟล์ (หรือ `git clone https://github.com/yaroo393-png/MedMind.git`)
 2. เปิดไฟล์ในเบราว์เซอร์ด้วยการ **ดับเบิลคลิก**:
-   - [`docs/02-design/prototypes/2569-11-04/demo.html`](docs/02-design/prototypes/2569-11-04/demo.html) — **จอผู้สูงอายุและจอผู้ดูแลคู่กัน** ใช้ข้อมูลชุดเดียวกัน มีนาฬิกาจำลอง (เลือก "สถานการณ์" เช่น `07:00 — ถึงเวลาเตือน 2 มื้อพร้อมกัน`, ปุ่ม +5 นาที / ไปเวลาเตือนถัดไป / ไป T+15 พอดี, ช่อง "ตั้งเวลาจำลอง" ถึงมิลลิวินาที) — เดินครบ FR-01–05 ทั้งทางถูกและทางผิดในเบราว์เซอร์เดียว
-   - [`docs/02-design/prototypes/2569-11-04/app.html`](docs/02-design/prototypes/2569-11-04/app.html) — จอเดียว สลับบทบาทได้
-   - [`docs/02-design/prototypes/2569-11-04/index.html`](docs/02-design/prototypes/2569-11-04/index.html) — **สารบัญ**: ตารางครอบคลุม acceptance criteria ทั้ง 43 ข้อ บอกว่าข้อไหนดูได้ที่หน้าจอไหน (ทางผิดมีเครื่องหมาย ❌)
+   - [`prototype/demo.html`](prototype/demo.html) — **จอผู้สูงอายุและจอผู้ดูแลคู่กัน** ใช้ข้อมูลชุดเดียวกัน มีนาฬิกาจำลอง (เลือก "สถานการณ์" เช่น `07:00 — ถึงเวลาเตือน 2 มื้อพร้อมกัน`, ปุ่ม +5 นาที / ไปเวลาเตือนถัดไป / ไป T+15 พอดี, ช่อง "ตั้งเวลาจำลอง" ถึงมิลลิวินาที) — เดินครบ FR-01–05 ทั้งทางถูกและทางผิดในเบราว์เซอร์เดียว
+   - [`prototype/app.html`](prototype/app.html) — จอเดียว สลับบทบาทได้
+   - [`prototype/index.html`](prototype/index.html) — **สารบัญ**: ตารางครอบคลุม acceptance criteria ทั้ง 43 ข้อ บอกว่าข้อไหนดูได้ที่หน้าจอไหน (ทางผิดมีเครื่องหมาย ❌)
 3. ทุกหน้ามีแถบ **"Covers: FR-xx"** บอกว่าหน้านี้ตอบ FR/BR ข้อไหน · ข้อมูลทั้งหมดเป็นข้อมูลสมมติ ไม่ส่งข้อมูลออกนอกเครื่อง
-4. รายละเอียด วิธีลอง และข้อจำกัดของต้นแบบ: [`NOTES.md`](docs/02-design/prototypes/2569-11-04/NOTES.md) · รายการทดสอบด้วยมือ: [`TEST-CHECKLIST.md`](docs/02-design/prototypes/2569-11-04/TEST-CHECKLIST.md)
+4. รายละเอียด วิธีลอง และข้อจำกัดของต้นแบบ: [`NOTES.md`](prototype/NOTES.md) · รายการทดสอบด้วยมือ: [`TEST-CHECKLIST.md`](prototype/TEST-CHECKLIST.md)
 
 > ต้นแบบเป็นของจำลอง (กฎเวลาเขียนซ้ำไว้ในต้นแบบ) — กฎจริงอยู่ใน `public/js/logic/` และพิสูจน์ด้วยเทสต์อัตโนมัติ (ข้อ ② ด้านล่าง)
 
