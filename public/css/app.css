@@ -326,3 +326,6 @@ h1, h2, h3, .h-card, .hero-big, .appbar-title, .brand, .entry-title { font-famil
 /* ข้อความแจ้ง (toast) อยู่ใต้แถบหัว ไม่บังปุ่มด้านล่าง — ค้าง 10 วินาทีตาม WCAG แต่ต้องกดปุ่มล่างได้เสมอ */
 .toast-region { top: 64px; bottom: auto; }
 body.real .toast-region { top: calc(64px + env(safe-area-inset-top)); }
+
+/* FR-02 ข้อ 5: ข้อความที่ OCR อ่านได้ (ดูประกอบการกรอกเอง) — ตัดบรรทัดได้ ไม่ล้นจอมือถือ */
+.ocr-text { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 18rem; overflow: auto; margin: var(--space-2) 0 0; font: inherit; font-size: var(--fs-body); }

@@ -8,6 +8,7 @@ import { createClock } from '../core/clock.js';
 import { esc } from './ui.js';
 import { aiLabelFromFirebase } from '../services/aiLabel.js';
 import { loadPhoto, redactImage } from '../services/redact.js';
+import { createLocalOcr } from '../services/localOcr.js';
 
 const pad = (n) => String(n).padStart(2, '0');
 const dateKeyOf = (ms) => { const d = new Date(ms); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
@@ -25,9 +26,10 @@ export async function bootReal({ role, root, search = '', hostname = '', href = 
   const dev = hostname === 'localhost' || hostname === '127.0.0.1';
   const sdkBase = dev && params.get('sdk') ? params.get('sdk') : undefined;
   const emulator = dev && params.get('emulator') === '1';
+  const appCheckDebug = dev && params.get('appCheckDebug') === '1';   // ทดสอบ AI บน localhost: ลงทะเบียน debug token ที่ Console พิมพ์ออกมา
   let phone = null;
   try {
-    const fb = await connectFirebase({ sdkBase, emulator });
+    const fb = await connectFirebase({ sdkBase, emulator, appCheckDebug });
     const clock = createClock();                                       // นาฬิกาจริง
     const errors = [];
     const repo = createFirestoreRepo({ fs: fb.fs, db: fb.db, uid: fb.uid, clock, onError: (e) => { errors.push(e); phone?.toast(`ส่งข้อมูลไม่สำเร็จ: ${e.code ?? e.message}`); } });
@@ -40,6 +42,7 @@ export async function bootReal({ role, root, search = '', hostname = '', href = 
       refresh: () => phone?.render(), onUnpaired: () => phone?.bind(ctx, role === 'senior' ? 'senior-pair' : 'cg-pair'),
       firebase: fb,
       ai: aiLabelFromFirebase(fb, { isOnline: () => globalThis.navigator?.onLine !== false }),   // FR-02: Gemini ผ่าน Firebase AI Logic
+      ocr: createLocalOcr(),                                                                     // FR-02 ข้อ 5: Gemini ใช้ไม่ได้ → OCR บนเครื่องช่วยกรอกเอง
       photo: {                                                                                   // FR-02 ข้อ 9: รูปอยู่ในเครื่อง ปิดแถบดำก่อนส่ง
         async load(file) { const p = await loadPhoto(file); return { ...p, url: URL.createObjectURL(file) }; },
         release(p) { try { URL.revokeObjectURL(p.url); p.bitmap?.close?.(); } catch { /* ไม่สำคัญ */ } },

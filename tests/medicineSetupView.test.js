@@ -180,6 +180,14 @@ async function realPair(aiReply) {
   return { ctx, caregiver, env, released, sent };
 }
 
+// ถ่ายรูป → ปิดแถบบน → ติ๊ก → ส่ง (ทางปกติของผู้ใช้จริง)
+async function sendLabel(caregiver) {
+  await caregiver.act('set-photo', { file: {} });
+  await caregiver.act('cover-top');
+  await caregiver.act('set-tick', { checked: true });
+  await caregiver.act('send-ai');
+}
+
 test('ใช้งานจริง C-03/C-04: ถ่ายรูป → ปิดแถบ → ต้องมีแถบอย่างน้อย 1 แถบ + ติ๊ก จึงส่งได้ · ส่งเฉพาะภาพที่ปิดแล้ว · ทิ้งรูปต้นฉบับ (ข้อ 8, 9)', async () => {
   const { caregiver, env, released, sent } = await realPair({ name: 'ยาจริง', instructionText: null, warnings: null, contraindications: null, asNeeded: false, slots: [{ meal: 'breakfast', timing: 'after_meal', minutesBefore: null, tabletsPerDose: 1 }] });
   caregiver.extraEnv = env;
@@ -229,4 +237,104 @@ test('ใช้งานจริง: ลบแถบล่าสุด / ล้
   await caregiver.act('cancel-draft');
   assert.deepEqual(released, ['blob:fake']);
   assert.equal(caregiver.ui.photo, null);
+});
+
+// ---------- ข้อ 5 ทางสำรอง: Gemini ใช้ไม่ได้ → OCR บนเครื่องช่วยกรอกเอง ----------
+const quota = () => Object.assign(new Error('quota'), { reason: 'quota' });
+
+test('ข้อ 5 + OCR: AI ใช้ไม่ได้ → OCR อ่านภาพที่ปิดแล้ว (ภาพเดียวกับที่ส่ง AI) → ฟอร์มกรอกเองพร้อมข้อความประกอบที่ escape แล้ว · ไม่เติมช่องให้', async () => {
+  const { ctx, caregiver, env } = await realPair(quota());
+  const seen = [];
+  let aiImage = null;
+  env.ai = { async requestDraft(img) { aiImage = img; throw quota(); } };
+  env.ocr = { async recognize(img) { seen.push(img); return { text: 'ยาตัวอย่าง <b>500</b> mg\nหลังอาหาร', confidence: 80 }; } };
+  caregiver.extraEnv = env;
+  const before = (await ctx.repo.listMedicines()).length;
+  await sendLabel(caregiver);
+  assert.equal(seen.length, 1);
+  assert.equal(seen[0], aiImage, 'OCR ได้ภาพที่ปิดแล้วตัวเดียวกับที่ส่ง AI ไม่ใช่ไฟล์ต้นฉบับ');
+  assert.equal(caregiver.route, 'cg-draft');
+  assert.match(caregiver.ui.manualReason, /โควตา AI ของวันนี้หมดแล้ว/);
+  const v = await caregiver.view('cg-draft', { real: true });
+  assert.match(v.body, /class="ocr-text">ยาตัวอย่าง &lt;b&gt;500&lt;\/b&gt; mg/);
+  assert.doesNotMatch(v.body, /<b>500<\/b>/);
+  assert.equal(caregiver.ui.draft.name, null, 'OCR ไม่เติมชื่อยาให้ — ผู้ดูแลกรอกเอง (BR-04)');
+  assert.equal((await ctx.repo.listMedicines()).length, before, 'ไม่มีอะไรถูกบันทึกเอง');
+});
+
+test('ข้อ 5 + OCR: OCR ก็อ่านไม่ได้ → ฟอร์มกรอกเองแบบเดิม ไม่ล้ม · ไม่มี OCR (Demo) → ไม่เรียก', async () => {
+  const { caregiver, env } = await realPair(quota());
+  env.ocr = { async recognize() { throw new Error('offline'); } };
+  caregiver.extraEnv = env;
+  await sendLabel(caregiver);
+  assert.equal(caregiver.route, 'cg-draft');
+  assert.equal(caregiver.ui.ocrText, '');
+  assert.doesNotMatch((await caregiver.view('cg-draft', { real: true })).body, /ocr-text/);
+});
+
+test('ข้อ 5 + OCR: AI ล้ม → เปิดฟอร์มกรอกเองทันที ไม่รอ OCR · ระหว่างรอบอกว่า OCR กำลังอ่าน · AI อ่านได้ = ไม่เรียก OCR เลย', async () => {
+  const { caregiver, env } = await realPair(quota());
+  let during = null;
+  env.ocr = { async recognize() { during = { route: caregiver.route, body: (await caregiver.view('cg-draft', { real: true })).body }; return { text: 'x' }; } };
+  caregiver.extraEnv = env;
+  await sendLabel(caregiver);
+  assert.equal(during.route, 'cg-draft', 'ผู้ใช้เห็นฟอร์มกรอกเองแล้วตอนที่ OCR ยังอ่านอยู่');
+  assert.match(during.body, /กำลังอ่านข้อความด้วย OCR ในเครื่อง/);
+  assert.equal(caregiver.ui.ocrReading, false, 'อ่านเสร็จแล้วปิดสถานะกำลังอ่าน');
+  assert.equal(caregiver.ui.ocrText, 'x');
+});
+
+test('AI อ่านได้ → แสดงร่างทันที แล้ว OCR อ่านเบื้องหลังเทียบชื่อยา · ไม่ตรง = เตือน (ไม่บล็อกการบันทึก) · ตรง = ไม่เตือน', async () => {
+  const draftJson = (name) => ({ name, instructionText: null, warnings: null, contraindications: null, asNeeded: false, slots: [{ meal: 'breakfast', timing: 'after_meal', minutesBefore: null, tabletsPerDose: 1 }] });
+  const { caregiver, env } = await realPair(draftJson('Amlodipine 5 mg'));
+  let routeDuringOcr = null;
+  env.ocr = { async recognize() { routeDuringOcr = caregiver.route; return { text: 'PARACETAMOL 500 mg' }; } };
+  caregiver.extraEnv = env;
+  await sendLabel(caregiver);
+  assert.equal(routeDuringOcr, 'cg-draft', 'ร่างขึ้นก่อน OCR อ่านเสร็จ');
+  let v = await caregiver.view('cg-draft', { real: true });
+  assert.match(v.body, /ไม่ตรงกับข้อความที่ OCR อ่านได้/);
+  assert.match(v.body, /<details class="card"><summary>ข้อความที่อ่านได้จากฉลาก/, 'ข้อความ OCR พับไว้');
+  assert.doesNotMatch(v.body, /data-act="save-draft" disabled/, 'เตือนอย่างเดียว ยังบันทึกได้');
+
+  const same = await realPair(draftJson('Paracetamol 500 mg'));
+  same.env.ocr = { async recognize() { return { text: 'PARACETAMOL 500mg\nหลังอาหาร' }; } };
+  same.caregiver.extraEnv = same.env;
+  await sendLabel(same.caregiver);
+  v = await same.caregiver.view('cg-draft', { real: true });
+  assert.doesNotMatch(v.body, /ไม่ตรงกับข้อความที่ OCR/);
+});
+
+test('ยกเลิกระหว่างรอ AI/OCR → ผลที่มาถึงทีหลังถูกทิ้ง ไม่เด้งกลับมาทับหน้าจอ · ข้อความ OCR ถูกล้าง', async () => {
+  const { caregiver, env } = await realPair(quota());
+  let finishAi;
+  env.ai = { requestDraft: () => new Promise((resolve) => { finishAi = resolve; }) };
+  caregiver.extraEnv = env;
+  await caregiver.act('set-photo', { file: {} });
+  await caregiver.act('cover-top');
+  await caregiver.act('set-tick', { checked: true });
+  const sending = caregiver.act('send-ai');
+  await new Promise((r) => setTimeout(r, 0));
+  assert.equal(caregiver.route, 'cg-ai');
+  await caregiver.act('cancel-draft');
+  assert.equal(caregiver.route, 'cg-meds');
+  finishAi({ name: 'ยาที่มาช้า', instructionText: null, warnings: null, contraindications: null, asNeeded: false, slots: [] });
+  await sending;
+  assert.equal(caregiver.route, 'cg-meds', 'ยังอยู่หน้าที่ผู้ใช้เลือก');
+  assert.equal(caregiver.ui.draft, null);
+  assert.equal(caregiver.ui.ocrText, '');
+});
+
+test('ปิดภาพไม่สำเร็จ → ไม่ส่งอะไรให้ AI/OCR · ทิ้งรูปต้นฉบับ · เปิดฟอร์มกรอกเอง', async () => {
+  const { caregiver, env, released } = await realPair({});
+  let sentOut = 0;
+  env.photo.redact = async () => { throw new Error('canvas failed'); };
+  env.ai = { async requestDraft() { sentOut += 1; return {}; } };
+  env.ocr = { async recognize() { sentOut += 1; return { text: 'x' }; } };
+  caregiver.extraEnv = env;
+  await sendLabel(caregiver);
+  assert.equal(sentOut, 0);
+  assert.deepEqual(released, ['blob:fake']);
+  assert.equal(caregiver.route, 'cg-draft');
+  assert.match(caregiver.ui.manualReason, /ไม่มีอะไรถูกส่งออก/);
 });

@@ -189,7 +189,7 @@ export class Phone {
       toast: (m) => this.toast(m), go: (r) => this.go(r), later: (fn, ms) => this.later(fn, ms), cancelLater: () => this.cancelLater(),
       setFlag: (k, v) => { this.ctx.flags[k] = v; }, setInbox: (box) => { this.inbox = box; }, unlockSound: () => this.unlockSound(),
       onUnpaired: () => this.ctx.onUnpaired?.(),
-      ai: this.ctx.ai ?? null, photo: this.ctx.photo ?? null, render: () => this.render(),
+      ai: this.ctx.ai ?? null, ocr: this.ctx.ocr ?? null, photo: this.ctx.photo ?? null, render: () => this.render(),
     };
   }
   async run(act, data) {

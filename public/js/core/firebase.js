@@ -17,21 +17,28 @@ export const APP_CHECK_SITE_KEY = '6LfpGhUuAAAAAC2egmne0Rcl7HV4oh4DMghlWATu';
 
 /**
  * เริ่ม Firebase แล้วล็อกอินแบบนิรนาม (uid เดิมเมื่อเปิดซ้ำบนเครื่องเดิม)
- * @param {{ sdkBase?: string, emulator?: boolean, config?: object }} [options]
+ * @param {{ sdkBase?: string, emulator?: boolean, appCheckDebug?: boolean, config?: object }} [options]
  *   sdkBase = ที่ตั้งไฟล์ SDK (ค่าเริ่มต้น = CDN ของ Google) · emulator = ต่อ Firebase Emulator บนเครื่อง (ทดสอบเท่านั้น)
+ *   appCheckDebug = ให้ SDK พิมพ์ debug token ใน Console (ทดสอบ AI บน localhost เท่านั้น — realShell ตรวจโดเมนก่อนส่งค่านี้มา)
+ *   คืน appCheckError = สาเหตุที่ App Check เริ่มไม่ได้ (AI อ่านฉลากใช้บอกผู้ดูแล/ทีม)
  * @returns {Promise<{ app: object, auth: object, db: object, fs: object, uid: string, sdk: { app: object, auth: object, firestore: object } }>}
  */
-export async function connectFirebase({ sdkBase = `https://www.gstatic.com/firebasejs/${SDK_VERSION}/`, emulator = false, config = FIREBASE_CONFIG } = {}) {
+export async function connectFirebase({ sdkBase = `https://www.gstatic.com/firebasejs/${SDK_VERSION}/`, emulator = false, appCheckDebug = false, config = FIREBASE_CONFIG } = {}) {
   const [appMod, authMod, fsMod] = await Promise.all([
     import(`${sdkBase}firebase-app.js`), import(`${sdkBase}firebase-auth.js`), import(`${sdkBase}firebase-firestore.js`),
   ]);
   const app = appMod.initializeApp(config);
   let appCheck = null;
+  let appCheckError = null;
   if (!emulator && sdkBase.startsWith('https://')) {
     try {
+      // debug token ลงทะเบียนใน Firebase Console → App Check → Manage debug tokens · ห้าม commit/แชร์ token
+      if (appCheckDebug) globalThis.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
       const acMod = await import(`${sdkBase}firebase-app-check.js`);
       appCheck = acMod.initializeAppCheck(app, { provider: new acMod.ReCaptchaEnterpriseProvider(APP_CHECK_SITE_KEY), isTokenAutoRefreshEnabled: true });
-    } catch (error) { console.warn('App Check เริ่มไม่ได้ — AI อ่านฉลากอาจใช้ไม่ได้ (ส่วนอื่นยังใช้ได้)', error); }
+    } catch (error) { appCheckError = error; console.warn('App Check เริ่มไม่ได้ — AI อ่านฉลากอาจใช้ไม่ได้ (ส่วนอื่นยังใช้ได้)', error); }
+  } else {
+    appCheckError = new Error('App Check ปิดอยู่ (Emulator/SDK ในเครื่อง) — AI อ่านฉลากจริงใช้ไม่ได้');
   }
   const auth = authMod.getAuth(app);
   if (emulator) authMod.connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
@@ -40,5 +47,5 @@ export async function connectFirebase({ sdkBase = `https://www.gstatic.com/fireb
   // เก็บสำเนาในเครื่องแบบถาวร: ออฟไลน์กด "กินแล้ว" ได้และส่งเมื่อกลับออนไลน์ (FR-04 ข้อ 7)
   const db = fsMod.initializeFirestore(app, { localCache: fsMod.persistentLocalCache({ tabManager: fsMod.persistentSingleTabManager() }) });
   if (emulator) fsMod.connectFirestoreEmulator(db, '127.0.0.1', 8080);
-  return { app, appCheck, auth, db, fs: fsMod, uid: auth.currentUser.uid, sdk: { app: appMod, auth: authMod, firestore: fsMod }, sdkBase };
+  return { app, appCheck, appCheckError, auth, db, fs: fsMod, uid: auth.currentUser.uid, sdk: { app: appMod, auth: authMod, firestore: fsMod }, sdkBase };
 }

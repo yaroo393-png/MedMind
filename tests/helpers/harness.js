@@ -35,7 +35,7 @@ export function makePhone(ctx, role, route) {
       later: (fn) => { phone.timer = fn; }, cancelLater: () => { phone.timer = null; },
       setFlag: (k, v) => { ctx.flags[k] = v; }, setInbox: (box) => { phone.inbox = box; }, unlockSound: () => { phone.sound = true; },
       onUnpaired: () => { phone.unpaired = true; },
-      ai: null, photo: null, render: () => {},
+      ai: null, ocr: null, photo: null, render: () => {},
       ...(phone.extraEnv ?? {}),
     };
     await ACTIONS[act](env, data);

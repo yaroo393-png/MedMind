@@ -2,7 +2,7 @@
 // เจ้าของ: Yar Oo (FR-02) · BR-04–BR-07, BR-19 · NFR-06, NFR-09, NFR-14 · ตัดสินด้วย logic/labelDraft.js และ logic/schedule.js เท่านั้น
 // Demo mode: "AI" เป็นตัวจำลอง ร่างมาจาก core/demoData.js (ฉลากสมมติ) · ใช้งานจริง (model.real): ถ่ายรูปจริง → ปิดแถบดำ (services/redact.js) → Gemini ผ่าน env.ai (services/aiLabel.js)
 import { esc, btn, hero, flag, icon, mascot } from './ui.js';
-import { buildDraft, applyEdit, addSlot, removeSlot, canSave, canSend, toMedicine } from '../logic/labelDraft.js';
+import { buildDraft, applyEdit, addSlot, removeSlot, canSave, canSend, toMedicine, ocrMismatches } from '../logic/labelDraft.js';
 import { reminderTime } from '../logic/schedule.js';
 import { labelDrafts } from '../core/demoData.js';
 import { MEAL_NAMES, TIMING_NAMES, REASON_TEXT, AI_PROBLEMS } from './format.js';
@@ -72,6 +72,20 @@ function realCover(model) {
     (ready ? '' : '<p class="hint">ต้องมีแถบปิดอย่างน้อย 1 แถบ และติ๊กยืนยันก่อน — ระหว่างนี้ไม่มีอะไรถูกส่งออก</p>') + btn('ghost', 'ยกเลิก', 'cancel-draft') };
 }
 
+// ข้อความที่ OCR อ่านได้ — ให้ผู้ดูแลดูประกอบการกรอกเอง ไม่เติมช่องใดให้อัตโนมัติ (BR-04) · escape ทุกตัวอักษร
+function ocrPanel({ ocrText, ocrReading }, { open = true } = {}) {
+  if (ocrReading) return '<p class="hint" role="status">กำลังอ่านข้อความด้วย OCR ในเครื่อง… (ทำต่อได้เลย ไม่ต้องรอ · ครั้งแรกโหลดตัวอ่าน ~8 MB)</p>';
+  if (!ocrText) return '';
+  return `<details class="card"${open ? ' open' : ''}><summary>ข้อความที่อ่านได้จากฉลาก (OCR — อาจผิด ใช้ดูประกอบเท่านั้น)</summary>` +
+    `<pre class="ocr-text">${esc(ocrText)}</pre></details>`;
+}
+
+// ร่างจาก AI: ชื่อยาไม่พบในข้อความ OCR → เตือนให้เทียบกับฉลาก (ไม่บล็อกการบันทึก — OCR ภาษาไทยผิดได้)
+function ocrCheck(ui, draft) {
+  if (!ocrMismatches(draft, ui.ocrText).includes('name')) return '';
+  return `<p class="error" role="alert">${flag()} ชื่อยาที่ AI อ่าน ไม่ตรงกับข้อความที่ OCR อ่านได้ — เทียบกับฉลากจริงอีกครั้ง</p>`;
+}
+
 export const screens = {
   // C-02 — ตั้งเวลามื้อ (BR-06)
   'cg-meals'(model) {
@@ -126,6 +140,7 @@ export const screens = {
   // C-05 (กำลังอ่าน)
   'cg-ai'() {
     return { title: 'AI กำลังอ่าน', covers: 'FR-02, ADR-3, NFR-08', tabs: false, body: hero('sparkle', 'AI กำลังอ่านฉลาก…', '') +
+      '<p class="hint" role="status">ปกติใช้ 5–20 วินาที · ถ้า AI ไม่ตอบ ระบบจะเปิดให้กรอกเอง</p>' +
       '<div class="spinner" aria-hidden="true"></div><p class="hint">AI แค่ร่าง — คุณต้องตรวจทุกช่องก่อนบันทึก</p>' + btn('ghost', 'ยกเลิก', 'cancel-draft') };
   },
 
@@ -142,8 +157,8 @@ export const screens = {
     const emptySlots = draft.checks.some((c) => c.path === 'slots');
     return { title: ui.manualReason ? 'กรอกเอง' : 'ตรวจร่าง', covers: 'FR-02, BR-04, BR-05, BR-06, BR-07 · NFR-06', body:
       `<h1>${ui.manualReason ? 'กรอกข้อมูลยาเอง' : 'ร่างจาก AI — ยังไม่ได้บันทึก'}</h1>` +
-      (ui.manualReason ? `<div class="card warn" role="alert"><p>${esc(ui.manualReason)}</p></div>`
-        : '<p class="hint">AI อ่านผิดได้ — ตรวจทุกช่องก่อนบันทึก · ช่องที่อ่านไม่ได้ปล่อยว่างไว้ ไม่เดา</p>' + (draft.instructionText ? `<p class="label-says">ฉลากเขียนว่า: “${esc(draft.instructionText)}”</p>` : '')) +
+      (ui.manualReason ? `<div class="card warn" role="alert"><p>${esc(ui.manualReason)}</p></div>` + ocrPanel(ui)
+        : '<p class="hint">AI อ่านผิดได้ — ตรวจทุกช่องก่อนบันทึก · ช่องที่อ่านไม่ได้ปล่อยว่างไว้ ไม่เดา</p>' + ocrCheck(ui, draft) + ocrPanel(ui, { open: false }) + (draft.instructionText ? `<p class="label-says">ฉลากเขียนว่า: “${esc(draft.instructionText)}”</p>` : '')) +
       `<label class="field"><span>ชื่อยา ${nameFlag ? flag() : ''}</span><input type="text" data-path="name"${nameFlag ? ' aria-invalid="true"' : ''} value="${esc(draft.name ?? '')}"></label>` +
       slotRows(draft, snap.mealTimes) + (emptySlots ? `<p class="error">${flag()} ยังไม่มีช่องเวลากิน</p>` : '') + btn('ghost', '+ เพิ่มช่องเวลากิน', 'add-slot') +
       `<label class="field"><span>คำเตือน (ถ้ามีบนฉลาก)</span><input type="text" data-path="warnings" value="${esc(draft.warnings ?? '')}"></label>` +
@@ -182,20 +197,58 @@ function dropPhoto(env) {
 const AI_REASON_TEXT = { offline: AI_PROBLEMS.offline, service_down: AI_PROBLEMS.down, quota: AI_PROBLEMS.quota, unreadable: AI_PROBLEMS.unreadable };
 async function sendReal(env) {
   if (!env.ui.photo || !(env.ui.rects ?? []).length) return;          // ต้องปิดอย่างน้อย 1 แถบ (BR-19)
-  const blob = await env.photo.redact(env.ui.photo, env.ui.rects);     // ภาพใหม่ ไม่มี EXIF
+  const scan = newScan(env);
+  let image;
+  try {
+    image = await env.photo.redact(env.ui.photo, env.ui.rects);        // ภาพใหม่ ไม่มี EXIF
+  } catch {
+    dropPhoto(env);
+    startManual(env, 'เตรียมภาพที่ปิดชื่อ/HN ไม่สำเร็จ — ไม่มีอะไรถูกส่งออก ลองถ่ายใหม่หรือกรอกเอง');
+    return;
+  }
   dropPhoto(env);                                                       // ทิ้งต้นฉบับทันที
   env.go('cg-ai'); env.render();
   try {
-    const json = await env.ai.requestDraft(blob);
+    const json = await env.ai.requestDraft(image);
+    if (isStale(env, scan)) return;                                     // ผู้ใช้ยกเลิก/เริ่มใหม่ระหว่างรอ → ทิ้งผล
     env.ui.manualReason = null;
     env.ui.draft = buildDraft(json, { mealTimes: env.snap.mealTimes ?? undefined });
     env.go('cg-draft');
+    await readWithOcr(env, image, scan);                                // ไม่บล็อก: ผู้ดูแลตรวจร่างได้เลย OCR มาเทียบชื่อยาทีหลัง
   } catch (error) {
-    const detail = error?.detail ?? '';
-    if (detail) console.warn('AI อ่านฉลากไม่ได้:', error);
-    startManual(env, `${AI_REASON_TEXT[error?.reason] ?? AI_PROBLEMS.down} — กรอกข้อมูลยาด้วยตัวเองได้เลย ไม่มีอะไรถูกบันทึกให้` + (detail ? ` (รายละเอียดสำหรับทีม: ${detail})` : ''));
+    if (isStale(env, scan)) return;
+    if (error?.detail) console.warn('AI อ่านฉลากไม่ได้:', error.detail);   // รหัส/ข้อความสั้น ไม่มีข้อมูลในภาพ
+    const reason = AI_REASON_TEXT[error?.reason] ?? AI_PROBLEMS.down;
+    // เปิดฟอร์มกรอกเองทันที (ไม่รอ OCR) แล้วให้ OCR อ่านต่อเบื้องหลัง → ผู้ใช้ไม่ต้องเห็นวงกลมหมุนซ้ำ
+    startManual(env, `${reason} — กรอกข้อมูลยาด้วยตัวเอง ไม่มีอะไรถูกบันทึกให้` + (error?.detail ? ` (รายละเอียดสำหรับทีม: ${error.detail})` : ''));
+    await readWithOcr(env, image, scan);
   }
 }
+
+// OCR บนเครื่อง (ทางสำรองเมื่อ Gemini ใช้ไม่ได้) — เก็บผลลง ui.ocrText เมื่ออ่านได้ · อ่านไม่ได้/ไม่มี OCR = ไม่แสดงอะไร
+async function readWithOcr(env, image, scan) {
+  if (!env.ocr) return;
+  env.ui.ocrReading = true; env.render();
+  let text = '';
+  try {
+    text = (await env.ocr.recognize(image)).text;
+  } catch (error) {
+    console.warn('OCR อ่านไม่ได้:', String(error?.message ?? error).slice(0, 120));   // ห้าม log ข้อความในภาพ
+  }
+  if (isStale(env, scan)) return;                                       // ผู้ใช้ยกเลิก/เริ่มใหม่ระหว่างรอ → ทิ้งผล
+  env.ui.ocrReading = false;
+  env.ui.ocrText = text;
+  env.render();
+}
+
+// รอบการสแกน: ยกเลิก/เริ่มใหม่ = เพิ่มเลขรอบ → ผลของรอบเก่าที่มาถึงทีหลังถูกทิ้ง ไม่ทับหน้าจอปัจจุบัน
+function newScan(env) {
+  env.ui.scan = (env.ui.scan ?? 0) + 1;
+  env.ui.ocrText = '';
+  env.ui.ocrReading = false;
+  return env.ui.scan;
+}
+const isStale = (env, scan) => env.ui.scan !== scan;
 
 // ร่างปัจจุบัน — ถ้าเปิดหน้าตรวจร่างตรง ๆ (ยังไม่มีร่าง) ใช้ฉลากตัวอย่างที่เลือกไว้
 function currentDraft(env) {
@@ -228,7 +281,7 @@ export const actions = {
     } catch { env.toast('เวลามื้อต้องกรอกครบ 4 ช่อง'); }
   },
   'set-time'(env, d) { env.ui.times = { ...(env.ui.times ?? env.snap.mealTimes ?? DEFAULT_TIMES), [d.time]: d.value }; },
-  'start-add'(env) { env.ui.cover = {}; env.ui.tick = false; env.ui.draft = null; env.go('cg-photo'); },
+  'start-add'(env) { newScan(env); env.ui.cover = {}; env.ui.tick = false; env.ui.draft = null; env.go('cg-photo'); },
   'cover-toggle'(env, d) { env.ui.cover = { ...(env.ui.cover ?? {}), [d.region]: !env.ui.cover?.[d.region] }; },
   'set-tick'(env, d) { env.ui.tick = d.checked; },
   'set-sample'(env, d) { env.ui.sample = d.value; },
@@ -242,7 +295,7 @@ export const actions = {
     env.go('cg-ai');
     env.later(() => startDraft(env), AI_DELAY_MS); // AI จำลอง
   },
-  'cancel-draft'(env) { env.cancelLater(); dropPhoto(env); env.ui.draft = null; env.go('cg-meds'); env.toast('ยกเลิก — ไม่ได้บันทึกอะไร'); },
+  'cancel-draft'(env) { env.cancelLater(); newScan(env); dropPhoto(env); env.ui.draft = null; env.go('cg-meds'); env.toast('ยกเลิก — ไม่ได้บันทึกอะไร'); },
   // ---- ใช้งานจริง: รูปฉลาก + แถบปิด ----
   async 'set-photo'(env, d) {
     if (!d.file || !env.photo) return;
@@ -257,7 +310,7 @@ export const actions = {
   'cover-top'(env) { env.ui.rects = [...(env.ui.rects ?? []), { ...TOP_BAND }]; },
   'undo-rect'(env) { env.ui.rects = (env.ui.rects ?? []).slice(0, -1); },
   'clear-rects'(env) { env.ui.rects = []; },
-  'manual-entry'(env) { dropPhoto(env); startManual(env, 'กรอกข้อมูลยาเองจากฉลาก'); },
+  'manual-entry'(env) { newScan(env); dropPhoto(env); startManual(env, 'กรอกข้อมูลยาเองจากฉลาก'); },
   manual(env) { startManual(env, 'ยาที่กินเมื่อมีอาการยังไม่รองรับ — ถ้าเป็นยาเวลาตายตัว กรอกเองได้'); },
   /** ผู้ดูแลแก้ช่องของร่าง (ค่าที่แก้ชนะค่าจาก AI — ข้อ 2) */
   'edit-field'(env, d) {
@@ -277,7 +330,7 @@ export const actions = {
     const draft = currentDraft(env);
     if (!canSave(draft)) return;
     await env.repo.saveMedicine(toMedicine(draft));
-    env.ui.draft = null;
+    newScan(env); env.ui.draft = null;   // จบรอบ: ผล OCR ที่ยังค้างอยู่จะถูกทิ้ง
     env.go('cg-meds');
     env.toast('บันทึกยาแล้ว');
   },
