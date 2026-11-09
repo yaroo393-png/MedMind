@@ -151,3 +151,18 @@ export function toMedicine(draft) {
     warnings: draft.warnings, contraindications: draft.contraindications,
   };
 }
+
+// ---------- เทียบร่างจาก AI กับข้อความ OCR บนเครื่อง (FR-02 ข้อ 2 — ช่วยผู้ดูแลตรวจ ไม่ตัดสินแทน) ----------
+// ตัดช่องว่าง/เครื่องหมาย และตัวพิมพ์ใหญ่-เล็ก ออกก่อนเทียบ (OCR มักเว้นวรรคไม่ตรง เช่น "500 mg" กับ "500mg")
+const squash = (text) => String(text ?? '').toLowerCase().replace(/[\s()[\]{},.:;'"“”‘’\-_/]+/g, '');
+
+/**
+ * ช่องที่ AI อ่านได้ แต่ไม่พบในข้อความ OCR → ให้ผู้ดูแลเทียบกับฉลากอีกครั้ง (แค่เตือน ไม่บล็อกการบันทึก)
+ * ตอนนี้ตรวจเฉพาะชื่อยา (ผิดแล้วอันตรายที่สุด) · ไม่มีข้อความ OCR = ไม่สรุปอะไร
+ * @returns {string[]} path ของช่องที่ไม่พบ เช่น ['name']
+ */
+export function ocrMismatches(draft, ocrText) {
+  const ocr = squash(ocrText);
+  if (!ocr || !draft?.name) return [];
+  return ocr.includes(squash(draft.name)) ? [] : ['name'];
+}

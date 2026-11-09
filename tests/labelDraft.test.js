@@ -2,7 +2,7 @@
 // ข้อมูลฉลากมาจาก core/demoData.js ชุดเดียวของทีม
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildDraft, applyEdit, addSlot, removeSlot, canSave, canSend, toMedicine } from '../public/js/logic/labelDraft.js';
+import { buildDraft, applyEdit, addSlot, removeSlot, canSave, canSend, toMedicine, ocrMismatches } from '../public/js/logic/labelDraft.js';
 import { groupMeals } from '../public/js/logic/schedule.js';
 import { labelDrafts, mealTimes } from '../public/js/core/demoData.js';
 import { createClock } from '../public/js/core/clock.js';
@@ -153,4 +153,18 @@ test('toMedicine: minutesBefore เก็บเฉพาะ "ก่อนอา�
   const med = toMedicine(d);
   assert.equal(med.slots[0].minutesBefore, null);
   assert.deepEqual(Object.keys(med).sort(), ['contraindications', 'instructionText', 'name', 'slots', 'warnings']);
+});
+
+// ---------- ocrMismatches: เทียบร่างจาก AI กับข้อความ OCR (ช่วยตรวจ ไม่บล็อก) ----------
+
+test('ocrMismatches: ชื่อยาที่ AI อ่านอยู่ในข้อความ OCR (ไม่สนช่องว่าง/ตัวพิมพ์/เครื่องหมาย) → ไม่เตือน', () => {
+  assert.deepEqual(ocrMismatches({ name: 'Paracetamol 500 mg' }, 'PARACETAMOL 500mg\nรับประทานครั้งละ 1 เม็ด'), []);
+  assert.deepEqual(ocrMismatches({ name: 'พาราเซตามอล' }, 'ยา พารา เซตามอล (500)'), []);
+});
+
+test('ocrMismatches: ชื่อยาไม่อยู่ใน OCR → เตือนช่อง name · ไม่มีข้อความ OCR หรือ AI ไม่ได้ชื่อ → ไม่สรุปอะไร', () => {
+  assert.deepEqual(ocrMismatches({ name: 'Amlodipine 5 mg' }, 'PARACETAMOL 500 mg'), ['name']);
+  assert.deepEqual(ocrMismatches({ name: 'Amlodipine' }, ''), []);
+  assert.deepEqual(ocrMismatches({ name: 'Amlodipine' }, '  \n '), []);
+  assert.deepEqual(ocrMismatches({ name: null }, 'PARACETAMOL'), []);
 });

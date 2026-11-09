@@ -82,6 +82,10 @@ test('ADR-8 / NFR-09: Demo mode ไม่ต้องมี server — ไม่
     const s = read(f);
     if (f === 'js/core/firebase.js') {
       for (const m of s.matchAll(/https?:\/\/[^\s'"`]+/g)) assert.match(m[0], /^https:\/\/www\.gstatic\.com\/firebasejs\/|^http:\/\/127\.0\.0\.1:9099$/, `firebase.js อ้าง ${m[0]}`);
+    } else if (f === 'js/services/localOcr.js') {
+      // OCR สำรอง (FR-02 ข้อ 5): โหลดได้เฉพาะไฟล์ Tesseract จาก CDN เดียว · ไม่ส่งภาพหรือข้อมูลออก (ไม่มี fetch/XHR)
+      for (const m of s.matchAll(/https?:\/\/[^\s'"`]+/g)) assert.equal(m[0], 'https://cdn.jsdelivr.net/npm/', `localOcr.js อ้าง ${m[0]}`);
+      assert.doesNotMatch(s, /\bfetch\(|XMLHttpRequest|WebSocket|sendBeacon/, 'localOcr.js ส่งข้อมูลออก');
     } else {
       // sw.js (PWA) เรียก self.fetch เฉพาะไฟล์ของเว็บเอง (same-origin) เพื่อแคชสำรอง — ตรวจด้านล่างว่าไม่ยุ่งกับโดเมนอื่น
       const body = f === 'sw.js' ? s.replace('self.fetch(req)', '') : s;
@@ -108,7 +112,7 @@ test('ADR-8: demo.html และไฟล์ที่มัน import ทั้�
   };
   visit('demo.html');
   assert.ok(seen.has('js/features/phone.js') && seen.has('js/core/repo.js'), 'ไล่ import ไม่ครบ');
-  for (const bad of ['js/core/firebase.js', 'js/core/firestoreRepo.js', 'js/features/realShell.js', 'js/services/aiLabel.js']) assert.equal(seen.has(bad), false, `demo.html ดึง ${bad}`);
+  for (const bad of ['js/core/firebase.js', 'js/core/firestoreRepo.js', 'js/features/realShell.js', 'js/services/aiLabel.js', 'js/services/localOcr.js']) assert.equal(seen.has(bad), false, `demo.html ดึง ${bad}`);
 });
 
 test('สถาปัตยกรรม: เฉพาะ phone.js, demoShell.js, realShell.js, redactTool.js และ qrScan.js แตะ DOM · logic/ และ core/ ไม่แตะ DOM · Date.now() อยู่ที่ clock.js ที่เดียว', () => {
