@@ -69,7 +69,10 @@ flowchart TB
 | `logic/mealTimeline.js` | Logic | FR-03, BR-08/13/15/16/18 | `mealState(...)` — แกนของไทม์ไลน์ (ดู §5.1) | FR-03 |
 | `logic/confirm.js` | Logic | FR-04, BR-10/11/12/15/20 | สร้างบันทึกยืนยัน (`doseId`, `scheduledTime`, `confirmedAt`), `confirmStatus(scheduledTime, confirmedAt)` → `taken` / `taken_late` (กฎ T+15 ใน §5.1), ตรวจว่ายืนยันได้ไหม | FR-04 |
 | `logic/status.js` | Logic | FR-05, BR-13/14/18/20 | สถานะรายวัน, `alertFor(...)` — แจ้งเตือนที่ต้องแสดง (ครั้งเดียวต่อมื้อ, ไม่แจ้งผิดจากการยืนยันที่มาถึงช้า — §7.4), ข้อความถึงผู้ดูแล | FR-05 |
-| `logic/weeklySummary.js` | Logic | FR-09 (Could) | รวมสถานะ 7 วัน → ข้อมูลสำหรับ prompt (ไม่มีชื่อ/HN/ยา) | ภายหลัง |
+| `logic/weeklySummary.js` | Logic | FR-09 (Could; เกณฑ์รอรับรอง) | รวมบันทึกยืนยันใน 7 วันปฏิทินที่จบแล้ว ใช้กฎสถานะเดิม → ข้อมูล allowlist สำหรับสรุป; ไม่อนุมานมื้อจากตารางยาปัจจุบัน | ชุดรวมรอทีมรีวิว |
+| `services/weeklyHistory.js`, `weeklySummaryFacts.js`, `aiWeeklySummary.js` | Data / Services | FR-09, NFR-09 | อ่านประวัติแบบ read-only ตามสิทธิ์ผู้ดูแล สร้างข้อเท็จจริงและตรวจรหัสประเด็นที่ AI เลือก; ไม่ส่งชื่อ/HN/ยา/ID/วันจริง | ชุดรวมรอทีมรีวิว |
+| `features/weeklySummary*.js`, `public/weekly-summary.html`, `css/weekly-summary.css` | UI | FR-09, C-10 | controller/page/panel ในจอผู้ดูแล (`cg-weekly`) และทางเข้าแยก; ตรวจข้อมูลและยินยอมก่อนส่งคำขอ ทิ้งผลหลังเปลี่ยนบริบท/ถอนสิทธิ์ | ชุดรวมรอทีมรีวิว |
+| `features/i18n.js`, `languageUi.js` | UI | NFR-03 | เลือกไทย/อังกฤษ เก็บเฉพาะ `mm-language`; ข้อมูลยาและข้อมูลที่ผู้ใช้กรอกไม่ถูกแปลและไม่ส่งบริการแปลภาษา | UI ส่วนรวม |
 | `features/pairing.js` | UI | FR-01 | S-01, S-04, C-01, C-09 — จับคู่ ยินยอม ยกเลิกจับคู่ 2 ขั้น (**ทำแล้ว 7 พ.ย.**) | Takkan |
 | `features/medicineSetup.js` | UI | FR-02 | C-02…C-06 — เวลามื้อ, ถ่าย/ปิดชื่อ, ร่างจาก AI (ตอนนี้จำลองจาก `demoData`), รายการยา (**ทำแล้ว 7 พ.ย.**) | Yar |
 | `features/reminder.js` | UI | FR-03 | S-03 — หน้าเตือน (**ทำแล้ว 7 พ.ย.**) | Rossatorn |
@@ -90,12 +93,15 @@ flowchart TB
 | `public/senior.html` | มือถือผู้สูงอายุ | จับคู่ (QR + รหัส + ยินยอม), หน้าหลักวันนี้, หน้าเตือน, ยืนยัน, ตั้งค่า/ยกเลิกจับคู่ | `firestoreRepo` |
 | `public/caregiver.html` | มือถือผู้ดูแล | จับคู่ (สแกน QR ด้วยกล้องมือถือ / กรอกรหัส), ตั้งเวลามื้อ, เพิ่มยาด้วยการถ่ายฉลาก → ปิดชื่อ/HN → AI ร่าง → ตรวจ → บันทึก, สถานะรายวัน, การแจ้งเตือน, ตั้งค่า/ยกเลิกจับคู่ | `firestoreRepo` |
 | `public/demo.html` | ผู้ตรวจ / นำเสนอบนคอม | จอผู้สูงอายุ + ผู้ดูแลคู่กัน + ปุ่มเลื่อนนาฬิกา (ADR-8) | `localRepo` + ข้อมูลตัวอย่าง |
+| `public/weekly-summary.html` | ผู้ตรวจ หรือผู้ดูแลที่เลือกข้อมูลจริงในหน้าแยก | ทางเข้า FR-09 แยกจากแท็บ `cg-weekly`; เริ่มด้วย Demo | Demo สมมติ / ประวัติตามสิทธิ์ผู้ดูแลเมื่อเลือกข้อมูลจริง |
 
 ทั้ง `senior.html`, `caregiver.html` และ `demo.html` ใช้ `logic/` และ `features/` **ชุดเดียวกัน** ต่างกันแค่ repo ที่ส่งเข้าไปและหน้าจอที่แสดง
 
 **สถานะ 7 พ.ย. 2569:** ทำแล้วทั้ง 4 หน้า — `demo.html` (Demo mode), `index.html` (S-00 เลือกบทบาทด้วยลิงก์ ไม่จำบทบาทในเครื่อง), `senior.html` และ `caregiver.html` (Firebase จริงผ่าน `features/realShell.js` + `core/firestoreRepo.js`) · ทดสอบ 2 เบราว์เซอร์กับ Firebase Emulator แล้ว · **ยังไม่ได้ทดสอบบนมือถือจริงกับโปรเจกต์จริง**
 
 **ทดสอบข้ามเครื่องบนมือถือจริง:** deploy ขึ้น Firebase Hosting preview channel (ได้ลิงก์ HTTPS ชั่วคราว) → มือถือ A เปิด `index.html` เลือก "ผู้สูงอายุ" → มือถือ B เลือก "ผู้ดูแล" แล้วสแกน QR บนจอ A ด้วยแอปกล้อง → จับคู่ → B ถ่ายฉลากจริง (ปิดชื่อ/HN ก่อนส่ง) → A ได้รับเตือนตามเวลาที่บันทึก · การเปิดผ่าน IP ในวง Wi-Fi (`http://192.168.x.x`) ไม่ใช่ HTTPS กล้อง/Firebase อาจใช้ไม่ได้
+
+**การรวมเว็บใหม่ 9 พ.ย. 2569:** เก็บชื่อทางเข้าเดิมและเส้นทางสัมพัทธ์สำหรับ GitHub Pages `/MedMind/` นำ UI ภาษา/ธีม/ฟอร์มและ FR-09 จาก Sites commit `daa4e47` มารวมกับ `main` ฐาน `08bd3a4` โดยยึด scanner PR #63: `realShell` จัด `ctx.ai`, `ctx.ocr`, `ctx.photo`; `phone.env()` ส่งต่อให้ `medicineSetup` ภาพต้องผ่าน `redact` ก่อน AI/OCR และเลขรอบคำขอป้องกันผลเก่าหลังยกเลิก คงโมดูลบริการ Firebase/สแกน/OCR/ตรวจร่างจาก main ล่าสุด ไม่มีการเปลี่ยน Security Rules หรือรูปข้อมูลร่วม ไม่รวม `qa-fr09.html` / `js/qa/` ของ Sites; FR-09 ยังใช้เกณฑ์เสนอใน README ประจำฟีเจอร์ ไม่ใช่การแก้ SRS
 
 ### 5.1 สัญญากลาง (รูปข้อมูลที่ทุกโมดูลใช้ร่วมกัน)
 > ตรวจกับของเดิมใน repo แล้ว: ชื่อ field และค่า enum ที่ใช้อยู่เดิม (`name`, `instructionText`, `timing`, `meal`, `minutesBefore`, `tabletsPerDose`, `warnings`, `contraindications`, `confirmedAt`, `status` = `taken` | `taken_late`, `state`, `caregiverAlert`) **คงชื่อเดิมทั้งหมด** — มติ A1 ย้าย `meal`, `timing`, `minutesBefore`, `tabletsPerDose` เข้าไปอยู่ใน `slots[]` (ไม่เปลี่ยนชื่อ) และ A5 **ไม่เพิ่มค่า `status` ใหม่** · สิ่งที่เพิ่มใหม่มีเพียง `slots`, `scheduledTime`, `serverReceivedAt` (เหตุผลอยู่ในตารางท้ายหัวข้อ)

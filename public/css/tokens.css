@@ -1,35 +1,34 @@
-/* Design tokens ของ MedMind — ต้องตรงกับ docs/02-design/design-system.md §2 ทุกค่า
- * โทนเขียวตามต้นแบบของ Rossatorn (ปรับ 4 พ.ย. 2569) — ตรวจ contrast ใหม่ทุกคู่แล้ว (NFR-03: ≥ 4.5 : 1) ตัวเลขอยู่ใน design-system.md §2
- * เจ้าของ: Rossatorn (UX/UI) ปรับได้ แต่ต้องแก้ design-system.md ให้ตรงกันและตรวจ contrast ใหม่
- * กติกา M3: หน้าจอและต้นแบบทุกหน้า "ห้ามคิดสีเอง" — ใช้ var(--ชื่อ) เท่านั้น ห้ามใส่ #hex ลอย ๆ นอกไฟล์นี้ */
+/* Site ทดสอบเท่านั้น: โทนเขียวหม่นและตัวอักษรอ่านง่ายตามคำขอ 8 พ.ย. 2569
+ * ไม่แก้ต้นฉบับของทีมใน GitHub; บันทึกการปรับและผลตรวจอยู่ใน VISUAL-CHANGES.md
+ * สีของคอมโพเนนต์อ้าง token ที่นี่ ขนาดขั้นต่ำและสี QR เดิมยังคงใช้ */
 :root {
   /* สี — โทนเขียวจากต้นแบบของ Rossatorn (SE-Project 26 ต.ค. 2569) · ตัวเลข contrast ใน design-system.md §2 */
-  --text: #2F3A2B;         /* 12.6:1 บน --bg · ≥ 10.3:1 บนทุกพื้น */
-  --text-muted: #5E5A4C;   /* 6.0:1 บน --bg · ≥ 4.9:1 บนทุกพื้น (ห้ามใช้บน --hero-bg) */
-  --bg: #FFFFFF;           /* การ์ด (ขาวอมครีม) */
-  --surface: #FFF4E4;      /* พื้นรอง / การ์ดย่อย */
-  --bg-grad-1: #FFF8EF;    /* พื้นหลังหน้า (ไล่สีอ่อนมาก) */
-  --bg-grad-2: #FFF3E3;
-  --primary: #46743F;      /* เขียวเข้ม: ปุ่มหลัก ลิงก์ แถบหัว · 9.8:1 กับตัวอักษร --on-color */
-  --accent: #3E6B38;       /* เขียวรอง: หัวข้อย่อย ตัวเลข · 6.1:1 บน --bg */
-  --accent-soft: #E4EFD9;  /* เขียวมะนาว: แท็บที่เลือก ป้ายนับ ป้ายรอบเตือน */
-  --hero-bg: #97E96A;      /* การ์ดฮีโร่ */
-  --hero-text: #24502A;    /* 6.8:1 บน --hero-bg */
-  --taken: #46743F;        /* ปุ่ม "กินแล้ว" (เขียว) 7.0:1 กับตัวอักษร --on-color */
-  --notyet: #A3473A;       /* ปุ่ม "ยังไม่กิน" (แดง) / ข้อผิดพลาด 7.1:1 กับตัวอักษร --on-color */
-  --warn-bg: #FFF0B8;      /* แถบแจ้งเตือนผู้ดูแล / คำเตือนยา */
-  --warn-text: #6B4E00;    /* 6.4:1 บน --warn-bg */
-  --fresh: #8DBA62;        /* พื้นหน้าแรก (เขียวสด) ตามต้นแบบ — ตัวอักษร --text เข้ม 6.0:1 */
+  --text: #29362E;
+  --text-muted: #536052;
+  --bg: #F5F6F0;
+  --surface: #E6EBE1;
+  --bg-grad-1: #E9EDE4;
+  --bg-grad-2: #E2E7DC;
+  --primary: #42664C;
+  --accent: #3C6148;
+  --accent-soft: #DAE4D3;
+  --hero-bg: #D3DECB;
+  --hero-text: #294A34;
+  --taken: #42664C;
+  --notyet: #91483F;
+  --warn-bg: #EEE5CB;
+  --warn-text: #665323;
+  --fresh: #CCDCC4;
   --on-color: #FFFFFF;
   --qr-dark: #000000;      /* QR ต้องดำบนขาวเสมอ (ทั้งโหมดสว่าง/มืด) — แอปกล้องอ่าน QR สีกลับไม่ได้ */
   --qr-light: #FFFFFF;     /* ตัวอักษรบนปุ่มสี */
-  --shadow: 0 4px 0 #E9DAC2; /* เงาแข็งแบบสติกเกอร์ (ตกแต่งเท่านั้น) */
+  --shadow: 0 3px 0 #CDD5C7;
   /* มาสคอต "เมล็ดพีช" — ตัวละครต้นฉบับของ Rossatorn (ต้นแบบ 26 ต.ค. 2569) ใช้ตกแต่งเท่านั้น ไม่สื่อความหมาย ไม่ใช่รูปยา */
   --mascot-line: #204D39;
   --mascot-body: #F2C9A0;
   --mascot-shine: #FFEDD7;
   --mascot-leaf: #739E54;
-  --mascot-leaf-2: #D8F36A;
+  --mascot-leaf-2: #BDCEA4;
   --mascot-cheek: #E6A583;
   --mascot-shadow: rgba(22, 76, 59, 0.09);
   /* ตัวอักษร (NFR-03) */
@@ -50,15 +49,15 @@
   --radius: 16px;
   --radius-lg: 24px;
   /* ธีมน่ารัก (7 พ.ย. 2569 ตามแคนวาสที่ทีมแก้): พื้นครีมโทนเนื้อ การ์ดขาวมีขอบ · สีสถานะ ตัวอักษรบนพื้นสถานะ ≥ 4.5:1 ทุกคู่ */
-  --line: #CFB896;         /* ขอบการ์ด (ตกแต่ง) */
-  --field-line: #A08A66;   /* ขอบช่องกรอก 3.3:1 บนขาว (WCAG 1.4.11) */
-  --ok-bg: #DDF0D2; --ok-line: #8CC47A; --ok-text: #24502A;     /* ยืนยันแล้ว — 7.7:1 */
-  --no-bg: #FCE1DC; --no-line: #E8A093; --no-text: #8A2E22;     /* ยังไม่ยืนยัน — 6.8:1 */
-  --wait-bg: #FFF0B8; --wait-line: #E5C24F; --wait-text: #6B4E00; /* รอเวลา — 6.8:1 */
-  --eve-bg: #ECE4F7; --eve-line: #B7A3DD; --eve-text: #4B3F7A;  /* มื้อเย็น (หน้าหลักผู้สูงอายุ) */
-  --late-bg: #FFE57C;      /* แจ้ง "ยืนยันย้อนหลัง" — ตัวอักษร --text 9.5:1 */
-  --alert-bg: #FF7140; --alert-text: #3A1208;                   /* แจ้ง "ยังไม่ยืนยัน" ของผู้ดูแล — 6.0:1 */
-  --font-head: "Mali", "Sarabun", system-ui, sans-serif;        /* หัวข้อ: Mali (OFL) ไฟล์ในเครื่อง */
+  --line: #B8C2B0;
+  --field-line: #788873;
+  --ok-bg: #D8E4D1; --ok-line: #9DB38F; --ok-text: #2D4B32;
+  --no-bg: #EEDDD7; --no-line: #C69A8D; --no-text: #743E34;
+  --wait-bg: #EEE5CB; --wait-line: #BEAA70; --wait-text: #665323;
+  --eve-bg: #E3DEEB; --eve-line: #AEA0C4; --eve-text: #51446C;
+  --late-bg: #E9DDAF;
+  --alert-bg: #E8CEC4; --alert-text: #63382C;
+  --font-head: var(--font);
 }
 
 /* ---------- ตั้งค่าการแสดงผล (หน้าตั้งค่า S-04 / C-09) — ตั้งรายเครื่อง ผ่าน data-size / data-theme บนจอมือถือ ----------
@@ -71,29 +70,30 @@
   --fs-body: 26px; --fs-med-name: 34px; --fs-h1: 36px; --fs-h2: 30px; --fs-tab: 20px;
   --btn-h: 80px; --tap-min: 64px;
 }
-/* โหมดมืด — ไม่ใช่ requirement ใน SRS (เป็นตัวเลือกการแสดงผลของต้นแบบ) · ตรวจ contrast ทุกคู่ ≥ 4.5 : 1 แล้ว ตัวเลขใน design-system.md §2 */
+/* โหมดมืด: พื้นเข้มและสีสถานะหม่น ใช้สีข้อความคู่กัน */
 [data-theme="dark"] {
-  --text: #E9F2EC;
-  --text-muted: #B3C4B9;
-  --bg: #17251F;
-  --surface: #22362D;
-  --bg-grad-1: #0F1A15;
-  --bg-grad-2: #142119;
-  --primary: #8EDBB0;
-  --accent: #A5DDA0;
-  --accent-soft: #2F4A33;
-  --hero-bg: #2E4D3A;
-  --hero-text: #EAF4EE;
-  --taken: #7FD39B;
-  --notyet: #F29B90;
-  --warn-bg: #3B2E14;
-  --warn-text: #F4CF86;
-  --on-color: #0E1C16;     /* ตัวอักษรบนปุ่มสี (โหมดมืดใช้ตัวมืดบนปุ่มสว่าง) */
-  --shadow: 0 4px 0 rgba(0, 0, 0, 0.45);
-  --line: #3C5246; --field-line: #8FA79A;
-  --ok-bg: #1F3A27; --ok-line: #4F8C5E; --ok-text: #C9EDD2;
-  --no-bg: #43231F; --no-line: #A35A4E; --no-text: #F8CEC5;
-  --wait-bg: #3B3214; --wait-line: #9C8430; --wait-text: #F4DE8E;
-  --eve-bg: #2D2840; --eve-line: #6E5FA6; --eve-text: #DDD3F7;
-  --late-bg: #3E3512; --alert-bg: #5A2414; --alert-text: #FFE1D6;
+  --text: #E3EAE0;
+  --text-muted: #B7C4B5;
+  --bg: #1D2A22;
+  --surface: #29382D;
+  --bg-grad-1: #121D17;
+  --bg-grad-2: #17231B;
+  --primary: #A3C4A4;
+  --accent: #B2CCAA;
+  --accent-soft: #314836;
+  --hero-bg: #2D4132;
+  --hero-text: #E3EBDD;
+  --taken: #A3C4A4;
+  --notyet: #D8ABA0;
+  --warn-bg: #3A3425;
+  --warn-text: #E7D8B5;
+  --fresh: #293E2E;
+  --on-color: #15221A;
+  --shadow: 0 3px 0 rgba(0, 0, 0, 0.35);
+  --line: #465949; --field-line: #829982;
+  --ok-bg: #293E2E; --ok-line: #647E5E; --ok-text: #D2E4C8;
+  --no-bg: #422F2B; --no-line: #9F7769; --no-text: #ECD1C6;
+  --wait-bg: #3A3425; --wait-line: #95845C; --wait-text: #E7D8B5;
+  --eve-bg: #353043; --eve-line: #807293; --eve-text: #DED3EB;
+  --late-bg: #403923; --alert-bg: #49332C; --alert-text: #F0D8CD;
 }

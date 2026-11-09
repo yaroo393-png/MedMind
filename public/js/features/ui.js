@@ -2,6 +2,7 @@
 // เจ้าของ: Rossatorn (UX/UI) · ทุกฟังก์ชันคืน "สตริง HTML" (ฟังก์ชันล้วน ทดสอบด้วย node ได้) · ข้อความจากผู้ใช้/AI ผ่าน esc() ทุกครั้ง (RULES §3)
 // ไอคอนและมาสคอตย้ายมาจากต้นแบบ prototype/js/ui.js (ชุด medmind-icons + มาสคอต "เมล็ดพีช" ของ Rossatorn — ตกแต่งเท่านั้น)
 import { statusLabel, fmtHM } from './format.js';
+import { tr } from './i18n.js';
 
 /** escape ข้อความก่อนใส่ HTML — ใช้กับทุกค่าที่มาจากผู้ใช้หรือ AI (RULES §3) */
 export function esc(text) {
@@ -35,7 +36,7 @@ export function icon(name, cls) { return '<svg class="ico' + (cls ? ' ' + cls : 
 let logoSeq = 0;
 export function logo(cls) {
   const id = 'mmg' + (logoSeq++);
-  const a11y = cls === 'logo-sm' ? 'aria-hidden="true" focusable="false"' : 'role="img" aria-label="โลโก้ MedMind"'; // โลโก้เล็กซ้ำชื่อแอป → ซ่อนจาก screen reader
+  const a11y = cls === 'logo-sm' ? 'aria-hidden="true" focusable="false"' : `role="img" aria-label="${esc(tr('โลโก้ MedMind', 'MedMind logo'))}"`; // โลโก้เล็กซ้ำชื่อแอป → ซ่อนจาก screen reader
   return '<svg class="' + (cls || 'logo') + '" viewBox="0 0 64 64" ' + a11y + '>' +
     '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--primary)"/><stop offset="1" style="stop-color:var(--accent)"/></linearGradient></defs>' +
     '<path d="M32 56S6 41 6 22a13 13 0 0 1 26-6 13 13 0 0 1 26 6c0 19-26 34-26 34z" style="fill:url(#' + id + ')"/>' +
@@ -75,7 +76,7 @@ export function chip(label) {
 
 /** ป้าย "โปรดตรวจสอบ" ของช่องที่อ่านไม่ได้ (FR-02 ข้อ 3) */
 export function flag() {
-  return '<span class="flag">โปรดตรวจสอบ</span>';
+  return `<span class="flag">${tr('โปรดตรวจสอบ', 'Please check')}</span>`;
 }
 
 export function hero(iconName, title, sub) {
@@ -85,22 +86,22 @@ export function hero(iconName, title, sub) {
 /** รายการยาของมื้อ: ชื่อ (≥ 24px) · จำนวนเม็ดของมื้อนี้ · คำเตือน/ข้อห้าม — ไม่มีรูปยา */
 export function medList(meal) {
   return '<ul class="meds">' + meal.medicines.map((m) => `<li><span class="med-name">${esc(m.name)}</span>` +
-    `<span class="med-qty">จำนวน ${esc(m.tabletsPerDose)} เม็ด</span>` +
-    (m.warnings ? `<span class="med-warn">${icon('alert')}<span>คำเตือน: ${esc(m.warnings)}</span></span>` : '') +
-    (m.contraindications ? `<span class="med-warn">${icon('alert')}<span>ข้อห้าม: ${esc(m.contraindications)}</span></span>` : '') + '</li>').join('') + '</ul>';
+    `<span class="med-qty">${tr(`จำนวน ${esc(m.tabletsPerDose)} เม็ด`, `${esc(m.tabletsPerDose)} ${Number(m.tabletsPerDose) === 1 ? 'tablet' : 'tablets'}`)}</span>` +
+    (m.warnings ? `<span class="med-warn">${icon('alert')}<span>${tr('คำเตือน:', 'Warning:')} ${esc(m.warnings)}</span></span>` : '') +
+    (m.contraindications ? `<span class="med-warn">${icon('alert')}<span>${tr('ข้อห้าม:', 'Contraindications:')} ${esc(m.contraindications)}</span></span>` : '') + '</li>').join('') + '</ul>';
 }
 
 /** การ์ดมื้อ: หัวมื้อ + ป้ายสถานะ + ยาทั้งมื้อ (meal มาจาก model.js) */
 export function mealCard(meal, extra = '') {
   const label = statusLabel(meal.st.state, meal.dose?.confirmedAt);
   const evening = Number(String(meal.reminderTime).slice(0, 2)) >= 17 ? ' st-evening' : '';   // มื้อเย็นที่ยังไม่ถึงเวลา = ม่วงอ่อน (ธีม 7 พ.ย.)
-  return `<section class="card st-${label.kind}${evening}"><div class="card-head"><h2 class="h-card">มื้อ ${esc(meal.reminderTime)}</h2>${chip(label)}</div>` + medList(meal) +
-    (meal.pending ? '<p class="hint">รอส่งให้ผู้ดูแล — จะส่งเมื่อกลับมาออนไลน์</p>' : '') + extra + '</section>';
+  return `<section class="card st-${label.kind}${evening}"><div class="card-head"><h2 class="h-card">${tr('มื้อ', 'Meal')} ${esc(meal.reminderTime)}</h2>${chip(label)}</div>` + medList(meal) +
+    (meal.pending ? `<p class="hint">${tr('รอส่งให้ผู้ดูแล — จะส่งเมื่อกลับมาออนไลน์', 'Waiting to send to the caregiver — will send when back online')}</p>` : '') + extra + '</section>';
 }
 
 /** สรุปยาของมื้อบรรทัดเดียว (ใช้ในการ์ดฮีโร่และหน้าสถานะ) */
 export function medSummary(meal) {
-  return meal.medicines.map((x) => `${esc(x.name)} ${esc(x.tabletsPerDose)} เม็ด`).join(' · ');
+  return meal.medicines.map((x) => `${esc(x.name)} ${esc(x.tabletsPerDose)} ${tr('เม็ด', Number(x.tabletsPerDose) === 1 ? 'tablet' : 'tablets')}`).join(' · ');
 }
 
 export function heroCard(pose, label, big, sub, action, side) {
@@ -111,7 +112,7 @@ export function heroCard(pose, label, big, sub, action, side) {
 /** กล่องยืนยัน (ยกเลิกจับคู่ 2 ขั้น — BR-17) */
 export function dialog(id, title, text, yesLabel, yesAct) {
   return `<div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="${id}"><div class="modal-box"><h2 id="${id}">${esc(title)}</h2><p>${esc(text)}</p>` +
-    btn('notyet', esc(yesLabel), yesAct) + btn('ghost', 'ไม่ยกเลิก', 'unpair-no') + '</div></div>';
+    btn('notyet', esc(yesLabel), yesAct) + btn('ghost', tr('ไม่ยกเลิก', 'Keep pairing'), 'unpair-no') + '</div></div>';
 }
 
 /** QR ตัวอย่าง (ภาพประกอบเท่านั้น — ระบบจริงใช้ลิงก์ที่สแกนด้วยแอปกล้อง) สร้างจากรหัส 6 หลัก */
@@ -126,12 +127,19 @@ export function qrGrid(code) {
       out += `<i class="${on ? 'on' : ''}"></i>`;
     }
   }
-  return `<div class="qr" role="img" aria-label="QR ตัวอย่าง">${out}</div>`;
+  return `<div class="qr" role="img" aria-label="${tr('QR ตัวอย่าง', 'Example QR code')}">${out}</div>`;
 }
 
 // ---------- การตั้งค่าการแสดงผล (NFR-03) ----------
-export const SIZES = [['normal', 'ปกติ'], ['large', 'ใหญ่'], ['xlarge', 'ใหญ่มาก']];
-const THEMES = [['light', 'สว่าง', 'sun'], ['dark', 'มืด', 'moon']];
+const translatedOption = (id, th, en, iconName) => {
+  const option = [id, th];
+  Object.defineProperty(option, 1, { enumerable: true, get: () => tr(th, en) });
+  if (iconName) option.push(iconName);
+  return option;
+};
+export const SIZES = [translatedOption('normal', 'ปกติ', 'Normal'), translatedOption('large', 'ใหญ่', 'Large'), translatedOption('xlarge', 'ใหญ่มาก', 'Extra large')];
+export const sizeName = (id) => SIZES.find((option) => option[0] === id)?.[1] ?? SIZES[0][1];
+const THEMES = [translatedOption('light', 'สว่าง', 'Light', 'sun'), translatedOption('dark', 'มืด', 'Dark', 'moon')];
 
 function stepBtn(dir, label, ico, disabled) {
   return `<button type="button" class="step-btn" data-act="size-step" data-dir="${dir}" aria-label="${esc(label)}"${disabled ? ' aria-disabled="true"' : ''}>${icon(ico)}</button>`;
@@ -141,10 +149,10 @@ function stepBtn(dir, label, ico, disabled) {
 export function prefsCard(pref) {
   const pr = pref ?? { size: 'normal', theme: 'light' };
   const i = SIZES.map((s) => s[0]).indexOf(pr.size);
-  return `<div class="card"><h2 class="h-card">${icon('gear')}การแสดงผล</h2><p class="hint">ตั้งค่าเฉพาะเครื่องนี้ · ตัวอักษรทุกระดับไม่เล็กกว่าเกณฑ์ NFR-03</p>` +
-    '<p class="pref-label">ขนาดตัวอักษร</p><div class="stepper" role="group" aria-label="ขนาดตัวอักษร">' +
-    stepBtn(-1, 'ลดขนาดตัวอักษร', 'minus', i <= 0) + `<span class="step-val">${esc(SIZES[i][1])}</span>` + stepBtn(1, 'เพิ่มขนาดตัวอักษร', 'plus', i >= SIZES.length - 1) + '</div>' +
-    '<p class="pref-label">โหมดสี</p><div class="seg" role="group" aria-label="โหมดสี">' + THEMES.map((t) =>
+  return `<div class="card"><h2 class="h-card">${icon('gear')}${tr('การแสดงผล', 'Display')}</h2><p class="hint">${tr('ตั้งค่าเฉพาะเครื่องนี้ · ปรับขนาดข้อความในเนื้อหา ชื่อเมนูด้านล่างใช้ขนาดกระชับ', 'For this device only · Adjust content text size. Bottom menu labels use a compact size.')}</p>` +
+    `<p class="pref-label">${tr('ขนาดตัวอักษร', 'Text size')}</p><div class="stepper" role="group" aria-label="${tr('ขนาดตัวอักษร', 'Text size')}">` +
+    stepBtn(-1, tr('ลดขนาดตัวอักษร', 'Decrease text size'), 'minus', i <= 0) + `<span class="step-val">${esc(SIZES[i][1])}</span>` + stepBtn(1, tr('เพิ่มขนาดตัวอักษร', 'Increase text size'), 'plus', i >= SIZES.length - 1) + '</div>' +
+    `<p class="pref-label">${tr('โหมดสี', 'Colour theme')}</p><div class="seg" role="group" aria-label="${tr('โหมดสี', 'Colour theme')}">` + THEMES.map((t) =>
       `<button type="button" class="seg-btn${t[0] === pr.theme ? ' is-on' : ''}" data-act="set-theme" data-v="${t[0]}" aria-pressed="${t[0] === pr.theme}">${icon(t[2])}${esc(t[1])}</button>`).join('') + '</div></div>';
 }
 

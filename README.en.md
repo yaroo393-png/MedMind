@@ -10,6 +10,14 @@
 >
 > *The Thai README is the primary version. If the two differ, the Thai one is edited first and this page is updated to match.*
 
+## New app integration (9 November 2026 — awaiting review)
+
+The interface and app behavior from the [MedMind test Site](https://medmind-fr09-test-20261108.rossatoun.chatgpt.site/), source `daa4e47e902d9ba20c95de1c62a4a4597767bc9f`, are integrated on base `main` commit `08bd3a4`, including PR #63 scanner/OCR and PR #64 repository structure. The existing `index.html`, `senior.html`, `caregiver.html`, `demo.html` names and links above are retained. The imported app includes Thai/English UI, muted themes, and form text/caret preservation.
+
+FR-02 retains PR #63 redaction before image submission, Gemini timeouts/model fallback, local OCR, and stale-result cancellation. FR-09 adds the caregiver Summary tab and a Demo example; its [proposed acceptance criteria](fr/FR-09-weekly-summary/README.md) still await team approval. This integration does not change the SRS or security rules and excludes the test-only `qa-fr09.html` and `js/qa/`.
+
+**Combined checks:** npm run check: 460/460 tests passed; check:secrets passed. Real Firebase/Gemini and physical Android validation are still pending. The owner must read the code and obtain one other member's review before merging (`RULES.md` §2); this note does not claim the live app has been deployed.
+
 ## Current status
 | Part | Status |
 |---|---|
@@ -19,7 +27,7 @@
 | Traceability (Golden Thread) | 🟡 All 43 AC covered — mostly ✅ in Demo mode · what is left (Rules on Firestore, real phones, real AI) is stated in each row — [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) |
 | M3 prototype (`prototype/`) | ✅ Covers FR-01–05 including wrong paths and a two-screen demo — opens without a server — [`prototype/index.html`](prototype/index.html) · [`NOTES.md`](prototype/NOTES.md) · not yet tested on real phones (MT-08, MT-16) |
 | System (web app) `public/` | 🟡 **Demo mode** (`demo.html`) is done · **real use on Firebase** (`senior.html` / `caregiver.html`) is written: pairing with a real QR code · Firestore + Security Rules · Gemini label reading after the name/HN are covered — tested with the Firebase Emulator in two browsers · **not yet tested on real phones with the real project, and Gemini has not been called for real** · setup: [`docs/FIREBASE-SETUP.md`](docs/FIREBASE-SETUP.md) |
-| Automated tests | ✅ `npm test` 345 tests pass (logic, core, every FR screen per acceptance criterion, QR, label reading with a fake AI, page structure) · ✅ `emulator-tests/` 31 tests pass (Security Rules R-1…R-14 + `firestoreRepo` on the Firebase Emulator — CI job `emulator`) · missing: results on real phones |
+| Automated tests | ✅ `npm test` 460 tests pass (logic, core, every FR screen per acceptance criterion, QR, label reading with a fake AI, page structure) · ✅ `emulator-tests/` 31 tests pass (Security Rules R-1…R-14 + `firestoreRepo` on the Firebase Emulator — CI job `emulator`) · missing: results on real phones |
 | Project plan (Week 10) | 🟡 Sprints 0–3, risks, rotating roles, retrospective — [`docs/PROJECT-PLAN.md`](docs/PROJECT-PLAN.md) |
 | Final Report / AI-Use Statement / Demo | 🟡 Final Report and AI-Use Statement have content (a [ ] = no real result yet) · slides are still an outline — [`docs/05-report/`](docs/05-report/), [`docs/06-presentation/`](docs/06-presentation/) |
 
@@ -55,6 +63,7 @@
 | Forgetting a dose / taking it late | **FR-03** | [architecture §5.1, §7.3](docs/02-design/architecture.md) | S-03 · [`fr/FR-03-reminder`](fr/FR-03-reminder/README.md) | AC 1–6 · NFR-01 |
 | Not remembering whether the medicine was taken | **FR-04** | [architecture §6 (`doses`)](docs/02-design/architecture.md) | S-02, S-03 · [`fr/FR-04-confirm`](fr/FR-04-confirm/README.md) | AC 1–10 · NFR-02, 03, 07, 12 |
 | Calling or messaging for every meal; no single status | **FR-05** | [architecture §6 (`alertSeen`)](docs/02-design/architecture.md) | C-07, C-08 · [`fr/FR-05-caregiver-status`](fr/FR-05-caregiver-status/README.md) | AC 1–10 · NFR-01, 12, 13 |
+| Caregiver needs an overview of confirmation records across days | **FR-09 (Could; criteria awaiting approval)** | [architecture §5](docs/02-design/architecture.md) | C-10 (`cg-weekly`) · [`fr/FR-09-weekly-summary`](fr/FR-09-weekly-summary/README.md) | Summary/access/language tests in `tests/`; these do not replace real-service validation |
 
 AC → code → test, one by one, is in [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) · **the SRS is the source of truth** — change the SRS first, then copy the change here.
 
@@ -88,6 +97,7 @@ docs/
 ├── PROJECT-PLAN.md              # sprints, velocity, risks, rotating roles, retrospective
 └── GITHUB-SETUP.md              # labels, milestones, ruleset, first issues
 fr/FR-01…FR-05/README.md          # each member's work (evidence of individual contribution)
+fr/FR-09-weekly-summary/README.md # weekly summary: scope and proposed criteria for team review
 prototype/                        # M3 clickable prototype — double-click index.html, no server needed (app.html, demo.html, css/, js/, NOTES.md, TEST-CHECKLIST.md)
 slides/                           # demo slides: demo-slides.pdf (submitted) · demo-slides.pptx (editable source)
 public/                           # the real web app: index / senior / caregiver / demo .html + css/ + js/{logic,core,services,features}/

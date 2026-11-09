@@ -9,6 +9,18 @@
 > **ใช้งานจริงบน Firebase (7 พ.ย. ช่วงบ่าย):** `public/senior.html` + `caregiver.html` ใช้ `firestoreRepo` + `firestore.rules` — Rules R-1…R-14 และ `firestoreRepo` ทดสอบกับ Firebase Emulator (`emulator-tests/`, 31 เทสต์) · เปิด 2 เบราว์เซอร์ต่อ Emulator แล้วเดินจับคู่ → ตั้งเวลามื้อ → เพิ่มยาจากรูป → เตือน → กินแล้ว → ผู้ดูแลเห็น ผ่าน · **ยังไม่ได้ทดสอบบนมือถือจริงกับโปรเจกต์จริง และยังไม่เคยเรียก Gemini จริง**
 > ตัวย่อ: `TC-xx.n` = เทสต์อัตโนมัติ (`node --test`) · `R-n` = เทสต์ Security Rules (Emulator) · `MT-nn` = ทดสอบด้วยมือ (ตารางท้ายเอกสาร)
 
+## หลักฐานชุดรวมเว็บใหม่ — 9 พ.ย. 2569 (รอรีวิว)
+
+ฐาน `08bd3a4` เก็บระบบสแกน PR #63 และโครงสร้าง PR #64; UI/ภาษา/สรุปรายสัปดาห์มาจาก Sites commit `daa4e47e902d9ba20c95de1c62a4a4597767bc9f` โดยไม่เปลี่ยน SRS, รูปข้อมูลร่วม หรือ Security Rules ผลตรวจชุดรวม: **npm run check: 460/460 tests passed; check:secrets passed**
+
+| ส่วน | โค้ดจริง | หลักฐานที่ต้องตรวจในชุดรวม | ขอบเขตผล |
+|---|---|---|---|
+| FR-01 / NFR-03: จับคู่และการแสดงผล | `features/pairing.js`, `phone.js`, `i18n.js`, `languageUi.js`, `css/tokens.css`, `css/app.css` | `pairingInput.test.mjs`, `phoneFocus.test.mjs`, `phoneFormLanguage.test.mjs`, `mobileSettingsNavigation.test.mjs`, `i18n.test.mjs`, `publicPages.test.js` | การเลือกภาษาไม่แปลข้อมูลยา และไม่ทำข้อความที่กำลังกรอกหาย |
+| FR-02 ข้อ 1, 3, 5, 9 / BR-19 | `features/medicineSetup.js`, `realShell.js`, `phone.js`; `services/aiLabel.js`, `localOcr.js`, `redact.js`; `logic/labelDraft.js` | `aiLabel.test.js`, `localOcr.test.js`, `labelDraft.test.js`, `medicineSetupView.test.js`, `scannerIntegration.test.js` | จำลอง AI/OCR และยกเลิกคำขอ; ยังไม่ใช่ผล Firebase/Gemini หรือกล้องมือถือจริง |
+| FR-09 / C-10 (Could) | `logic/weeklySummary.js`, `services/weeklyHistory.js`, `weeklySummaryFacts.js`, `aiWeeklySummary.js`, `features/weeklySummary*.js` | `weeklySummary.test.js`, `weeklyHistory.test.js`, `aiWeeklySummary.test.js`, `weeklySummaryPage.test.js`, `weeklyController.test.mjs`, `weeklyPanel.test.mjs`, `weeklyLanguage.test.mjs` · [เกณฑ์เสนอ](../fr/FR-09-weekly-summary/README.md) | รอทีมรับรองเกณฑ์; Demo ใช้ข้อมูลสมมติและไม่เรียก AI จริง; ไม่มีการเขียนข้อมูลสุขภาพเพิ่ม |
+
+ไม่รวมหน้าตรวจภายใน `qa-fr09.html` / `js/qa/` ของ Sites ในแอปทีม ผลมือถือจริงและบริการจริงต้องบันทึกแยกจากเทสต์จำลองก่อนรับรองงาน
+
 ## Problem
 ผู้สูงอายุที่ต้องกินยาเม็ด/แคปซูลตามเวลาประจำอาจลืมกิน กินผิดเวลา หรือจำไม่ได้ว่ากินแล้วหรือยัง ขณะที่ลูกที่เป็นผู้ดูแลต้องออกไปทำงานและตามดูทั้งวันไม่ได้ วิธีที่ใช้อยู่ (นาฬิกาปลุก กล่องยา โทร/LINE) ยืนยันสถานะและรายงานให้ผู้ดูแลโดยอัตโนมัติไม่ได้ (รายละเอียด: M1 Charter)
 
@@ -24,7 +36,7 @@
 | ลืมกินยา / กินไม่ตรงเวลา | FR-03 | architecture §5.1, §7.3 (state machine) | S-03 | AC 1–6 · NFR-01 |
 | จำไม่ได้ว่ากินแล้วหรือยัง | FR-04 | architecture §5.1, §6 (`doses`) | S-03, S-02 | AC 1–10 · NFR-02, 03, 07, 12 |
 | โทร/ส่ง LINE ถามทุกมื้อ ไม่มีสถานะรวม | FR-05 | architecture §5.1, §6 (`alertSeen`) | C-07, C-08 | AC 1–10 · NFR-01, 12, 13 |
-| ผู้ดูแลอยากเห็นภาพรวมทั้งสัปดาห์ (Could) | FR-09 | (หลัง MVP) | C-10 | (เขียน AC เมื่อย้ายเข้า increment) |
+| ผู้ดูแลอยากเห็นภาพรวมทั้งสัปดาห์ (Could) | FR-09 | architecture §5; เกณฑ์เสนอใน `fr/FR-09-weekly-summary/README.md` | C-10 (`cg-weekly`) | เทสต์ที่เสนอใน README ประจำ FR-09; ยังไม่รับรอง AC ใน SRS |
 
 
 ## FR-01 — Pair older adult and caregiver

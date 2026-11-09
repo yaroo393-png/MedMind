@@ -2,34 +2,43 @@
 // เจ้าของ: Rossatorn (UX/UI) · ข้อความตาม SRS v1.5 และ BR-14 (ผู้ดูแลเห็น "ยังไม่ยืนยัน" ห้ามใช้คำว่า "ไม่ได้กิน")
 // เวลาทั้งหมดเป็นมิลลิวินาที ตามเวลาท้องถิ่นของเครื่อง (เหมือน logic/time.js)
 
-export const MEAL_NAMES = { breakfast: 'เช้า', lunch: 'กลางวัน', dinner: 'เย็น', bedtime: 'ก่อนนอน' };
-export const TIMING_NAMES = { after_meal: 'หลังอาหาร', before_meal: 'ก่อนอาหาร', at_bedtime: 'ก่อนนอน' };
+import { tr, getLanguage } from './i18n.js';
+
+// อ่านคำแปลตอนใช้ ไม่เก็บภาษาค้างไว้ตอน import (ยังใช้ MEAL_NAMES[key] / Object.entries ได้เหมือนเดิม)
+const labels = (values) => Object.defineProperties({}, Object.fromEntries(Object.entries(values).map(([key, [th, en]]) => [key, { enumerable: true, get: () => tr(th, en) }])));
+export const MEAL_NAMES = labels({ breakfast: ['เช้า', 'Breakfast'], lunch: ['กลางวัน', 'Lunch'], dinner: ['เย็น', 'Dinner'], bedtime: ['ก่อนนอน', 'Bedtime'] });
+export const TIMING_NAMES = labels({ after_meal: ['หลังอาหาร', 'After a meal'], before_meal: ['ก่อนอาหาร', 'Before a meal'], at_bedtime: ['ก่อนนอน', 'At bedtime'] });
 
 // เหตุผลที่ slot ใช้ไม่ได้ → ข้อความถึงผู้ดูแล (ตรงกับ reason ของ validateSlot / groupMeals)
-export const REASON_TEXT = {
-  missing: 'อ่านไม่ได้ — กรอกเอง', invalid_meal: 'ยังไม่ได้เลือกมื้อ', invalid_timing: 'ยังไม่ได้เลือกวิธีกิน',
-  minutesBefore_required: 'ก่อนอาหารต้องระบุจำนวนนาที', invalid_tablets: 'จำนวนเม็ดต้องเป็นจำนวนเต็มบวก (ไม่รองรับครึ่งเม็ด)',
-  meal_timing_mismatch: 'ก่อนนอนต้องเลือกมื้อ "ก่อนนอน" คู่กัน', duplicate_slot: 'ช่องเวลากินซ้ำกัน',
-  conflicting_tablets: 'เวลาเตือนเดียวกันแต่จำนวนเม็ดต่างกัน', no_slot: 'ยังไม่มีช่องเวลากิน', invalid_reminder_time: 'คำนวณเวลาเตือนไม่ได้ — ตรวจเวลามื้อ',
-};
+export const REASON_TEXT = labels({
+  missing: ['อ่านไม่ได้ — กรอกเอง', 'Could not read this field — enter it manually'],
+  invalid_meal: ['ยังไม่ได้เลือกมื้อ', 'Choose a meal'], invalid_timing: ['ยังไม่ได้เลือกวิธีกิน', 'Choose when to take it'],
+  minutesBefore_required: ['ก่อนอาหารต้องระบุจำนวนนาที', 'Enter the number of minutes before the meal'],
+  invalid_tablets: ['จำนวนเม็ดต้องเป็นจำนวนเต็มบวก (ไม่รองรับครึ่งเม็ด)', 'The tablet count must be a positive whole number (half tablets are not supported)'],
+  meal_timing_mismatch: ['ก่อนนอนต้องเลือกมื้อ "ก่อนนอน" คู่กัน', 'At bedtime must use the Bedtime meal'],
+  duplicate_slot: ['ช่องเวลากินซ้ำกัน', 'Duplicate dose time'],
+  conflicting_tablets: ['เวลาเตือนเดียวกันแต่จำนวนเม็ดต่างกัน', 'The same reminder time has different tablet counts'],
+  no_slot: ['ยังไม่มีช่องเวลากิน', 'Add at least one dose time'],
+  invalid_reminder_time: ['คำนวณเวลาเตือนไม่ได้ — ตรวจเวลามื้อ', 'Cannot calculate the reminder time — check the meal times'],
+});
 
 // เหตุผลที่จับคู่ไม่สำเร็จ (reason ของ joinCheck) → ข้อความ (FR-01 ข้อ 2, 4, 5)
-export const JOIN_TEXT = {
-  wrong_code: 'รหัสไม่ถูกต้อง — ตรวจรหัสแล้วลองใหม่',
-  already_has_caregiver: 'ผู้สูงอายุท่านนี้มีผู้ดูแลแล้ว',
-  expired: 'รหัสหมดอายุแล้ว (เกิน 10 นาที) — ขอรหัสใหม่จากเครื่องผู้สูงอายุ',
-  already_used: 'รหัสนี้ถูกใช้ไปแล้ว — ขอรหัสใหม่',
-  not_consented: 'รอผู้สูงอายุกดยินยอมก่อน แล้วลองใหม่',
-  self_pairing: 'เครื่องนี้คือเครื่องผู้สูงอายุของคู่นี้ — ใช้มือถืออีกเครื่องเป็นผู้ดูแล',
-};
+export const JOIN_TEXT = labels({
+  wrong_code: ['รหัสไม่ถูกต้อง — ตรวจรหัสแล้วลองใหม่', 'Incorrect code — check it and try again'],
+  already_has_caregiver: ['ผู้สูงอายุท่านนี้มีผู้ดูแลแล้ว', 'This older adult already has a caregiver'],
+  expired: ['รหัสหมดอายุแล้ว (เกิน 10 นาที) — ขอรหัสใหม่จากเครื่องผู้สูงอายุ', 'The code has expired (over 10 minutes) — request a new code on the older adult’s device'],
+  already_used: ['รหัสนี้ถูกใช้ไปแล้ว — ขอรหัสใหม่', 'This code has already been used — request a new one'],
+  not_consented: ['รอผู้สูงอายุกดยินยอมก่อน แล้วลองใหม่', 'Wait for the older adult to consent, then try again'],
+  self_pairing: ['เครื่องนี้คือเครื่องผู้สูงอายุของคู่นี้ — ใช้มือถืออีกเครื่องเป็นผู้ดูแล', 'This is the older adult’s device — use a different device for the caregiver'],
+});
 
 // ปัญหาของบริการ AI (FR-02 ข้อ 5) — ใช้ใน Demo mode จำลองเหตุที่ส่งไม่ได้
-export const AI_PROBLEMS = {
-  offline: 'ไม่มีอินเทอร์เน็ต ส่งให้ AI ไม่ได้',
-  down: 'บริการ AI ใช้ไม่ได้ตอนนี้',
-  quota: 'โควตา AI ของวันนี้หมดแล้ว',
-  unreadable: 'อ่านรูปไม่ออก (ภาพเบลอหรือมืดเกินไป)',
-};
+export const AI_PROBLEMS = labels({
+  offline: ['ไม่มีอินเทอร์เน็ต ส่งให้ AI ไม่ได้', 'No internet connection — cannot send to AI'],
+  down: ['บริการ AI ใช้ไม่ได้ตอนนี้', 'The AI service is currently unavailable'],
+  quota: ['โควตา AI ของวันนี้หมดแล้ว', 'Today’s AI quota has been used up'],
+  unreadable: ['อ่านรูปไม่ออก (ภาพเบลอหรือมืดเกินไป)', 'Cannot read this image (it may be too blurry or dark)'],
+});
 
 const pad = (n) => String(n).padStart(2, '0');
 
@@ -75,8 +84,10 @@ export function dayStartOf(dateKey) {
 /** 'YYYY-MM-DD' → ข้อความวันที่ภาษาไทย (พ.ศ.) */
 export function thaiDate(dateKey) {
   const [y, m, d] = dateKey.split('-').map(Number);
-  const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
-  return `${d} ${months[m - 1]} ${y + 543}`;
+  const thai = getLanguage() === 'th';
+  const months = thai ? ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
+    : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return `${d} ${months[m - 1]} ${thai ? y + 543 : y}`;
 }
 
 /**
@@ -85,9 +96,9 @@ export function thaiDate(dateKey) {
  */
 export function statusLabel(state, confirmedAt) {
   switch (state) {
-    case 'not_due': return { text: 'ยังไม่ถึงเวลา', kind: 'none' };
-    case 'taken': return { text: `กินแล้ว ${fmtHM(confirmedAt)}`, kind: 'taken' };
-    case 'taken_late': return { text: `กินแล้ว (ยืนยันย้อนหลัง) ${fmtHM(confirmedAt)}`, kind: 'late' };
-    default: return { text: 'ยังไม่ยืนยัน', kind: 'notyet' };
+    case 'not_due': return { text: tr('ยังไม่ถึงเวลา', 'Not due yet'), kind: 'none' };
+    case 'taken': return { text: tr(`กินแล้ว ${fmtHM(confirmedAt)}`, `Confirmed ${fmtHM(confirmedAt)}`), kind: 'taken' };
+    case 'taken_late': return { text: tr(`กินแล้ว (ยืนยันย้อนหลัง) ${fmtHM(confirmedAt)}`, `Confirmed late ${fmtHM(confirmedAt)}`), kind: 'late' };
+    default: return { text: tr('ยังไม่ยืนยัน', 'Not yet confirmed'), kind: 'notyet' };
   }
 }

@@ -1,0 +1,76 @@
+/* C-10 แยกขอบเขตจากหน้าจอเดิม ใช้สีและขนาดจาก tokens.css ของทีม */
+.week-root { max-width: 880px; margin: auto; padding: var(--space-2); }
+.week-header, .week-brand, .week-section-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.week-header { margin: var(--space-1) 0 var(--space-4); flex-wrap: wrap; }
+.week-brand { justify-content: flex-start; font-size: var(--fs-h2); font-weight: 700; text-decoration: none; }
+.week-root h1 { font-family: var(--font-head); font-size: clamp(28px, 5vw, 40px); margin-bottom: var(--space-2); }
+.week-root .covers { margin: var(--space-1) 0; padding: 0; }
+.week-eyebrow { color: var(--primary); font-weight: 700; }
+.week-mode { display: flex; flex-wrap: wrap; gap: var(--space-1); margin: var(--space-3) 0 var(--space-2); }
+.week-root button { min-height: var(--tap-min); padding: var(--space-1) var(--space-2); border: 2px solid var(--primary); border-radius: var(--radius); background: var(--bg); color: var(--primary); font-weight: 700; cursor: pointer; }
+.week-mode button[aria-pressed="true"], .week-root .week-primary { background: var(--primary); color: var(--on-color); }
+.week-root button:disabled { cursor: default; opacity: 0.6; }
+.week-root button:focus-visible, .week-root a:focus-visible, .week-root summary:focus-visible, .week-root input:focus-visible { outline: 3px solid var(--primary); outline-offset: 4px; }
+.week-banner { border-radius: var(--radius); background: var(--accent-soft); padding: var(--space-2); }
+.week-notice { color: var(--text-muted); margin: var(--space-1) 0 var(--space-2); }
+.week-error { color: var(--no-text); background: var(--no-bg); padding: var(--space-2); border-radius: var(--radius); }
+.week-card { background: var(--bg); border: 2px solid var(--line); border-radius: var(--radius-lg); padding: var(--space-3); margin-bottom: var(--space-3); box-shadow: var(--shadow); }
+.week-section-head { flex-wrap: wrap; align-items: flex-start; margin-bottom: var(--space-1); }
+.week-section-head h2 { font-size: var(--fs-h2); }
+.week-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-1); margin: var(--space-3) 0 var(--space-2); }
+.week-stats div { display: flex; flex-direction: column; background: var(--surface); border-radius: var(--radius); padding: var(--space-2); }
+.week-stats strong { color: var(--accent); font-size: 32px; }
+.week-stats span { font-size: var(--fs-body); }
+.week-scope, .week-empty { background: var(--warn-bg); color: var(--warn-text); padding: var(--space-2); border-radius: var(--radius); }
+.week-table { border-collapse: collapse; width: 100%; margin: var(--space-2) 0; text-align: left; }
+.week-table caption { color: var(--text-muted); text-align: left; margin-bottom: var(--space-1); }
+.week-table th, .week-table td { border-bottom: 1px solid var(--line); padding: var(--space-2) var(--space-1); vertical-align: top; }
+.week-table th[scope="row"] { width: 32%; font-weight: 600; }
+.week-records { list-style: none; padding: 0; margin: 0; }
+.week-records li { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1); margin-bottom: var(--space-1); }
+.week-records time { font-variant-numeric: tabular-nums; }
+.week-label { border-radius: var(--radius); padding: 2px var(--space-1); }
+.week-label.is-on-time { background: var(--ok-bg); color: var(--ok-text); }
+.week-label.is-late { background: var(--wait-bg); color: var(--wait-text); }
+.week-payload { margin: var(--space-2) 0; border: 1px solid var(--line); border-radius: var(--radius); padding: var(--space-2); }
+.week-payload summary { cursor: pointer; font-weight: 600; min-height: var(--tap-min); }
+.week-payload pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: var(--fs-body); }
+.week-consent { display: flex; align-items: flex-start; gap: var(--space-2); padding: var(--space-2) 0; cursor: pointer; }
+.week-consent input { width: 24px; height: 24px; flex: none; margin-top: 3px; accent-color: var(--primary); }
+.week-primary { width: 100%; min-height: var(--btn-h) !important; }
+.week-result { margin-top: var(--space-3); padding: var(--space-2); border-radius: var(--radius); background: var(--accent-soft); }
+.week-result ul { padding-left: var(--space-3); }
+.week-result li { margin: var(--space-1) 0; }
+.week-footer { color: var(--text-muted); padding: var(--space-3) 0; }
+.week-ai-info { background: var(--surface); border-radius: var(--radius); padding: var(--space-2); margin: var(--space-2) 0; }
+.week-ai-info p + p { margin-top: var(--space-1); }
+.week-model, .week-storage-note { overflow-wrap: anywhere; }
+.week-storage-note { color: var(--text-muted); margin: var(--space-2) 0; }
+
+/* Embedded in Phone's existing .screen: inherit its light/dark and text-size tokens. */
+.week-root.week-embedded { width: 100%; max-width: none; min-width: 0; margin: 0; padding: 0; overflow-wrap: anywhere; }
+.week-embedded .week-content, .week-embedded .week-card, .week-embedded .week-section-head > div { min-width: 0; max-width: 100%; }
+.week-embedded h1 { font-size: var(--fs-h2); line-height: 1.55; }
+.week-embedded .week-card { padding: var(--space-2); }
+.week-embedded .week-section-head > div { flex: 1 1 100%; }
+.week-embedded .week-section-head h2 { overflow-wrap: anywhere; }
+.week-embedded .week-mode { flex-direction: column; }
+.week-embedded button { min-height: max(48px, var(--tap-min)); max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+.week-embedded .week-stats { grid-template-columns: minmax(0, 1fr); }
+.week-embedded .week-stats div { flex-direction: row; align-items: center; min-width: 0; gap: var(--space-2); }
+.week-embedded .week-stats strong { flex: none; }
+.week-embedded .week-stats span { min-width: 0; overflow-wrap: anywhere; }
+.week-embedded .week-table { table-layout: fixed; }
+.week-embedded .week-table th, .week-embedded .week-table td { overflow-wrap: anywhere; padding: var(--space-2) 2px; }
+.week-embedded .week-records li { align-items: flex-start; }
+.week-embedded .week-label { max-width: 100%; overflow-wrap: anywhere; }
+.week-embedded .week-payload, .week-embedded .week-payload pre { min-width: 0; max-width: 100%; }
+.week-embedded .week-consent span { min-width: 0; }
+.week-embedded .week-ai-info { padding: var(--space-1); }
+@media (max-width: 480px) {
+  .week-root { padding: var(--space-1); }
+  .week-card { padding: var(--space-2); }
+  .week-stats { grid-template-columns: 1fr; }
+  .week-stats div { flex-direction: row; align-items: center; gap: var(--space-2); }
+  .week-table th, .week-table td { padding: var(--space-2) 2px; }
+}

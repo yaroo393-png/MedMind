@@ -8,6 +8,14 @@
 >
 > **โหมดสาธิต:** https://yaroo393-png.github.io/MedMind/demo.html
 
+## การรวมเว็บใหม่ (9 พ.ย. 2569 — รอรีวิว)
+
+นำหน้าตาและการทำงานจาก [เว็บทดสอบ MedMind](https://medmind-fr09-test-20261108.rossatoun.chatgpt.site/) ต้นฉบับ `daa4e47e902d9ba20c95de1c62a4a4597767bc9f` มารวมบน `main` ฐาน `08bd3a4` (รวม PR #63 ระบบสแกน/OCR และ PR #64 โครงสร้าง repo แล้ว) โดยคง `index.html`, `senior.html`, `caregiver.html`, `demo.html` และลิงก์ด้านบน ใช้ภาษาไทย–อังกฤษ ธีมที่ลดความสว่าง และการรักษาข้อความ/เคอร์เซอร์ขณะกรอกฟอร์มจากเว็บใหม่
+
+ส่วนสแกน FR-02 ยังคงการปิดข้อมูลก่อนส่งภาพ, Gemini พร้อม timeout/โมเดลสำรอง, OCR ในเครื่อง และการทิ้งผลเก่าหลังยกเลิกของ PR #63 · FR-09 เพิ่มแท็บสรุปในหน้าผู้ดูแลและตัวอย่างใน Demo; [เกณฑ์รับงาน FR-09](fr/FR-09-weekly-summary/README.md) ยังรอทีมรับรอง ไม่เปลี่ยน SRS หรือกฎความปลอดภัย · ไม่รวม `qa-fr09.html` และ `js/qa/` ของเว็บทดสอบ
+
+**ผลตรวจชุดรวม:** npm run check: 460/460 tests passed; check:secrets passed · ยังไม่รับรองผล Firebase/Gemini จริงหรือมือถือ Android จริง · เจ้าของงานยังต้องอ่านโค้ด และให้อีก 1 คนรีวิวก่อน merge ตาม `RULES.md` §2; เอกสารนี้ไม่ใช่หลักฐานว่าเผยแพร่ขึ้นเว็บจริงแล้ว
+
 ## สถานะปัจจุบัน
 | ส่วน | สถานะ |
 |---|---|
@@ -17,7 +25,7 @@
 | Traceability (Golden Thread) | 🟡 ครบ 43 AC — ✅ ใน Demo mode เป็นส่วนใหญ่ · ส่วนที่ค้าง (Rules บน Firestore, มือถือจริง, AI จริง) ระบุไว้ในแต่ละแถว — [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) |
 | ต้นแบบ M3 (`prototype/`) | ✅ ครบ FR-01–05 + ทางที่ผิด + โหมดสาธิต 2 จอ — เปิดได้โดยไม่ต้องมี server — [`prototype/index.html`](prototype/index.html) · [`NOTES.md`](prototype/NOTES.md) · ยังไม่ได้ทดสอบบนมือถือจริง (MT-08, MT-16) |
 | ระบบ (เว็บแอป) `public/` | 🟡 **Demo mode** (`demo.html`) เสร็จ · **ใช้งานจริงบน Firebase** (`senior.html` / `caregiver.html`) เขียนเสร็จ: จับคู่ด้วย QR จริง · Firestore + Security Rules · AI อ่านฉลากด้วย Gemini หลังปิดชื่อ/HN — ทดสอบกับ Firebase Emulator และ 2 เบราว์เซอร์แล้ว · **ยังไม่ได้ทดสอบบนมือถือจริงกับโปรเจกต์จริง และยังไม่เคยเรียก Gemini จริง** · ตั้งค่า: [`docs/FIREBASE-SETUP.md`](docs/FIREBASE-SETUP.md) |
-| เทสต์อัตโนมัติ | ✅ `npm test` 345 เทสต์ผ่าน (logic, core, หน้าจอทุก FR ระดับ AC, QR, AI อ่านฉลากด้วยของปลอม, โครงสร้างหน้าเว็บ) · ✅ `emulator-tests/` 31 เทสต์ผ่าน (Security Rules R-1…R-14 + `firestoreRepo` กับ Firebase Emulator — CI งาน `emulator`) · ยังไม่มี: ผลบนมือถือจริง |
+| เทสต์อัตโนมัติ | ✅ `npm test` 460 เทสต์ผ่าน (logic, core, หน้าจอทุก FR ระดับ AC, QR, AI อ่านฉลากด้วยของปลอม, โครงสร้างหน้าเว็บ) · ✅ `emulator-tests/` 31 เทสต์ผ่าน (Security Rules R-1…R-14 + `firestoreRepo` กับ Firebase Emulator — CI งาน `emulator`) · ยังไม่มี: ผลบนมือถือจริง |
 | แผนงาน (Week 10) | 🟡 sprint 0–3, ความเสี่ยง, บทบาทหมุนเวียน, retro — [`docs/PROJECT-PLAN.md`](docs/PROJECT-PLAN.md) |
 | Final Report / AI-Use Statement / Demo | 🟡 Final Report และ AI-Use Statement มีเนื้อหาแล้ว (ช่อง [ ] = ยังไม่มีผลจริง) · สไลด์ยังเป็นโครงเรื่อง — [`docs/05-report/`](docs/05-report/), [`docs/06-presentation/`](docs/06-presentation/) |
 
@@ -53,6 +61,7 @@
 | ลืมกินยา / กินไม่ตรงเวลา | **FR-03** | [architecture §5.1, §7.3](docs/02-design/architecture.md) | S-03 · [`fr/FR-03-reminder`](fr/FR-03-reminder/README.md) | AC 1–6 · NFR-01 |
 | จำไม่ได้ว่ากินแล้วหรือยัง | **FR-04** | [architecture §6 (`doses`)](docs/02-design/architecture.md) | S-02, S-03 · [`fr/FR-04-confirm`](fr/FR-04-confirm/README.md) | AC 1–10 · NFR-02, 03, 07, 12 |
 | โทร/ส่ง LINE ถามทุกมื้อ ไม่มีสถานะรวม | **FR-05** | [architecture §6 (`alertSeen`)](docs/02-design/architecture.md) | C-07, C-08 · [`fr/FR-05-caregiver-status`](fr/FR-05-caregiver-status/README.md) | AC 1–10 · NFR-01, 12, 13 |
+| ผู้ดูแลอยากเห็นภาพรวมบันทึกยืนยันหลายวัน | **FR-09 (Could; รอรับรองเกณฑ์)** | [architecture §5](docs/02-design/architecture.md) | C-10 (`cg-weekly`) · [`fr/FR-09-weekly-summary`](fr/FR-09-weekly-summary/README.md) | เทสต์สรุป/สิทธิ์/ภาษาใน `tests/`; ไม่แทนผลบริการจริง |
 
 รายละเอียดทีละ AC → โค้ด → เทสต์ อยู่ใน [`docs/TRACEABILITY.md`](docs/TRACEABILITY.md) · **SRS เป็นแหล่งความจริง** แก้ SRS ก่อนแล้วคัดมาที่นี่
 
@@ -95,6 +104,7 @@ docs/
 ├── PROJECT-PLAN.md              # sprint, velocity, ความเสี่ยง, บทบาทหมุนเวียน, retrospective
 └── GITHUB-SETUP.md              # labels, milestones, ruleset, issue ชุดแรก
 fr/FR-01…FR-05/README.md          # งานของแต่ละคน (หลักฐานส่วนร่วมรายคน)
+fr/FR-09-weekly-summary/README.md # สรุปรายสัปดาห์: ขอบเขตและเกณฑ์ที่เสนอให้ทีมรีวิว
 prototype/                        # ต้นแบบ M3 คลิกได้ — เปิด index.html ด้วยดับเบิลคลิก ไม่ต้องมี server (app.html, demo.html, css/, js/, NOTES.md, TEST-CHECKLIST.md)
 slides/                           # สไลด์เดโม: demo-slides.pdf (ไฟล์ส่ง) · demo-slides.pptx (ไฟล์ต้นฉบับที่แก้ได้)
 public/                           # เว็บแอปจริง: index / senior / caregiver / demo .html + css/ + js/{logic,core,services,features}/
