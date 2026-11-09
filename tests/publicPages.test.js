@@ -69,7 +69,14 @@ test('ทุกปุ่ม (data-act) ที่หน้าจอสร้า�
 });
 
 test('M3: ใช้ token เท่านั้น ไม่มีสี #hex ลอยนอก tokens.css', () => {
-  assert.equal(/--fresh:\s*#8DBA62/i.test(read('css/tokens.css')), true, 'theme-color ใน HTML ต้องตรงกับ --fresh');
+  const fresh = /--fresh:\s*(#[0-9a-f]{6})/i.exec(read('css/tokens.css'))?.[1];
+  assert.ok(fresh, 'ต้องมี token --fresh สำหรับสีเปลือกแอป');
+  for (const f of ['index.html', 'senior.html', 'caregiver.html']) {
+    assert.equal(/<meta name="theme-color" content="([^"]+)"/i.exec(read(f))?.[1].toLowerCase(), fresh.toLowerCase(), `${f}: theme-color ต้องตรงกับ --fresh`);
+  }
+  const manifest = JSON.parse(read('manifest.webmanifest'));
+  assert.equal(manifest.theme_color.toLowerCase(), fresh.toLowerCase());
+  assert.equal(manifest.background_color.toLowerCase(), fresh.toLowerCase());
   for (const f of codeFiles.filter((x) => x !== 'css/tokens.css')) {
     // ยกเว้น <meta name="theme-color"> (ใส่ var() ไม่ได้ — ต้องตรงกับ --fresh ใน tokens.css)
     const bad = read(f).replace(/<meta name="theme-color"[^>]*>/g, '').match(/#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?\b/g);
@@ -92,9 +99,15 @@ test('ADR-8 / NFR-09: Demo mode ไม่ต้องมี server — ไม่
       assert.doesNotMatch(body, /\bfetch\(|XMLHttpRequest|WebSocket|sendBeacon|https?:\/\//, `public/${f} อ้างเครือข่าย`);
       if (f === 'sw.js') assert.match(s, /origin !== self\.location\.origin\) return/, 'sw.js ต้องไม่แคช/ยุ่งกับคำขอข้ามโดเมน');
     }
-    // ข้อยกเว้นเดียว: จำ "บทบาท" ของเครื่อง (คีย์ mm-role = senior|caregiver ไม่ใช่ข้อมูลส่วนตัว) ให้เปิดลิงก์เดียวแล้วเข้าหน้าเดิม
+    // จำได้เฉพาะบทบาทและภาษา UI ไม่ใช่ยา/ข้อมูลผู้ป่วย; ทุกคีย์และจุดอ่านเขียนต้องตรวจได้
     const allowRoleMemory = f === 'index.html' || f === 'js/features/realShell.js';
-    const stripped = allowRoleMemory ? s.replace(/localStorage\??\.(?:get|set)Item\(([^)]*)\)/g, (m, a) => { assert.match(a, /KEY|'mm-role'/, `${f} เก็บอย่างอื่นนอกบทบาท: ${m}`); return ''; }) : s;
+    let stripped = allowRoleMemory ? s.replace(/localStorage\??\.(?:get|set)Item\(([^)]*)\)/g, (m, a) => { assert.match(a, /KEY|'mm-role'/, `${f} เก็บอย่างอื่นนอกบทบาท: ${m}`); return ''; }) : s;
+    if (f === 'js/features/i18n.js') {
+      assert.match(s, /const KEY = 'mm-language'/);
+      assert.match(s, /next !== 'th' && next !== 'en'/, 'บันทึกภาษาได้เฉพาะ th/en');
+      stripped = s.replace('(storage ?? globalThis.localStorage)?.getItem(KEY)', '')
+        .replace('globalThis.localStorage?.setItem(KEY, next)', '');
+    }
     assert.doesNotMatch(stripped, /localStorage|sessionStorage|indexedDB|document\.cookie/, `public/${f} เก็บข้อมูลลงเบราว์เซอร์เอง (ใช้ที่เก็บของแอปเท่านั้น)`);
   }
 });
@@ -115,9 +128,11 @@ test('ADR-8: demo.html และไฟล์ที่มัน import ทั้�
   for (const bad of ['js/core/firebase.js', 'js/core/firestoreRepo.js', 'js/features/realShell.js', 'js/services/aiLabel.js', 'js/services/localOcr.js']) assert.equal(seen.has(bad), false, `demo.html ดึง ${bad}`);
 });
 
-test('สถาปัตยกรรม: เฉพาะ phone.js, demoShell.js, realShell.js, redactTool.js และ qrScan.js แตะ DOM · logic/ และ core/ ไม่แตะ DOM · Date.now() อยู่ที่ clock.js ที่เดียว', () => {
-  const domWords = /\b(document|window|localStorage|innerHTML|addEventListener)\b/;
-  for (const f of featureFiles.filter((x) => !/phone\.js$|demoShell\.js$|realShell\.js$|redactTool\.js$|qrScan\.js$/.test(x))) {
+test('สถาปัตยกรรม: เฉพาะเปลือกหน้าจอ/ภาษาและเครื่องมือกล้องแตะ DOM · logic/ และ core/ ไม่แตะ DOM · Date.now() อยู่ที่ clock.js ที่เดียว', () => {
+  // ตรวจการเข้าถึง DOM แทนคำเดี่ยว เพราะข้อความ UI อังกฤษมีคำว่า "confirmation window"
+  // การอ่านเขียน localStorage ตรวจแยกด้วยรายการคีย์ที่อนุญาตด้านบน
+  const domWords = /\b(?:document|window)\s*(?:\?\.|\.|\[)|\b(?:innerHTML|addEventListener)\b/;
+  for (const f of featureFiles.filter((x) => !/phone\.js$|demoShell\.js$|realShell\.js$|redactTool\.js$|qrScan\.js$|languageUi\.js$/.test(x))) {
     assert.doesNotMatch(read(f).replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, ''), domWords, `public/${f} แตะ DOM`);
   }
   for (const f of files.filter((x) => /^js\/(logic|core)\//.test(x) && x.endsWith('.js'))) {

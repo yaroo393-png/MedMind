@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedMind — สรุปรายสัปดาห์</title>
+  <link rel="icon" href="img/icon-192.png">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/weekly-summary.css">
+</head>
+<body data-page="weekly">
+  <div id="page-language"></div>
+  <div class="week-root" id="weekly-root"><p role="status">กำลังเปิดสรุปรายสัปดาห์…</p></div>
+  <noscript><p>ต้องเปิด JavaScript เพื่อใช้ MedMind</p></noscript>
+  <script type="module">
+    import { bootWeeklySummary } from './js/features/weeklySummaryPage.js';
+    import { installLanguageUi } from './js/features/languageUi.js';
+    installLanguageUi();
+    // ส่วนผูก DOM อยู่ในหน้าเข้าใหม่ ส่วน controller รับ draw เพื่อคงชั้น feature ให้ทดสอบโดยไม่มี DOM
+    const root = document.getElementById('weekly-root');
+    const start = () => bootWeeklySummary({ draw: (html) => { root.innerHTML = html; } });
+    let page = start();
+    root.addEventListener('click', (event) => {
+      const button = event.target.closest('button[data-action]');
+      if (button && root.contains(button) && !button.disabled) void page.act(button.dataset.action);
+    });
+    root.addEventListener('change', (event) => {
+      if (event.target.matches('input[data-action="consent"]')) void page.act('consent', event.target.checked);
+    });
+    window.addEventListener('pagehide', () => page.dispose());
+    // กลับมาด้วยปุ่มย้อนกลับและ BFCache: เริ่มตัวอย่างใหม่ ไม่ค้าง controller ที่ถูก dispose แล้ว
+    window.addEventListener('pageshow', (event) => { if (event.persisted) page = start(); });
+  </script>
+</body>
+</html>

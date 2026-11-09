@@ -1,7 +1,7 @@
 // Service worker ของ MedMind (PWA) — ให้ติดตั้งลงหน้าจอหลักได้ และเปิดเปลือกแอปได้แม้ไม่มีเน็ต
 // ไม่ใช่ server code: ทำงานในเครื่องผู้ใช้ · แคชเฉพาะไฟล์ของเว็บเอง (same-origin GET) · ข้อมูลยา/ผลยืนยันอยู่ที่ Firestore (มีแคชออฟไลน์ของมันเอง)
 // กลยุทธ์ "เครือข่ายก่อน แคชสำรอง": ได้โค้ดใหม่เสมอเมื่อออนไลน์ ไม่ค้างเวอร์ชันเก่า
-const CACHE = 'medmind-shell-v1';
+const CACHE = 'medmind-shell-v2';
 
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (event) => {

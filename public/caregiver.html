@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#8DBA62">
+<meta name="theme-color" content="#CCDCC4">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="MedMind">
@@ -13,13 +13,16 @@
 <title>MedMind — เครื่องผู้ดูแล</title>
 <link rel="stylesheet" href="css/tokens.css">
 <link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/weekly-summary.css">
 </head>
-<body class="real">
+<body class="real" data-page="caregiver">
 <!-- Covers: FR-01–FR-05 · ใช้งานจริงบน Firebase (1 เครื่อง = 1 บทบาท — ADR-9) · ทุกหน้าจอมีป้าย Covers ของตัวเอง -->
 <div class="phone" id="phone" aria-live="off"></div>
 <noscript><p>ต้องเปิด JavaScript เพื่อใช้ MedMind</p></noscript>
 <script type="module">
   import { bootReal } from './js/features/realShell.js';
+  import { installLanguageUi } from './js/features/languageUi.js';
+  installLanguageUi();
   window.mmReal = await bootReal({ role: 'caregiver', root: document.getElementById('phone'), search: location.search, hostname: location.hostname, href: location.href });
 </script>
 </body>
