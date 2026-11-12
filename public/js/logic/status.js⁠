@@ -1,0 +1,43 @@
+// public/js/logic/status.js
+
+/**
+ * ตรวจสอบสถานะรายวันของผู้ป่วย/ผู้สูงอายุ
+ * @param {Object} dose - ข้อมูลโดสยา
+ * @param {Number} currentTime - เวลาปัจจุบัน (ms)
+ * @returns {String} สถานะของโดสยา เช่น 'pending', 'taken', 'taken_late', 'missed'
+ */
+export function getDoseStatus(dose, currentTime) {
+    if (!dose || !dose.scheduledTime) {
+        throw new Error('Invalid dose data');
+    }
+
+    // ถ้ามีการยืนยันการกินยาแล้ว
+    if (dose.confirmedAt) {
+        if (dose.confirmedAt <= dose.scheduledTime + (15 * 60 * 1000)) {
+            return 'taken'; // กินตรงเวลา (ภายใน T+15 นาที)
+        } else {
+            return 'taken_late'; // กินเลท (เกิน T+15 นาที)
+        }
+    }
+
+    // ถ้ายังไม่ยืนยัน และเวลาปัจจุบันเกินกำหนดไปแล้ว
+    if (currentTime > dose.scheduledTime + (15 * 60 * 1000)) {
+        return 'missed';
+    }
+
+    return 'pending'; // รอเวลารับประทาน
+}
+
+/**
+ * คำนวณการแจ้งเตือนผู้ดูแล (FR-05) เมื่อเลยกำหนด
+ */
+export function checkCaregiverAlert(dose, currentTime) {
+    const T_PLUS_15 = dose.scheduledTime + (15 * 60 * 1000);
+    if (!dose.confirmedAt && currentTime > T_PLUS_15) {
+        return {
+            alertTriggered: true,
+            message: 'Medicine not yet confirmed'
+        };
+    }
+    return { alertTriggered: false };
+}
